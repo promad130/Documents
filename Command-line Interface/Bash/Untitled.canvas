@@ -1,0 +1,22 @@
+{
+	"nodes":[
+		{"id":"662f3e16b3306d96","type":"file","file":"Attachments/Pasted image 20251013204346.png","x":0,"y":0,"width":400,"height":234},
+		{"id":"0e2b5306e1884ed7","type":"text","text":"# Card selection screen\n![[Pasted image 20251013204409.png]]","x":188,"y":237,"width":1532,"height":883},
+		{"id":"7c75d5f28b7ce237","type":"file","file":"Attachments/Pasted image 20251013205442.png","x":760,"y":1360,"width":1419,"height":830},
+		{"id":"3f7a26074309ad9a","type":"file","file":"Attachments/Pasted image 20251013205514.png","x":1800,"y":2360,"width":980,"height":573},
+		{"id":"839857b30636273a","type":"file","file":"Attachments/Pasted image 20251013205754.png","x":3580,"y":3660,"width":400,"height":234},
+		{"id":"8407436a4f32abdf","type":"text","text":"Increase hp and dmaane with the waqve\n","x":3605,"y":3960,"width":250,"height":60},
+		{"id":"dbab1b6e00ad01d5","type":"text","text":"Then comes wave 5, asnd the boss HP is high, and that will be like one on one match\n\n","x":3605,"y":4120,"width":675,"height":73},
+		{"id":"e060339f5771826f","type":"text","text":"Restore x% of player hp after each match","x":3605,"y":4280,"width":375,"height":80},
+		{"id":"3748a7b6a7cea54f","type":"text","text":"Add comics feedbacks and all\nadd hp decrease popups and all\n","x":2720,"y":4107,"width":583,"height":86},
+		{"id":"a40e99d00a9c6137","type":"file","file":"Attachments/Pasted image 20251013205736.png","x":2080,"y":3157,"width":1060,"height":620},
+		{"id":"4d962052b07e2a5b","x":3475,"y":3335,"width":250,"height":60,"type":"text","text":"Add a card healthbar text"},
+		{"id":"9aee9ec2d5cb2c40","x":2785,"y":4359,"width":355,"height":50,"type":"text","text":"Card Resolution => 2500x2500"}
+	],
+	"edges":[
+		{"id":"0bcc4d3a64393ac0","fromNode":"662f3e16b3306d96","fromSide":"right","toNode":"0e2b5306e1884ed7","toSide":"top"},
+		{"id":"16bf626f3632f3bc","fromNode":"7c75d5f28b7ce237","fromSide":"bottom","toNode":"3f7a26074309ad9a","toSide":"top","label":"Card Selection "},
+		{"id":"2a5bb6279d2c29f2","fromNode":"3f7a26074309ad9a","fromSide":"bottom","toNode":"a40e99d00a9c6137","toSide":"top","label":"Game Starts"},
+		{"id":"57ea3373d7ae3513","fromNode":"a40e99d00a9c6137","fromSide":"bottom","toNode":"839857b30636273a","toSide":"top","label":"Wave 2\n\n"}
+	]
+}

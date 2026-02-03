@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"6cee091c598f72d0","type":"file","file":"Programming languages/Css/CSS Properties/display Property/Display.canvas","x":-300,"y":-420,"width":540,"height":220},
+		{"id":"1834a00f75316b30","x":75,"y":130,"width":845,"height":130,"type":"text","text":"The `justify-content` property in CSS is used to control how flex items (or grid items) are aligned and distributed along the main axis of a flex or grid container. The main axis is horizontal by default (when `flex-direction: row`), but can be vertical if you set `flex-direction: column`"},
+		{"id":"cc848b50c7cd6c75","x":241,"y":437,"width":339,"height":143,"type":"text","text":"# Syntax:\n```CSS\njustify-content: ;\n```"},
+		{"id":"3fbdb2174db34200","x":880,"y":-260,"width":400,"height":224,"type":"file","file":"Attachments/Pasted image 20250612200354.png"}
+	],
+	"edges":[
+		{"id":"a266cb2718f632f6","fromNode":"6cee091c598f72d0","fromSide":"bottom","toNode":"1834a00f75316b30","toSide":"top"},
+		{"id":"dac4f48203758a4d","fromNode":"1834a00f75316b30","fromSide":"bottom","toNode":"cc848b50c7cd6c75","toSide":"top"},
+		{"id":"ce5f58fcd50fda71","fromNode":"1834a00f75316b30","fromSide":"right","toNode":"3fbdb2174db34200","toSide":"top"}
+	]
+}

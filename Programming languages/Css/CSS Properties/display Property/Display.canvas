@@ -1,0 +1,24 @@
+{
+	"nodes":[
+		{"id":"7000a6f87ba2bfbf","type":"text","text":"The **display** property in CSS defines how an HTML element is visually rendered and how it behaves in the document flow. It determines whether elements appear as block-level, inline, flex, grid, or other specialized types, and directly affects layout, positioning, and interaction with other elements.","x":-273,"y":-200,"width":593,"height":160,"color":"2"},
+		{"id":"f8924217d1bf2ea7","type":"text","text":"Syntax:\n```CSS\nselector {   \n\tdisplay: value; \n}\n```","x":-260,"y":40,"width":421,"height":183,"color":"3"},
+		{"id":"dbf00e06e651de56","type":"text","text":"Values","x":536,"y":-142,"width":104,"height":62,"color":"5"},
+		{"id":"fee374250777550c","type":"text","text":"# Flex\nThe `display: flex` property in CSS enables the Flexbox layout model for a container element. When you set an element’s `display` property to `flex`, it becomes a _flex container_, and its direct children become _flex items_ that can be easily aligned, distributed, and ordered along a single axis (row or column).","x":715,"y":-556,"width":745,"height":156},
+		{"id":"e4c2db2d54f9686c","type":"file","file":"Attachments/images 1.webp","x":1088,"y":-320,"width":297,"height":400},
+		{"id":"10f7e831a501747e","type":"file","file":"Attachments/0_-q0HWPWz_lkrXe6p.webp","x":1774,"y":-892,"width":400,"height":138},
+		{"id":"fd30fc2f223f2c3d","type":"file","file":"Attachments/0_N_b9t4brRps8IFxX.webp","x":1774,"y":-1120,"width":400,"height":76},
+		{"id":"c06493fa140c2eeb","type":"file","file":"Attachments/0_JBImuPS0Zwercmj1.webp","x":860,"y":-880,"width":400,"height":214},
+		{"id":"a75a7fc0e920bacf","type":"file","file":"Attachments/0_rxfGHp_3pzimj-WW.webp","x":1880,"y":-466,"width":400,"height":133}
+	],
+	"edges":[
+		{"id":"004fa00a78850929","fromNode":"7000a6f87ba2bfbf","fromSide":"bottom","toNode":"f8924217d1bf2ea7","toSide":"top"},
+		{"id":"4ad61f52111a0eff","fromNode":"7000a6f87ba2bfbf","fromSide":"right","toNode":"dbf00e06e651de56","toSide":"left"},
+		{"id":"772370db530db9c1","fromNode":"dbf00e06e651de56","fromSide":"right","toNode":"fee374250777550c","toSide":"left"},
+		{"id":"54d4f94b365896b5","fromNode":"fee374250777550c","fromSide":"bottom","toNode":"e4c2db2d54f9686c","toSide":"top"},
+		{"id":"0806d8c57718bf44","fromNode":"fee374250777550c","fromSide":"right","toNode":"10f7e831a501747e","toSide":"bottom"},
+		{"id":"87ef1d04074030ea","fromNode":"fee374250777550c","fromSide":"right","toNode":"a75a7fc0e920bacf","toSide":"left"},
+		{"id":"24a1e53e7ffe44a0","fromNode":"10f7e831a501747e","fromSide":"right","toNode":"fd30fc2f223f2c3d","toSide":"left"},
+		{"id":"bbf59b639e1f0a19","fromNode":"fee374250777550c","fromSide":"right","toNode":"fd30fc2f223f2c3d","toSide":"left"},
+		{"id":"ca4fcaeeaf624ab2","fromNode":"fee374250777550c","fromSide":"top","toNode":"c06493fa140c2eeb","toSide":"bottom"}
+	]
+}

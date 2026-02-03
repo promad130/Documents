@@ -1,0 +1,3 @@
+![[Object Oriented Programming#The Static Members and Methods]]
+
+Static fields have their uses, but a word of caution is in order. If a field is static, public, and not read-only, it creates global state. Global state is data that can be changed and used anywhere in your program. Global state is considered dangerous because one part of your program can affect other parts even though they seem unrelated to each other. Unexpected changes to global state can lead to bugs that take a long time to figure out, and in most situations, you’re better off not having it.

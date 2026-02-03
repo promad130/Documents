@@ -1,0 +1,101 @@
+# Player Edits 
+- Have player art available by now, and create child components inside the main player prefab.
+- Add arms, legs, torso, and face, and attach the respective player asset to them.
+- Give them layers.
+- Now have another main collider on player that will cover the whole player. This collider will be used by enemy 2 to hit player, and enemy 1 to detect if it is near player to be able to attack
+- Now create a destroyPlayerElement script, attach it to each player body child components. Create a bool that will check if that particular respective component has been hit by enemy or not, if yes, then highlight the component and then destroy it
+- Now replace the component with the glitch animation at the respective place.
+# Enemy 2
+This enemy has a pre-defined region that it can exist in. 
+It wont attack player duplicates
+It is like it is guarding something. 
+- So it has a fixed place it can be initially, and then create a trigger region, which when entered by the player will activate the `canAttack` part of the enemy,  i.e., now the region in which that enemy can move has increased a bit,
+	- First, we create enemy object, 
+	- now set a trigger region where the enemy is supposed to stay. These are the initial regions where enemy will be until player is detected near them.
+	- Now create `enemyAi` script, and create a public bool called `canAttack`, and set it to false. Create an empty gameObject that checks if the enemy is approching the boundary, if yes, then flip the enemy on X-axis. This walking system of enemy will exist in a conditional `if(canAttack == false)`
+	- Now create another region called detection region that will be associated with each trigger Region(trigger region being another object), attach `playerDetection` script with the parent triggerRegion and If player is found in this detection region, then set `canAttack = true` in the `enemyAi` scripts of all the enemies(enemy 2) that are in the region
+	- Now in EnemyAi, under `else` of the `if` conditional, i.e., when player is detected in the trigger region, then player position is recorded, and then the enemy attacks the player using enemy weapon. 
+	- There is a particular distance after which enemy can't shoot player, so that is when it goes towards player and starts attacking again, so add that first.
+	- Now create enemy weapon script, create enemy weapon, attach the script, and add logic that if player is in the shootable range, then shoot with recoil.
+	- enemy will shoot in a range, a range that is perpendicular to weapon muzzle, and bullet direction will stay in that range to give more natural look to shooting. 
+	- Give enemy weapon script access to player keys and mechanism, and give each movement key a number. (Player movement script edit: Create another keyCode that stores the current key for the particular movement)
+	- If the player does gets hit, then generate a random number:
+		- number 1: player horizontal movement keys
+			- Player keys for movement switches with other keys.
+			- two random numbers will be generated that are in range of numbers given to keys, and then the first number's key will switch position with initial left movement key and current key for horizontal movement changes 
+		- number 2: player jump keys
+			- Same logic done before, but here, just have generate only one number
+		- number 3: player crouch keys
+			- Same logic as above
+		- number 4: player speed
+			- have a range in which the speed can be, and then have a random number generated
+		- number 5: player jump force
+			- Same logic as above
+		- number 6: player dash force
+			- same logic as above
+		- number 7: automatic player movement that makes player walk towards enemy no matter what movement key player presses
+			- Have a bool that checks if the hit number is 7, if yes, then it turns yes, and give it's access to player movement script.
+			- (Player movement script edit) In function that control's player's horizontal movement, add a if conditional such that the code before is in `if(!number7)`, and `else` the player has been hit with the beem, so record the nearest enemy 2's location, and head towards it, and stop when it gets near it. Now when this function is executed(i.e., when player clicks on movement key), the player will head to enemy.
+	- Now have the probability distribution be uniform. 
+	- Create an enemy death-bar, and give it's access to player weapon's script, and when the health-bar is below zero, change mesh into a villager.
+	- Now in enemy movement script, create a bool that checks if the enemy is a villager again or not, if yes, then have another logic of movement, that will go as follows:
+		- (Edits) first keep the enemy AI, weapon, and trigger regions inside a conditional that enemy is not a villager yet.
+		- Each villager is assigned a house location, so the villager will roam around randomly, i.e., have a random time generated between a range, now once that timer reaches zero, have villarge move around and jump in random direction like a madman who just got freed.
+		- each time, the range for the wait the villager has increases in both min and max value, and the mesh of villager keeps looking sadder
+		- And once the wait time has gone above a particular limit, then it turns back into enemy by setting `isVillager` false.
+
+# Enemy 1
+This enemy can attack player and kill it. It will stay hidden in bushes and stuff, if there is even a slight distrubance around it, it will wake up and attack
+- First create the enemy's instance, add a movement script. 
+- Add a public bool that checks if the enemy is active or not, and initially set it to `false`.
+- This script will also have a logic to detect disturbance in close proximity:
+	- Have a bullet detection trigger object, if bullet is detected in this region, then check it's velocity, if the velocity is enoguh to startle the enemy, set `isEnemyActive = true`.
+	- If player goes through this region, then check the speed. If player speed is enough, then also set enemy active
+	- Have another collider that checks if the player dashed which being inside the trigger(access player movement script for that), if yes then set enemy active.
+	- create another bool that checks if the given instance of enemy is the level breaker enemy or not, if yes then change the enemy activation rules according to the level's guide, and if not, then follow the above enemy activation rules
+- Player can Jump over enemy and avoid making it active.
+- Now, when enemy is not active:
+	- Have a location where this enemy will stay hidden or spawn.
+	- change enemy appearance acc to the location in which it hides.
+	- add idle animation when enemy stays hidden
+- Now when the enemy does get active:
+	- First, change mesh to purple-red color, have enemy startled animation play and get player co-ordinates.
+	- Now, give enemy two types of speed, ground speed and climb speed.
+	- Have an empty gameObject trigger region placed under enemy that checks if the enemy is grounded or on the wall
+	- Have another gameObject in front of enemy to check if the enemy has encountered a wall
+	- Have another gameObject on right top of enemy that will help us determine if the given wall's height is jumpable
+	- Now create jump function for enemy, and now add logic to jump if the obstecle is jumpable 
+	- now, if not Jumpable, then create a climbFunction:
+		- First, turn-off gravity for enemy 
+		- rotate enemy 90 anti-clockwise
+		- have wall climb animation trasition, 
+		- and when the bottom trigger region does not detect wall anymore, rotate enemy back to it's original poisiton,
+		- turn gravity back to normal with a delay to make sure enemy is on the horizontal platform.
+		- change back to ground run animation
+	- Now, depending upon where enemy stands, switch between enemy velocity.
+- Player detection when enemy is active:
+	- Player Detection Region
+		- Upon activtion of enemy, it will have a certain region in which it detects player and follows it.
+		- If the player goes outside that region, then enemy will try to escape the game and corrupt the system. 
+			- So for this, first enemy will stay where it is (have a stop animation) when player does outside.
+			- It will wait a certain amount of time before it starts escaping
+				- Till then, it will roam a certain distance in left and right to check for player
+				- if not found, then we go for dig logic
+			- Now, when the timer is up, the enemy starts digging
+			- Have another camera made, and on that camera play the digging animation.
+			- If player is re-detected inside the region, then enemy goes back up to follow the player
+	- Enemy attack Region
+		- When player gets in a particular range of enemy (have another trigger for that), enemy attacks. So first create a bool that checks if the enemy is currently attacking or not
+		- If np, then do normal movement AI, if yes, then turn off all normal movement and follow playerAttackFunction():
+			- First, detect the position from which player enetered the trigger,
+			- jump in the opposite direction to it
+			- Now when at top, record player position
+			- and then dash(with no gravity) towards that player position such that the enemy reaches there in a particular amt of time set by it
+			- Now check if enemy collided with player, if no then go back to doing normal enemy stuff, if yes:
+				- Create a random number, where each number is given a particular player limb
+				- once it is selected, remove it, and make it look glitched.
+				- now, if it was:
+					- Leg: Decrease player speed if one leg
+					- if both legs are gone, then 
+	- Player detection rules:
+		- this enemy will only follow the current active player

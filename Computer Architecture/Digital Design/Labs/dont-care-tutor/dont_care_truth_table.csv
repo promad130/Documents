@@ -1,0 +1,17 @@
+Minterm,A,B,C,D,"F(A,B,C,D)",Condition
+0,0,0,0,0,X,Don't Care
+1,0,0,0,1,1,Specified (1)
+2,0,0,1,0,X,Don't Care
+3,0,0,1,1,1,Specified (1)
+4,0,1,0,0,0,Specified (0)
+5,0,1,0,1,X,Don't Care
+6,0,1,1,0,0,Specified (0)
+7,0,1,1,1,1,Specified (1)
+8,1,0,0,0,0,Specified (0)
+9,1,0,0,1,0,Specified (0)
+10,1,0,1,0,0,Specified (0)
+11,1,0,1,1,1,Specified (1)
+12,1,1,0,0,0,Specified (0)
+13,1,1,0,1,0,Specified (0)
+14,1,1,1,0,0,Specified (0)
+15,1,1,1,1,1,Specified (1)

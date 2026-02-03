@@ -1,0 +1,17 @@
+Index,A,B,C,D,F,Type
+0,0,0,0,0,0,Maxterm
+1,0,0,0,1,1,Minterm
+2,0,0,1,0,0,Maxterm
+3,0,0,1,1,1,Minterm
+4,0,1,0,0,1,Minterm
+5,0,1,0,1,0,Maxterm
+6,0,1,1,0,1,Minterm
+7,0,1,1,1,0,Maxterm
+8,1,0,0,0,1,Minterm
+9,1,0,0,1,1,Minterm
+10,1,0,1,0,1,Minterm
+11,1,0,1,1,1,Minterm
+12,1,1,0,0,1,Minterm
+13,1,1,0,1,1,Minterm
+14,1,1,1,0,1,Minterm
+15,1,1,1,1,1,Minterm

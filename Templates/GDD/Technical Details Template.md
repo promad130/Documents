@@ -1,0 +1,1 @@
+Add details about the platform it is going to work on and the minimum requirements

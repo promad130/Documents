@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS in K-Maps Tutorial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Product of Sums (POS) in Karnaugh Maps</h1>
+            <nav class="nav">
+                <button class="btn btn--secondary nav-btn active" data-section="tutorial">Tutorial</button>
+                <button class="btn btn--secondary nav-btn" data-section="interactive">Interactive K-Map</button>
+                <button class="btn btn--secondary nav-btn" data-section="example">Step-by-Step</button>
+                <button class="btn btn--secondary nav-btn" data-section="comparison">SOP vs POS</button>
+                <button class="btn btn--secondary nav-btn" data-section="practice">Practice</button>
+                <button class="btn btn--secondary nav-btn" data-section="quiz">Quiz</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Tutorial Section -->
+            <section id="tutorial" class="section active">
+                <div class="section-header">
+                    <h2>Understanding Product of Sums (POS)</h2>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-content">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>What is POS Form?</h3>
+                                <p>Product of Sums (POS) form expresses Boolean functions as a product of sum terms, where each sum corresponds to a maxterm (input combination that makes the function 0).</p>
+                                
+                                <h3>Key Concepts</h3>
+                                <ul class="concept-list">
+                                    <li><strong>Maxterms:</strong> Sum terms that make the function equal to 0</li>
+                                    <li><strong>Grouping:</strong> We group 0s in the K-map (opposite of SOP)</li>
+                                    <li><strong>Result:</strong> Product of sum expressions like (A+B)(A'+C)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card mt-8">
+                            <div class="card__body">
+                                <h3>SOP vs POS Comparison</h3>
+                                <div class="comparison-table">
+                                    <div class="comparison-row">
+                                        <div class="comparison-header">Aspect</div>
+                                        <div class="comparison-header">SOP</div>
+                                        <div class="comparison-header">POS</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-cell">Focus</div>
+                                        <div class="comparison-cell">Groups 1s (minterms)</div>
+                                        <div class="comparison-cell">Groups 0s (maxterms)</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-cell">Terms</div>
+                                        <div class="comparison-cell">Sum of products (A'B + AC)</div>
+                                        <div class="comparison-cell">Product of sums (A+B)(A'+C)</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-cell">Implementation</div>
+                                        <div class="comparison-cell">AND-OR gates</div>
+                                        <div class="comparison-cell">OR-AND gates</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-cell">Best when</div>
+                                        <div class="comparison-cell">Few 1s in truth table</div>
+                                        <div class="comparison-cell">Few 0s in truth table</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tutorial-visual">
+                        <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/7502cb204d377f8bbf7ccb8a55379301/e695832a-bee4-45f8-9f4d-a58a7416cb31/9db9a4bd.png" 
+                             alt="Complete Guide to POS Form in K-Maps" 
+                             class="tutorial-image">
+                    </div>
+                </div>
+
+                <div class="card mt-8">
+                    <div class="card__body">
+                        <h3>Maxterm Explanation</h3>
+                        <p>Maxterm Mx corresponds to input combination x that makes function = 0. For example:</p>
+                        <div class="maxterm-examples">
+                            <div class="maxterm-item">M0 = A+B+C+D (makes F=0 when A=0,B=0,C=0,D=0)</div>
+                            <div class="maxterm-item">M2 = A+B+C'+D (makes F=0 when A=0,B=0,C=1,D=0)</div>
+                            <div class="maxterm-item">M5 = A+B'+C+D' (makes F=0 when A=0,B=1,C=0,D=1)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive K-Map Section -->
+            <section id="interactive" class="section">
+                <div class="section-header">
+                    <h2>Interactive POS K-Map Builder</h2>
+                </div>
+                
+                <div class="kmap-controls">
+                    <div class="card">
+                        <div class="card__body">
+                            <div class="control-group">
+                                <label class="form-label">Number of Variables:</label>
+                                <select id="variableCount" class="form-control">
+                                    <option value="3">3 Variables (A,B,C)</option>
+                                    <option value="4" selected>4 Variables (A,B,C,D)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="form-label">Maxterms (π notation - enter numbers that make F=0):</label>
+                                <input type="text" id="maxterms" class="form-control" placeholder="e.g., 0,2,5,7" value="0,2,5,7">
+                            </div>
+                            
+                            <button id="generateKmap" class="btn btn--primary">Generate K-Map</button>
+                            <button id="clearGroups" class="btn btn--secondary">Clear Groupings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kmap-container">
+                    <div class="kmap-wrapper">
+                        <div class="kmap-labels">
+                            <div class="kmap-label-top" id="topLabels"></div>
+                            <div class="kmap-label-left" id="leftLabels"></div>
+                        </div>
+                        <div class="kmap-grid" id="kmapGrid"></div>
+                    </div>
+                    
+                    <div class="kmap-legend">
+                        <h4>Legend</h4>
+                        <div class="legend-item">
+                            <span class="legend-color legend-1"></span>
+                            <span>1 (Function outputs 1)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color legend-0"></span>
+                            <span>0 (Maxterm - click to group)</span>
+                        </div>
+                        <div class="legend-group">
+                            <span class="legend-color legend-grouped"></span>
+                            <span>Grouped 0s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="instructions-card">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Instructions</h3>
+                            <p><strong>Step 1:</strong> Enter maxterms (numbers where F=0) and generate the K-map</p>
+                            <p><strong>Step 2:</strong> Click on cells containing 0s to group them</p>
+                            <p><strong>Step 3:</strong> Form groups of 1, 2, 4, or 8 adjacent 0s</p>
+                            <p><strong>Step 4:</strong> Each group becomes a sum term in the POS expression</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-container" id="resultContainer"></div>
+            </section>
+
+            <!-- Step-by-Step Example -->
+            <section id="example" class="section">
+                <div class="section-header">
+                    <h2>Step-by-Step POS Example</h2>
+                </div>
+                
+                <div class="example-container">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Example: F(A,B,C,D) = π(0,2,5,7)</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="example-steps">
+                                <div class="step-item">
+                                    <h4>Step 1: Understand the Notation</h4>
+                                    <p>π(0,2,5,7) means Product of maxterms M0, M2, M5, and M7</p>
+                                    <div class="maxterm-expansions">
+                                        <div class="maxterm-exp">M0 = (A+B+C+D)</div>
+                                        <div class="maxterm-exp">M2 = (A+B+C'+D)</div>
+                                        <div class="maxterm-exp">M5 = (A+B'+C+D')</div>
+                                        <div class="maxterm-exp">M7 = (A+B'+C'+D')</div>
+                                    </div>
+                                </div>
+
+                                <div class="step-item">
+                                    <h4>Step 2: Place 0s in K-Map</h4>
+                                    <p>Place 0s at positions 0, 2, 5, 7. All other positions get 1s.</p>
+                                </div>
+
+                                <div class="step-item">
+                                    <h4>Step 3: Group Adjacent 0s</h4>
+                                    <p>Group 1: {0, 2} - Adjacent horizontally</p>
+                                    <p>Group 2: {5, 7} - Adjacent horizontally</p>
+                                </div>
+
+                                <div class="step-item">
+                                    <h4>Step 4: Derive Sum Terms</h4>
+                                    <p>For Group 1 {0, 2}: Variables that don't change → (A+B+D)</p>
+                                    <p>For Group 2 {5, 7}: Variables that don't change → (A+B'+D')</p>
+                                </div>
+
+                                <div class="step-item final-result">
+                                    <h4>Final POS Expression</h4>
+                                    <div class="pos-expression">F = (A+B+D)(A+B'+D')</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SOP vs POS Comparison -->
+            <section id="comparison" class="section">
+                <div class="section-header">
+                    <h2>SOP vs POS Comparison Tool</h2>
+                </div>
+                
+                <div class="comparison-tool">
+                    <div class="card">
+                        <div class="card__body">
+                            <div class="control-group">
+                                <label class="form-label">Enter Function (minterms):</label>
+                                <input type="text" id="comparisonMinterms" class="form-control" placeholder="e.g., 1,2,6" value="1,2,6">
+                                <button id="compareFunction" class="btn btn--primary mt-8">Compare SOP vs POS</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-results" id="comparisonResults">
+                    <div class="comparison-visual">
+                        <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/7502cb204d377f8bbf7ccb8a55379301/a9241966-2cc8-46ca-bacd-f4890629016a/d7d7166c.png" 
+                             alt="SOP vs POS Comparison" 
+                             class="comparison-image">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practice Section -->
+            <section id="practice" class="section">
+                <div class="section-header">
+                    <h2>Practice Exercises</h2>
+                </div>
+                
+                <div class="practice-container">
+                    <div class="practice-problem" data-problem="0">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Problem 1 - Beginner</h3>
+                            </div>
+                            <div class="card__body">
+                                <p><strong>Function:</strong> F(A,B,C) = π(0,3,6,7)</p>
+                                <p><strong>Hint:</strong> Look for pairs and individual terms</p>
+                                <div class="practice-controls">
+                                    <input type="text" class="form-control practice-answer" placeholder="Enter your POS expression">
+                                    <button class="btn btn--primary check-answer mt-8">Check Answer</button>
+                                </div>
+                                <div class="practice-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-problem" data-problem="1">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Problem 2 - Intermediate</h3>
+                            </div>
+                            <div class="card__body">
+                                <p><strong>Function:</strong> F(W,X,Y,Z) = π(1,4,5,10,11,14)</p>
+                                <p><strong>Hint:</strong> Try to form quads first</p>
+                                <div class="practice-controls">
+                                    <input type="text" class="form-control practice-answer" placeholder="Enter your POS expression">
+                                    <button class="btn btn--primary check-answer mt-8">Check Answer</button>
+                                </div>
+                                <div class="practice-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="practice-problem" data-problem="2">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3>Problem 3 - Advanced</h3>
+                            </div>
+                            <div class="card__body">
+                                <p><strong>Function:</strong> F(A,B,C,D) = π(2,3,8,9,12,13)</p>
+                                <p><strong>Hint:</strong> Look for two groups of 3 terms each</p>
+                                <div class="practice-controls">
+                                    <input type="text" class="form-control practice-answer" placeholder="Enter your POS expression">
+                                    <button class="btn btn--primary check-answer mt-8">Check Answer</button>
+                                </div>
+                                <div class="practice-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quiz Section -->
+            <section id="quiz" class="section">
+                <div class="section-header">
+                    <h2>Test Your Knowledge</h2>
+                </div>
+                
+                <div class="quiz-container" id="quizContainer">
+                    <!-- Quiz questions will be generated here -->
+                </div>
+                
+                <div class="quiz-results" id="quizResults">
+                    <!-- Quiz results will be shown here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

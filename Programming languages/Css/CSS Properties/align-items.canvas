@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"bd2d108aa143ea70","type":"text","text":"The `align-items` property in CSS is used to control how items are aligned along the **cross axis** (perpendicular to the main axis) inside a flex or grid container. In a flexbox with `flex-direction: row` (the default), the cross axis is vertical, so `align-items` controls **vertical alignment** of the flex items","x":-125,"y":-248,"width":605,"height":168},
+		{"id":"3fc1173a0f07a5a2","type":"file","file":"Attachments/Pasted image 20250612200823.png","x":197,"y":91,"width":399,"height":317},
+		{"id":"9241513ea3b7450f","x":-325,"y":-860,"width":400,"height":400,"type":"file","file":"Programming languages/Css/CSS Properties/display Property/Display.canvas"},
+		{"id":"93287d4763b64adc","x":886,"y":-227,"width":340,"height":400,"type":"file","file":"Attachments/0_zjr2zfjBxg_kRNFi.webp"}
+	],
+	"edges":[
+		{"id":"2652105d82e11d68","fromNode":"bd2d108aa143ea70","fromSide":"bottom","toNode":"3fc1173a0f07a5a2","toSide":"top"},
+		{"id":"ef02bbb46a023369","fromNode":"9241513ea3b7450f","fromSide":"bottom","toNode":"bd2d108aa143ea70","toSide":"top"},
+		{"id":"d5e1c9fc0e1129c7","fromNode":"bd2d108aa143ea70","fromSide":"right","toNode":"93287d4763b64adc","toSide":"left"}
+	]
+}

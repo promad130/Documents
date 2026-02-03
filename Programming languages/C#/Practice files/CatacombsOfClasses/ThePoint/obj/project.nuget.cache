@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Nld8F4rb1sI=",
+  "success": true,
+  "projectFilePath": "/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/ThePoint.csproj",
+  "expectedPackageFiles": [
+    "/home/rubber_duck/.nuget/packages/microsoft.netcore.app.ref/9.0.4/microsoft.netcore.app.ref.9.0.4.nupkg.sha512",
+    "/home/rubber_duck/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.4/microsoft.aspnetcore.app.ref.9.0.4.nupkg.sha512",
+    "/home/rubber_duck/.nuget/packages/microsoft.netcore.app.host.linux-x64/9.0.4/microsoft.netcore.app.host.linux-x64.9.0.4.nupkg.sha512"
+  ],
+  "logs": []
+}

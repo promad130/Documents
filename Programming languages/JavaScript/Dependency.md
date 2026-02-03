@@ -1,0 +1,1 @@
+A **dependency** in the context of npm and Node.js is a package or module that your project requires in order to function properly. In other words, your project "depends on" these external pieces of code to perform certain tasks, provide features, or enable specific functionality.

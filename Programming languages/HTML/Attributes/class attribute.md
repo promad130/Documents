@@ -1,0 +1,1 @@
+Assigns a sort of a tag to an element in HTML for CSS to access later and edit specifically.

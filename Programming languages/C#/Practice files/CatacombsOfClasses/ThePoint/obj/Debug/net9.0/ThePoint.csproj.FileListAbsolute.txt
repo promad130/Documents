@@ -1,0 +1,14 @@
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/bin/Debug/net9.0/ThePoint
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/bin/Debug/net9.0/ThePoint.deps.json
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/bin/Debug/net9.0/ThePoint.runtimeconfig.json
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/bin/Debug/net9.0/ThePoint.dll
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/bin/Debug/net9.0/ThePoint.pdb
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.GeneratedMSBuildEditorConfig.editorconfig
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.AssemblyInfoInputs.cache
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.AssemblyInfo.cs
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.csproj.CoreCompileInputs.cache
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.dll
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/refint/ThePoint.dll
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.pdb
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ThePoint.genruntimeconfig.cache
+/home/rubber_duck/Desktop/Coding/Documents/Programming languages/C#/Practice files/CatacombsOfClasses/ThePoint/obj/Debug/net9.0/ref/ThePoint.dll

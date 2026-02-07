@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppArchitect: Mobile & Web Dev Guide</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Warm Neutrals & Calm Harmony -->
+    <!-- Background: Stone-50 (#fafaf9) -->
+    <!-- Text: Stone-800 (#292524) -->
+    <!-- Accents: Amber-500, Sky-600, Rose-400 (Muted/Pastel versions) -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#475569', // Slate 600
+                        accent: '#d97706', // Amber 600
+                        bgLight: '#fafaf9', // Stone 50
+                        cardBg: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fafaf9; /* Stone-50 */
+            color: #292524; /* Stone-800 */
+        }
+        
+        /* Chart Container Styling - Mandatory Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e;
+        }
+
+        /* Interactive Element Styles */
+        .layer-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .layer-card:hover, .layer-card.active {
+            transform: translateX(10px);
+            border-left-width: 4px;
+            border-color: #d97706;
+            background-color: #fff7ed; /* Orange-50 */
+        }
+
+        .tech-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn {
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            color: #d97706;
+            border-bottom: 2px solid #d97706;
+            font-weight: 600;
+        }
+    </style>
+    
+    <!-- Application Structure Plan: 
+         The app is structured as an interactive educational dashboard.
+         1. Header: Global context and title.
+         2. Navigation: Tabs to switch between the four core educational modules (Architecture, Comparison, Tech Stack, Frameworks).
+         3. Dynamic Content Area: A central container that clears and re-renders based on the active tab.
+            - Architecture: Uses a visual "Stack" metaphor (clickable divs) to explain Backend vs Frontend.
+            - Web vs Mobile: Uses a Radar Chart to visually compare trade-offs (User request: diff between web and mobile).
+            - Tech Stack: Uses a "House Construction" analogy with cards for HTML/CSS/JS.
+            - Frameworks: Uses a Bar Chart to compare efficiency/learning curve and detailed lists.
+         4. Footer: Summary.
+         Why this structure? It breaks down a complex, multi-faceted topic into digestible, non-linear sections, allowing the user to focus on one concept at a time without being overwhelmed by text.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. Web vs Mobile Comparison -> Goal: Compare -> Radar Chart (Chart.js) -> Allows users to see the "shape" of the trade-offs (e.g., Native is high cost/high perf, Web is low cost/med perf).
+         2. Framework Efficiency -> Goal: Inform -> Bar Chart (Chart.js) -> Visually demonstrates why frameworks are used (speed of dev).
+         3. Architecture Layers -> Goal: Organize -> Interactive HTML List -> Clicking layers reveals details, simulating "drilling down" into the tech.
+         4. Tech Stack -> Goal: Inform -> Flexbox Cards -> Simple, clean presentation of the core trio.
+         
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All icons are Unicode or CSS shapes.
+    -->
+</head>
+<body class="antialiased font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-3xl mr-3">📱</div>
+                    <div>
+                        <h1 class="text-xl font-bold text-stone-800">AppArchitect</h1>
+                        <p class="text-xs text-stone-500 uppercase tracking-wider">Interactive Dev Guide</p>
+                    </div>
+                </div>
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <button onclick="renderSection('architecture')" class="nav-btn active px-1 pt-1 text-sm font-medium text-stone-900" id="nav-architecture">Architecture</button>
+                    <button onclick="renderSection('webvsmobile')" class="nav-btn px-1 pt-1 text-sm font-medium text-stone-500 hover:text-stone-700" id="nav-webvsmobile">Web vs. Mobile</button>
+                    <button onclick="renderSection('techstack')" class="nav-btn px-1 pt-1 text-sm font-medium text-stone-500 hover:text-stone-700" id="nav-techstack">The Tech Stack</button>
+                    <button onclick="renderSection('frameworks')" class="nav-btn px-1 pt-1 text-sm font-medium text-stone-500 hover:text-stone-700" id="nav-frameworks">Frameworks</button>
+                </nav>
+                <!-- Mobile Menu Button (Simple) -->
+                <div class="md:hidden">
+                    <select onchange="renderSection(this.value)" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md">
+                        <option value="architecture">Architecture</option>
+                        <option value="webvsmobile">Web vs. Mobile</option>
+                        <option value="techstack">The Tech Stack</option>
+                        <option value="frameworks">Frameworks</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div id="app-content" class="space-y-8">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-stone-200 mt-auto">
+        <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <p class="text-sm text-stone-500">Generated for Educational Purposes.</p>
+            <div class="text-sm text-stone-400">Powered by JS, HTML, Tailwind & Chart.js</div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // State Management
+        const appState = {
+            currentSection: 'architecture',
+            architectureLayer: 'frontend'
+        };
+
+        // Data Store
+        const contentData = {
+            architecture: {
+                intro: "An application isn't just one thing; it's a layered system. To understand how an app comes together, we need to look at the flow of data and logic. From the button you click (Frontend) to the server that processes it (Backend) and the storage that keeps it (Database), every part plays a critical role.",
+                layers: [
+                    {
+                        id: 'frontend',
+                        title: 'The Frontend (Client Side)',
+                        icon: '🖥️',
+                        desc: 'This is what the user sees and touches. In a mobile app, this is the interface running on your phone. In a web app, it is the HTML/CSS website.',
+                        details: 'Built with Frameworks (React, Flutter) or Native code (Swift, Kotlin). It handles animations, user input, and displaying data.'
+                    },
+                    {
+                        id: 'api',
+                        title: 'The API (The Messenger)',
+                        icon: '🔗',
+                        desc: 'Application Programming Interface. It acts as the bridge. When you click "Log In", the frontend sends a message through the API to the backend.',
+                        details: 'Uses protocols like HTTP/REST or GraphQL. It ensures the frontend doesn\'t need to know the complex logic of the server, just how to ask for data.'
+                    },
+                    {
+                        id: 'backend',
+                        title: 'The Backend (Server Side)',
+                        icon: '⚙️',
+                        desc: 'The brain of the operation. It runs on a remote server, processes logic (e.g., verifying passwords), and prepares data.',
+                        details: 'Written in languages like Node.js, Python, Java, or Go. It handles security, business rules, and heavy computations.'
+                    },
+                    {
+                        id: 'database',
+                        title: 'The Database (Data Store)',
+                        icon: '💾',
+                        desc: 'Where all information lives. User profiles, posts, inventory lists—it all sits here.',
+                        details: 'Can be SQL (structured tables like Postgres) or NoSQL (flexible documents like MongoDB/Firebase).'
+                    }
+                ]
+            },
+            webvsmobile: {
+                intro: "Not all apps are created equal. A 'Native' mobile app is installed from an App Store. A 'Web App' lives in the browser. Understanding the difference is key to choosing the right build path.",
+                radarData: {
+                    labels: ['Performance', 'Dev Speed', 'Cost Efficiency', 'Device Access', 'Update Ease'],
+                    datasets: [
+                        {
+                            label: 'Native App (iOS/Android)',
+                            data: [95, 40, 30, 100, 50],
+                            backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                            borderColor: 'rgba(217, 119, 6, 1)',
+                            pointBackgroundColor: 'rgba(217, 119, 6, 1)',
+                        },
+                        {
+                            label: 'Web App (PWA)',
+                            data: [60, 90, 90, 40, 100],
+                            backgroundColor: 'rgba(71, 85, 105, 0.2)',
+                            borderColor: 'rgba(71, 85, 105, 1)',
+                            pointBackgroundColor: 'rgba(71, 85, 105, 1)',
+                        }
+                    ]
+                }
+            },
+            techstack: {
+                intro: "The fundamental building blocks of the web (and often mobile apps via hybrids) are HTML, CSS, and JavaScript. Think of building an app like building a house.",
+                cards: [
+                    {
+                        title: 'HTML',
+                        subtitle: 'HyperText Markup Language',
+                        analogy: 'The Skeleton & Structure 🦴',
+                        desc: 'HTML defines the structure. It says "This is a heading," "This is a button," or "This is an image." Without HTML, there is no content to show.',
+                        code: '&lt;button&gt;Click Me&lt;/button&gt;'
+                    },
+                    {
+                        title: 'CSS',
+                        subtitle: 'Cascading Style Sheets',
+                        analogy: 'The Paint & Decor 🎨',
+                        desc: 'CSS controls the look. It handles colors, fonts, spacing, and layout. It turns a boring skeleton into a beautiful experience.',
+                        code: 'button { background: blue; color: white; }'
+                    },
+                    {
+                        title: 'JavaScript',
+                        subtitle: 'The Programming Language',
+                        analogy: 'The Electricity & Muscles ⚡',
+                        desc: 'JavaScript provides the interactivity. It handles logic: "What happens when I click this?" It fetches data, validates forms, and animates elements.',
+                        code: 'btn.onclick = () => alert("Hello!");'
+                    }
+                ]
+            },
+            frameworks: {
+                intro: "Why don't we just write raw HTML/JS for everything? Because it's slow and repetitive. Frameworks are pre-written libraries of code that provide a structure for building apps faster and more reliably.",
+                list: [
+                    { name: 'React / React Native', type: 'Hybrid/Web', desc: 'Created by Meta. Uses a "Component" based architecture. Learn once, write anywhere.' },
+                    { name: 'Flutter', type: 'Mobile', desc: 'Created by Google. Uses the Dart language. Renders its own pixels for high performance.' },
+                    { name: 'Angular', type: 'Web', desc: 'Created by Google. A full-featured framework for heavy enterprise web apps.' },
+                    { name: 'Vue.js', type: 'Web', desc: 'Community driven. Known for being easy to learn and integrate.' }
+                ],
+                chartData: {
+                    labels: ['Raw Coding', 'Using Framework'],
+                    datasets: [{
+                        label: 'Development Speed (Arbitrary Units)',
+                        data: [30, 85],
+                        backgroundColor: ['#cbd5e1', '#d97706'],
+                        borderWidth: 1
+                    }]
+                }
+            }
+        };
+
+        // Render Functions
+        function renderSection(sectionId) {
+            // Update State
+            appState.currentSection = sectionId;
+
+            // Update Nav UI
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-stone-900', 'text-stone-500');
+                if (btn.id === `nav-${sectionId}`) {
+                    btn.classList.add('active', 'text-stone-900');
+                } else {
+                    btn.classList.add('text-stone-500');
+                }
+            });
+
+            const contentDiv = document.getElementById('app-content');
+            contentDiv.innerHTML = ''; // Clear content
+
+            // Render specific content
+            if (sectionId === 'architecture') renderArchitecture(contentDiv);
+            if (sectionId === 'webvsmobile') renderWebVsMobile(contentDiv);
+            if (sectionId === 'techstack') renderTechStack(contentDiv);
+            if (sectionId === 'frameworks') renderFrameworks(contentDiv);
+        }
+
+        // --- SECTION: ARCHITECTURE ---
+        function renderArchitecture(container) {
+            const data = contentData.architecture;
+            
+            // Build Layout
+            let html = `
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 mb-6">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">How an App Comes Together</h2>
+                    <p class="text-stone-600 leading-relaxed">${data.intro}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Interactive Visual Stack -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-stone-700 mb-4">The App Stack (Click to Explore)</h3>
+                        ${data.layers.map(layer => `
+                            <div onclick="updateArchDetail('${layer.id}')" 
+                                 class="layer-card bg-white p-4 rounded border border-stone-200 shadow-sm flex items-center justify-between group hover:border-amber-400 relative overflow-hidden"
+                                 id="layer-${layer.id}">
+                                <div class="flex items-center z-10">
+                                    <span class="text-2xl mr-4 group-hover:scale-110 transition-transform">${layer.icon}</span>
+                                    <span class="font-medium text-stone-700 group-hover:text-stone-900">${layer.title}</span>
+                                </div>
+                                <div class="text-stone-300 group-hover:text-amber-500">👉</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Details Panel -->
+                    <div class="bg-stone-100 p-6 rounded-xl border border-stone-200 h-full flex flex-col justify-center" id="arch-details-panel">
+                        <div class="text-center text-stone-500">
+                            <span class="text-4xl block mb-2">👆</span>
+                            Select a layer on the left to see how it fits into the build process.
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function updateArchDetail(layerId) {
+            // Update Active State on Buttons
+            document.querySelectorAll('.layer-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`layer-${layerId}`).classList.add('active');
+
+            // Find Data
+            const layer = contentData.architecture.layers.find(l => l.id === layerId);
+            const panel = document.getElementById('arch-details-panel');
+
+            // Update Panel
+            panel.innerHTML = `
+                <div class="animate-fade-in-up">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">${layer.icon}</span>
+                        <h3 class="text-xl font-bold text-stone-800">${layer.title}</h3>
+                    </div>
+                    <p class="text-stone-700 mb-4 font-medium">${layer.desc}</p>
+                    <div class="bg-white p-4 rounded border border-stone-200 text-sm text-stone-600">
+                        <strong class="text-amber-600">Technical Context:</strong> ${layer.details}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- SECTION: WEB VS MOBILE ---
+        function renderWebVsMobile(container) {
+            const data = contentData.webvsmobile;
+            
+            let html = `
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 mb-6">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">Web App vs. Mobile App</h2>
+                    <p class="text-stone-600 leading-relaxed">${data.intro}</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    
+                    <!-- Radar Chart Container -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-semibold text-stone-700 mb-4 text-center">Trade-off Analysis</h3>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-stone-400 mt-2">Scale: 0 (Poor) to 100 (Excellent)</p>
+                    </div>
+
+                    <!-- Explanation Cards -->
+                    <div class="space-y-4">
+                        <div class="bg-amber-50 p-5 rounded-lg border border-amber-100">
+                            <h3 class="font-bold text-amber-800 mb-2">📱 Native Mobile Apps</h3>
+                            <p class="text-sm text-stone-700 mb-2">Built specifically for iOS (Swift) or Android (Kotlin). They live on the device.</p>
+                            <ul class="text-sm text-stone-600 list-disc ml-5">
+                                <li><b>Pros:</b> Best performance, full access to camera/sensors, works offline.</li>
+                                <li><b>Cons:</b> Expensive (need 2 teams), must go through App Store approval.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 p-5 rounded-lg border border-slate-100">
+                            <h3 class="font-bold text-slate-800 mb-2">🌐 Web Apps / PWAs</h3>
+                            <p class="text-sm text-stone-700 mb-2">Websites that act like apps. Accessed via browser (Chrome/Safari).</p>
+                            <ul class="text-sm text-stone-600 list-disc ml-5">
+                                <li><b>Pros:</b> Cheap, one codebase for all devices, instant updates (no store).</li>
+                                <li><b>Cons:</b> Slower, limited access to device hardware, needs internet.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+
+            // Initialize Chart
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: data.radarData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e5e7eb' },
+                            grid: { color: '#e5e7eb' },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // hide numbers for cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // --- SECTION: TECH STACK ---
+        function renderTechStack(container) {
+            const data = contentData.techstack;
+
+            let html = `
+                 <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 mb-6">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">The Tech Trinity</h2>
+                    <p class="text-stone-600 leading-relaxed">${data.intro}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    ${data.cards.map((card, index) => `
+                        <div class="tech-card bg-white rounded-xl overflow-hidden border border-stone-200 flex flex-col h-full">
+                            <div class="h-2 w-full ${index === 0 ? 'bg-orange-500' : index === 1 ? 'bg-blue-500' : 'bg-yellow-400'}"></div>
+                            <div class="p-6 flex-grow">
+                                <h3 class="text-xl font-bold text-stone-800">${card.title}</h3>
+                                <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-4">${card.subtitle}</p>
+                                
+                                <div class="bg-stone-50 p-3 rounded-lg mb-4 text-center border border-stone-100">
+                                    <span class="text-sm font-bold text-stone-600">${card.analogy}</span>
+                                </div>
+                                
+                                <p class="text-stone-600 text-sm mb-4 leading-relaxed">${card.desc}</p>
+                            </div>
+                            <div class="bg-stone-900 p-4 font-mono text-xs text-green-400 overflow-x-auto">
+                                ${card.code}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // --- SECTION: FRAMEWORKS ---
+        function renderFrameworks(container) {
+            const data = contentData.frameworks;
+
+            let html = `
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 mb-6">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-2">The Power of Frameworks</h2>
+                    <p class="text-stone-600 leading-relaxed">${data.intro}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Text List -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-stone-700">Popular Frameworks</h3>
+                        ${data.list.map(fw => `
+                            <div class="flex items-start bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+                                <div class="flex-shrink-0 mr-4 mt-1">
+                                    <div class="w-2 h-2 rounded-full ${fw.type === 'Mobile' ? 'bg-purple-500' : 'bg-blue-500'}"></div>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-stone-800">${fw.name}</h4>
+                                    <span class="text-xs bg-stone-100 text-stone-500 px-2 py-0.5 rounded-full">${fw.type}</span>
+                                    <p class="text-sm text-stone-600 mt-1">${fw.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                        <h3 class="text-lg font-semibold text-stone-700 mb-4">Development Speed Impact</h3>
+                        <div class="chart-container flex-grow">
+                            <canvas id="frameworkChart"></canvas>
+                        </div>
+                         <div class="mt-4 bg-blue-50 p-3 rounded text-sm text-blue-800 border border-blue-100">
+                            <strong>Why is this important?</strong> <br>
+                            Frameworks handle the boring "boilerplate" code (like navigation and state management), letting developers focus on the unique features of the app.
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+
+             // Initialize Chart
+            const ctx = document.getElementById('frameworkChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: data.chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '% Efficiency';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Efficiency Score' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initial Render
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSection('architecture');
+        });
+
+    </script>
+</body>
+</html>

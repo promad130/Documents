@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Programming languages/cpp/Data Structures in C++.md",
+                "file": "Programming languages/cpp/C++ Programming Language.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Data Structures in C++"
+              "title": "C++ Programming Language"
             }
           },
           {
@@ -64,83 +64,45 @@
             }
           },
           {
-            "id": "9a22ff5b4af9591a",
+            "id": "36002fb460e694fa",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
-                "mode": "source",
-                "source": false
+                "file": "vdoc.pub_fundamental-2d-game-programming-with-java.pdf"
               },
-              "icon": "lucide-file",
-              "title": "C++ Programming Language"
-            }
-          }
-        ]
-      },
-      {
-        "id": "f374f1cd6678247d",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "ca17b8c38787a6d8",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Introduction to Microprocessors and Interfacing"
+              "icon": "lucide-file-text",
+              "title": "vdoc.pub_fundamental-2d-game-programming-with-java"
             }
           },
           {
-            "id": "5f85e457827c15a3",
+            "id": "20124de8049ce412",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
-                "mode": "source",
-                "source": false
+                "file": "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf"
               },
-              "icon": "lucide-file",
-              "title": "Introduction to assembly"
+              "icon": "lucide-file-text",
+              "title": "2 ER_model"
             }
           },
           {
-            "id": "416adb5efcd46524",
+            "id": "bb7aa3017a668f73",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Numeric Types.md",
+                "file": "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Numeric Types"
-            }
-          },
-          {
-            "id": "c810ce08e16048e6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "C++ Programming Language"
+              "title": "Time Complexity"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -197,8 +159,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 341.5,
-    "collapsed": true
+    "width": 341.5
   },
   "right": {
     "id": "be9d932dbdd99b40",
@@ -233,12 +194,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
+                "file": "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Introduction to assembly"
+              "title": "Outgoing links from Time Complexity"
             }
           },
           {
@@ -269,21 +230,20 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
+                "file": "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Introduction to assembly"
+              "title": "Outline of Time Complexity"
             }
           }
         ]
       }
     ],
     "direction": "horizontal",
-    "width": 297.5,
-    "collapsed": true
+    "width": 297.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -299,52 +259,51 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "c810ce08e16048e6",
+  "active": "bb7aa3017a668f73",
   "lastOpenFiles": [
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/time-complexity-guide.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals/InsertionSort_Visuals.js",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals/BubbleSort_Visualization.js",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals",
+    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 934298.crdownload",
+    "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
+    "vdoc.pub_fundamental-2d-game-programming-with-java.pdf",
+    "Intro to Programming using The C Programming Language/Basic elements of writing code/Memory Allocation.md",
+    "Programming languages/cpp/Data Structures in C++.md",
+    "Backend/Database and Structures/Notes(Theory)/2 ER Model Notes.md",
+    "Backend/Database and Structures/MySQL/Introduction to MySQL.md",
+    "Unconfirmed 204091.crdownload",
+    "Programming languages/cpp/C++ Programming Language.md",
+    "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
     "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Numeric Types.md",
     "Computer Architecture/assembly/Introduction to assembly.md",
-    "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
+    "AppDevIntro.html",
+    "Building Mobile Apps_ Web vs. Mobile.pdf",
+    "Unconfirmed 140508.crdownload",
     "Computer Architecture/assembly/Data types in Assembly.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Memory Allocation.md",
     "Intro to Programming using The C Programming Language/Introduction/Introduction to Programming.md",
     "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Data Types and Constants.md",
-    "Programming languages/cpp/C++ Programming Language.md",
-    "Programming languages/cpp/Data Structures in C++.md",
     "Intro to Programming using The C Programming Language/Basic elements of writing code/Pointers and Working with Memory Allocation.md",
     "Computer Architecture/assembly/The \"Copy-Paste\" Command, MOV in Assembly.md",
     "Programming languages/C#/library assembly.md",
-    "Intro to Programming using The C Programming Language/Untitled",
     "Intro to Programming using The C Programming Language/The C Programming Language/The C Programming Language.md",
     "Intro to Programming using The C Programming Language/The C Programming Language/The C Implementation.md",
     "Intro to Programming using The C Programming Language/Introduction/Overflow&Underflow in programming.md",
-    "Backend/Database and Structures/MySQL/Introduction to MySQL.md",
     "Programming languages/Python/Operators and mathematical functions in Python.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
     "Computer Architecture/Digital Design/Introduction to Digital Design.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms",
     "Programming languages/Python/Python.md",
-    "Backend/Database and Structures/Notes(Theory)/2 ER Model Notes.md",
-    "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
     "Programming languages/JavaScript/Data Structures in JS.md",
     "Attachments/Pasted image 20260128011143.png",
     "ReactNative/RAPI UI in ReactNative.md",
-    "Programming languages/Python/String Functions in Python.md",
-    "Computer Architecture/Microprocessors and Interfacing/3_MUPI_Architecture_II.pdf",
     "Attachments/Pasted image 20260123205552.png",
-    "Backend/Firebase App.md",
     "Attachments/Pasted image 20260123040259.png",
     "Attachments/Pasted image 20260123040148.png",
     "Attachments/Pasted image 20260123040105.png",
     "Attachments/Pasted image 20260123040027.png",
     "Attachments/Pasted image 20260123040018.png",
     "Attachments/Pasted image 20260123035124.png",
-    "Backend/Database and Structures/Notes(Theory)/1 Introduction Notes.md",
-    "Backend/Database and Structures/Notes(Theory)/1 Introduction.pdf",
-    "Backend/Database and Structures/Notes(Theory)",
-    "Backend/Database and Structures",
-    "Programming languages/cpp.zip",
-    "Object Oriented Programming/Code Examples/AstroidDestroyer/GamePanel.java",
-    "Object Oriented Programming/Code Examples/AstroidDestroyer/GameWindow.java",
     "Attachments/Pasted image 20260119122851.png",
     "Attachments/Pasted image 20260110021848.png",
     "Projects/Wrath of god game/Class Structures.canvas",

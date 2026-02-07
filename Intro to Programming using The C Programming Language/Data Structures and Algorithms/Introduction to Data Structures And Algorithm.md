@@ -1,8 +1,9 @@
+[[time-complexity-guide]]
 
 In programming, **techniques** refer to the methods or approaches used to solve problems, organize code, and implement algorithms. These techniques are not tied to a specific programming language but are general strategies that can be applied across different languages and paradigms. Below is a list of common programming techniques:
 
 ---
-### 1. **Iteration**
+# 1. **Iteration**
    - **Definition:** Repeating a set of instructions until a specific condition is met.
    - **Tools:** Loops like `for`, `while`, and `do-while`.
    - **Use Case:** When you need to perform repetitive tasks, such as processing elements in an array or generating a sequence of numbers.
@@ -13,8 +14,106 @@ In programming, **techniques** refer to the methods or approaches used to solve 
      }
      ```
 
+# Algorithms under iteration
+
+## BubbleSort
+
+### 1. Conceptual Overview & Pseudocode
+
+Bubblesort is a popular, albeit inefficient, sorting algorithm that operates by repeatedly swapping adjacent elements that are out of order. The name comes from the way smaller elements "bubble" up to the beginning of the list (or larger elements sink to the end).
+
+**Pseudocode (based on CLRS Problem 2-2):**
+
+Plaintext
+
+```
+BUBBLESORT(A, n)
+1  for i = 1 to n - 1
+2      for j = n downto i + 1
+3          if A[j] < A[j - 1]
+4              exchange A[j] with A[j - 1]
+```
+
+### 2. Flowchart (Directed Graph)
+
+A directed graph representation of the logic:
+
+- **Start** $\rightarrow$ **Initialize $i = 1$**.
+    
+- **Outer Loop Condition ($i < n$):** If false, **End**. If true, proceed.
+    
+- **Initialize $j = n$**.
+    
+- **Inner Loop Condition ($j > i$):** If false, **Increment $i$** and return to Outer Loop.
+    
+- **Swap Check ($A[j] < A[j-1]$):** If true, **Swap elements**.
+    
+- **Decrement $j$** $\rightarrow$ Return to Inner Loop Condition.
+    
+
+### 3. Proof of Correctness
+
+To prove that `BUBBLESORT` is correct, we use the method of **Loop Invariants**, similar to the proof provided for Insertion Sort.
+
+#### Part A: Inner Loop Invariant (Lines 2-4)
+
+**Invariant:** At the start of each iteration of the inner `for` loop, $A[j]$ is the smallest element in the subarray $A[j:n]$.
+
+- **Initialization:** When $j = n$, the subarray $A[n:n]$ has only one element, so $A[n]$ is trivially the smallest.
+    
+- **Maintenance:** If $A[j] < A[j-1]$, they are swapped; otherwise, they stay. After the swap (or lack thereof), the new $A[j-1]$ is the minimum of the original $A[j]$ and $A[j-1]$. Since the invariant held for $A[j]$, the new $A[j-1]$ is now the smallest in $A[j-1:n]$.
+    
+- **Termination:** The loop terminates when $j = i$. By the invariant, $A[i]$ now contains the smallest element of the subarray $A[i:n]$.
+    
+
+#### Part B: Outer Loop Invariant (Lines 1-4)
+
+**Invariant:** At the start of each iteration of the outer `for` loop, the subarray $A[1:i-1]$ contains the $i-1$ smallest elements of the original array in sorted order.
+
+- **Termination:** The loop terminates when $i = n$. Substituting $n$ into the invariant, $A[1:n-1]$ contains the $n-1$ smallest elements in sorted order. This implies the $n$-th element is the largest and is in its correct place, meaning the entire array $A[1:n]$ is sorted.
+    
+
+### 4. Worst-Case Time Complexity Analysis
+
+In the RAM model, we assume each comparison and swap takes a constant amount of time.
+
+- **Number of Comparisons:** The outer loop runs $n-1$ times. For a given $i$, the inner loop runs $n-i$ times.
+    
+- **Total Comparisons:** $\sum_{i=1}^{n-1} (n - i) = (n-1) + (n-2) + \dots + 1 = \frac{n(n-1)}{2}$.
+    
+- **Asymptotic Bound:** This is a quadratic function: $\frac{1}{2}n^2 - \frac{1}{2}n$. Dropping lower-order terms and constant coefficients, the worst-case running time is $\Theta(n^2)$.
+    
+
+### 5. C++ Implementation
+
+In modern C++, we utilize the STL for utility functions like `std::swap`, but implement the logic manually to demonstrate the pointer-like behavior of array access.
+
+```C++
+#include <iostream>
+#include <vector>
+#include <algorithm> // for std::swap
+
+/**
+ * Clean Implementation of Bubblesort
+ * Mirrors the CLRS logic with 0-indexed adjustment
+ */
+void bubbleSort(std::vector<int>& A) {
+    size_t n = A.size();
+    // i tracks the start of the unsorted portion
+    for (size_t i = 0; i < n - 1; ++i) {
+        // j moves from the end to bubble the smallest element to index i
+        for (size_t j = n - 1; j > i; --j) {
+            if (A[j] < A[j - 1]) {
+                std::swap(A[j], A[j - 1]);
+            }
+        }
+    }
+}
+```
+
+
 ---
-### 2. **Recursion**
+# 2. **[[Recursion]]**
    - **Definition:** A function calling itself to solve a problem by breaking it into smaller subproblems.
    - **Use Case:** When a problem can be divided into smaller, similar subproblems (e.g., tree traversal, factorial calculation).
    - **Example:**
@@ -24,6 +123,11 @@ In programming, **techniques** refer to the methods or approaches used to solve 
          return n * factorial(n - 1);
      }
      ```
+
+# Algorithms in Recursion
+
+## Insertion Sort
+
 
 ---
 ### 3. **Divide and Conquer**

@@ -4,133 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "692b442c77f76883",
+        "id": "b12483a802d4b0dd",
         "type": "tabs",
         "children": [
           {
-            "id": "669e4cd908d3520e",
+            "id": "4623f713f8897c3f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
+                "file": "Operating Systems Development/03-Memory-Management.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Introduction to Microprocessors and Interfacing"
-            }
-          },
-          {
-            "id": "1a9ecac1025cd640",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Basic elements of writing code/Memory Allocation.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Memory Allocation"
-            }
-          },
-          {
-            "id": "4ab99f4de34c5578",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "C++ Programming Language"
-            }
-          },
-          {
-            "id": "60f74c17566830d2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Basic elements of writing code/Memory Allocation.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Memory Allocation"
-            }
-          },
-          {
-            "id": "36002fb460e694fa",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "vdoc.pub_fundamental-2d-game-programming-with-java.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "vdoc.pub_fundamental-2d-game-programming-with-java"
-            }
-          },
-          {
-            "id": "20124de8049ce412",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "2 ER_model"
-            }
-          },
-          {
-            "id": "bb7aa3017a668f73",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Introduction to Microprocessors and Interfacing"
-            }
-          },
-          {
-            "id": "416ec62484b50352",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Introduction to assembly"
-            }
-          },
-          {
-            "id": "3b8873867355dc0d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Computer Architecture/assembly/Procedural Directives in MASM.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Procedural Directives in MASM"
+              "title": "03-Memory-Management"
             }
           }
-        ],
-        "currentTab": 7
+        ]
       }
     ],
     "direction": "vertical"
@@ -187,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 341.5
+    "width": 311.5
   },
   "right": {
     "id": "be9d932dbdd99b40",
@@ -196,6 +87,7 @@
       {
         "id": "5c14a81dcfadad75",
         "type": "tabs",
+        "dimension": 22.123893805309734,
         "children": [
           {
             "id": "b6a56fcef168303d",
@@ -222,12 +114,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
+                "file": "Attachments/Pasted image 20260210000239.png",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Introduction to assembly"
+              "title": "Outgoing links from Pasted image 20260210000239"
             }
           },
           {
@@ -251,6 +143,7 @@
       {
         "id": "9a8789f88f4c967c",
         "type": "tabs",
+        "dimension": 77.87610619469027,
         "children": [
           {
             "id": "b07c5833c41e5c95",
@@ -258,13 +151,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Computer Architecture/assembly/Introduction to assembly.md",
+                "file": "Attachments/Pasted image 20260210000239.png",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Introduction to assembly"
+              "title": "Outline of Pasted image 20260210000239"
             }
           }
         ]
@@ -275,7 +168,6 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "screengarden-obsidian:screen.garden": false,
       "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
@@ -284,57 +176,58 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "audio-recorder:Start/stop recording": false,
-      "vscode-editor:Create Code File": false
+      "vscode-editor:Create Code File": false,
+      "screengarden-obsidian:screen.garden": false
     }
   },
-  "active": "416ec62484b50352",
+  "active": "47a96b9d911bac68",
   "lastOpenFiles": [
-    "Computer Architecture/Microprocessors and Interfacing/Introduction to Microprocessors and Interfacing.md",
-    "Computer Architecture/assembly/Introduction to assembly.md",
-    "Computer Architecture/assembly/Procedural Directives in MASM.md",
-    "Computer Architecture/Digital Design/Introduction to Digital Design.md",
-    "Computer Architecture/assembly/The CF And SF Confusion.md",
-    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
+    "Operating Systems Development/03-Memory-Management.md",
+    "Attachments/Pasted image 20260210000325.png",
+    "Attachments/Pasted image 20260210000258.png",
+    "Attachments/Pasted image 20260210000239.png",
+    "Operating Systems Development/00-Overview.md",
+    "Attachments/Pasted image 20260210000217.png",
+    "Operating Systems Development/01-Boot-Process.md",
+    "Internet/Introduction to Internet.md",
+    "Operating Systems Development/02-x86-64-Architecture.md",
+    "Operating Systems Development/Boot.md",
+    "Operating Systems Development/09-Advanced-Topics.md",
+    "Operating Systems Development/08-Kernel-Architecture.md",
+    "Operating Systems Development/07-Build-System.md",
+    "Operating Systems Development/06-Filesystem-FAT32.md",
+    "Operating Systems Development/05-Drivers.md",
+    "Operating Systems Development/04-Interrupts-IDT.md",
+    "Operating Systems Development/-media-dhibaid-Mass Storage-Code-os-docs-notes-00-Overview.m.txt",
+    "Operating Systems Development/Overview.md",
+    "Operating Systems Development/Manuals/OStep.pdf",
+    "Operating Systems Development/Manuals/Intel x86 instruction set documentation vol3.pdf",
+    "Operating Systems Development/Manuals/325384-089-sdm-vol-3abcd.pdf",
+    "Operating Systems Development/Manuals/operating_systems_three_easy_pieces.pdf",
+    "Operating Systems Development/operating_systems_three_easy_pieces.pdf",
+    "Operating Systems Development/Manuals",
+    "Intro to Programming using The C Programming Language/Introduction/Introduction to Programming.md",
     "MemoryAddressing.html",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
-    "Programming languages/cpp/C++ Programming Language.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/time-complexity-guide.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals/InsertionSort_Visuals.js",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals/BubbleSort_Visualization.js",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Algorithms Visuals",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 934298.crdownload",
-    "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
-    "vdoc.pub_fundamental-2d-game-programming-with-java.pdf",
+    "Computer Architecture/assembly/The CF And SF Confusion.md",
+    "Computer Architecture/assembly/Procedural Directives in MASM.md",
+    "Programming languages/C.md",
+    "Operating Systems Development/Untitled.canvas",
+    "Untitled",
     "Intro to Programming using The C Programming Language/Basic elements of writing code/Memory Allocation.md",
+    "vdoc.pub_fundamental-2d-game-programming-with-java.pdf",
+    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/time-complexity-guide.md",
     "Programming languages/cpp/Data Structures in C++.md",
     "Backend/Database and Structures/Notes(Theory)/2 ER Model Notes.md",
     "Backend/Database and Structures/MySQL/Introduction to MySQL.md",
-    "Unconfirmed 204091.crdownload",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Numeric Types.md",
-    "AppDevIntro.html",
-    "Building Mobile Apps_ Web vs. Mobile.pdf",
-    "Computer Architecture/assembly/Data types in Assembly.md",
-    "Intro to Programming using The C Programming Language/Introduction/Introduction to Programming.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Data Types and Constants.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Pointers and Working with Memory Allocation.md",
-    "Computer Architecture/assembly/The \"Copy-Paste\" Command, MOV in Assembly.md",
-    "Programming languages/C#/library assembly.md",
-    "Intro to Programming using The C Programming Language/The C Programming Language/The C Programming Language.md",
-    "Intro to Programming using The C Programming Language/The C Programming Language/The C Implementation.md",
-    "Intro to Programming using The C Programming Language/Introduction/Overflow&Underflow in programming.md",
-    "Programming languages/Python/Operators and mathematical functions in Python.md",
-    "Programming languages/Python/Python.md",
-    "Programming languages/JavaScript/Data Structures in JS.md",
+    "Programming languages/cpp/C++ Programming Language.md",
     "Attachments/Pasted image 20260128011143.png",
     "Attachments/Pasted image 20260123205552.png",
     "Attachments/Pasted image 20260123040259.png",
     "Attachments/Pasted image 20260123040148.png",
     "Attachments/Pasted image 20260123040105.png",
     "Attachments/Pasted image 20260123040027.png",
-    "Attachments/Pasted image 20260123040018.png",
-    "Attachments/Pasted image 20260123035124.png",
-    "Attachments/Pasted image 20260119122851.png",
-    "Attachments/Pasted image 20260110021848.png",
     "Projects/Wrath of god game/Class Structures.canvas",
     "Unity GameDev/Project Documentations/Card_Game.canvas",
     "Programming languages/Css/CSS Properties/display Property/Display.canvas",

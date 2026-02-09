@@ -1696,7 +1696,68 @@ The 8086 provides specialized loop instructions that check both the **CX** regis
 
 
 ## CALL and RET in Procedures
-(Look into [[#]])
+(Look into [[#MASM Directives]] first, specifically [[#** Procedural Directives in MASM ** Used to define subroutines (functions).]])
+
+In the 8086 microprocessor, `CALL` and `RET` are the primary instructions used to implement procedures (subroutines). They work together using the system stack to ensure the program can jump to a block of code and then return exactly where it left off.
+
+### 1. The CALL Instruction
+
+The `CALL` instruction transfers program control to a procedure. Before jumping to the new address, it saves the **Return Address** (the address of the instruction immediately following the `CALL`) onto the stack.
+
+There are two types of `CALL` instructions:
+
+- **Near CALL:** Used when the procedure is in the same code segment. It pushes only the 16-bit Instruction Pointer (`IP`) onto the stack.
+    
+- **Far CALL:** Used when the procedure is in a different code segment. It pushes both the Code Segment (`CS`) register and then the `IP` register onto the stack.
+
+
+### 2. The RET Instruction
+
+The `RET` instruction is placed at the end of a procedure to return control to the calling program.
+
+- **Operation:** It removes the return address from the top of the stack and places it back into the `IP` (and `CS` for far returns).
+    
+- **Selection:** The assembler automatically selects the correct near or far `RET` based on how the procedure was defined using the `PROC` directive.
+    
+
+### 3. The Stack Mechanism
+
+The stack is a Last-In, First-Out (LIFO) memory area managed by the Stack Pointer (`SP`).
+
+- When a `CALL` occurs, the `SP` decrements as it "pushes" the return address.
+    
+- When a `RET` occurs, the `SP` increments as it "pops" that address back into the instruction registers.
+    
+- **Near RET Example:** If `SP` is at `FFFDH` and a `CALL` is made, the 16-bit `IP` is stored in memory, and `SP` moves to `FFFBH`.
+    
+
+### 4. Practical Example
+
+This example demonstrates a basic procedure call to add two numbers.
+
+Code snippet
+
+```
+; MAIN PROGRAM
+MOV AX, 30      ; First number
+MOV BX, 40      ; Second number
+PUSH AX         ; Pass parameters via stack
+PUSH BX
+CALL ADDM       ; 1. Pushes current IP to stack. 2. Jumps to ADDM
+; ... Execution continues here after RET ...
+
+; PROCEDURE DEFINITION
+ADDM PROC NEAR  ; Defined as a NEAR procedure
+    PUSH BP     ; Save base pointer
+    MOV BP, SP  ; Set BP to access stack parameters
+    MOV AX, [BP+4] ; Access pushed BX
+    ADD AX, [BP+6] ; Add pushed AX
+    POP BP      ; Restore BP
+    RET         ; Pops address from stack back into IP
+ADDM ENDP
+```
+
+**Crucial Note:** If you manually push data onto the stack inside a procedure (like `PUSH BP` above), you **must** pop it back out before hitting the `RET` instruction. If you don't, the `RET` will mistakenly pop your data into the `IP` register instead of the actual return address, causing the program to crash.
 
 
 
@@ -1720,25 +1781,21 @@ You write a text file (ending in `.asm`). The CPU cannot run this file. You must
 ### Why MASM?
 
 - **Target:** It is designed specifically for **Intel x86** processors (the chips inside most PCs).
-    
 - **Syntax:** It uses **Intel Syntax**, which is the standard "Destination, Source" format (e.g., `MOV Destination, Source`).
-    
 - **"Macro" Feature:** It allows you to define **Macros** (shortcuts). If you have a chunk of 10 lines of code you use often, you can give it a name and type just that name; MASM will paste the 10 lines for you during assembly.
-    
+
+### Why NOT MASM?
+It is WINDOWS ASSEMBLER
 
 ### The Breakdown
 
 - **It is NOT the language:** The language is "x86 Assembly."
-    
 - **It IS the compiler:** Think of MASM as the "compiler" for assembly language on Windows.
-    
 
 ### Simple Workflow
 
 1. Write `program.asm` (Text).
-    
 2. Run **MASM** $\rightarrow$ gets `program.obj` (Machine parts).
-    
 3. Run **Linker** $\rightarrow$ gets `program.exe` (Finished Windows app).
 
 
@@ -1778,7 +1835,7 @@ Think of it like this:
 
 # MASM Directives
 
-assembly directives are a fundamental part of **MASM** (Microsoft Macro Assembler).
+Assembly Directives are a fundamental part of **MASM** (Microsoft Macro Assembler).
 
 In fact, you cannot write a functional program in MASM without them. While assembly _instructions_ (like `MOV`, `ADD`, or `JMP`) tell the processor what to do at runtime, **directives** tell the MASM assembler how to build the program during the assembly process.
 
@@ -1797,34 +1854,32 @@ Directives (often called pseudo-ops) do not translate into machine code. Instead
 
 You will likely encounter these categories of directives in almost every MASM program:
 
-**1. Data Definition** Used to define variables and reserve memory. They are ALLOCATORS
+#### **1. Data Definition** Used to define variables and reserve memory. They are ALLOCATORS
 
 - `DB` (Define Byte): Allocates 1 byte.
-    
 - `DW` (Define Word): Allocates 2 bytes.
-    
 - `DD` (Define Doubleword): Allocates 4 bytes.
-    
 - `EQU`: Defines a constant value (similar to `#define` in C).
-    
 
-**2. Segment & Section Control** Used to organize the program's memory structure.
+#### **2. Segment & Section Control** Used to organize the program's memory structure.
 
 - `.DATA`: Marks the start of the initialized data segment.
-    
 - `.CODE`: Marks the start of the executable code segment.
-    
 - `.STACK`: Defines the size of the runtime stack.
-    
 - `.MODEL`: Sets the memory model (e.g., `.MODEL SMALL`, `.MODEL FLAT`).
-    
 
-**[[Procedural Directives in MASM]]** Used to define subroutines (functions).
+#### **[[Procedural Directives in MASM]]** Used to define subroutines (functions).
 
 - `PROC`: Signals the start of a procedure.
 - `ENDP`: Signals the end of a procedure.
 - `PROTO`: Declares a function prototype (often used when interfacing with C/C++ or Windows APIs).
 
+
+#### **[[Operator Directives in MASM]]** Used to define how to interpret any operation
+
+- **Arithmetic:** `+ - * /` (Do math before running).
+- **Size/Type:** `BYTE`, `WORD`, `DWORD`, `PTR` (Define width of memory).
+- **Meta-Data:** `OFFSET`, `SIZEOF`, `LENGTHOF` (Get info about variables).
 
 
 
@@ -1832,9 +1887,8 @@ You will likely encounter these categories of directives in almost every MASM pr
 
 In the snippet below, the **directives** are responsible for structure and memory, while the **instructions** perform the logic.
 
-Code snippet
 
-```
+```MASM
 .DATA                   ; DIRECTIVE: Start data segment
     val1 DW 10          ; DIRECTIVE: Allocate 2 bytes, initialize to 10
 

@@ -1749,9 +1749,7 @@ You write a text file (ending in `.asm`). The CPU cannot run this file. You must
 **2. Is it just an "addition" to normal assembly?** **No.** It is a **Dialect.** There is no such thing as "Normal Assembly" that exists on its own as a text file. You _always_ need a specific tool (an Assembler) to read your code.
 
 - **The Processor Instructions (`MOV`, `ADD`, `SUB`)**: These are standard for all Intel/AMD chips. Every assembler uses these.
-    
 - **The Syntax & Directives (`.DATA`, `DWORD`, `OFFSET`)**: This is the "Dialect." MASM has its own style. NASM has a different style.
-    
 
 Think of it like this:
 
@@ -1791,19 +1789,15 @@ Here is the breakdown of their role and some common examples.
 Directives (often called pseudo-ops) do not translate into machine code. Instead, they handle tasks such as:
 
 - **Defining Segments:** Telling the assembler which parts of the file are code, data, or stack.
-    
 - **Allocating Memory:** Reserving space for variables.
-    
 - **Procedure Management:** Marking the beginning and end of functions.
-    
 - **Conditional Assembly:** Including or excluding blocks of code based on specific conditions.
-    
 
 ### Common MASM Directives
 
 You will likely encounter these categories of directives in almost every MASM program:
 
-**1. Data Definition** Used to define variables and reserve memory.
+**1. Data Definition** Used to define variables and reserve memory. They are ALLOCATORS
 
 - `DB` (Define Byte): Allocates 1 byte.
     

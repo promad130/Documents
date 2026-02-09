@@ -128,12 +128,111 @@ void bubbleSort(std::vector<int>& A) {
 
 ## Insertion Sort
 
+### 1. Conceptual Breakdown
+
+**Insertion Sort** is an efficient algorithm for sorting a small number of elements. It works similarly to the way you might sort a hand of playing cards.
+
+**Pseudocode (CLRS 4th Edition, Page 19):**
+
+Plaintext
+
+```
+INSERTION-SORT(A, n)
+1  for j = 2 to n
+2      key = A[j]
+3      // Insert A[j] into the sorted sequence A[1 .. j - 1].
+4      i = j - 1
+5      while i > 0 and A[i] > key
+6          A[i + 1] = A[i]
+7          i = i - 1
+8      A[i + 1] = key
+```
+
+### 2. Flowchart (Directed Graph Logic)
+
+- **Start** $\rightarrow$ **Initialize $j = 2$**.
+    
+- **Outer Loop Condition ($j \le n$):** If false, **End**.
+    
+- **Extract Key:** $key = A[j]$, set $i = j - 1$.
+    
+- **Inner Loop Condition ($i > 0$ and $A[i] > key$):**
+    
+    - If **True**: $A[i+1] = A[i]$ (Shift Right), $i = i - 1$. Loop back.
+        
+    - If **False**: $A[i+1] = key$ (Insert).
+        
+- **Increment $j$** $\rightarrow$ Return to Outer Loop Condition.
+    
+
+### 3. Proof of Correctness (Loop Invariant)
+
+We use the **Loop Invariant** for the outer `for` loop:
+
+- **Invariant:** At the start of each iteration of the `for` loop of lines 1–8, the subarray $A[1 .. j-1]$ consists of the elements originally in $A[1 .. j-1]$, but in sorted order.
+    
+- **Initialization:** Before the first iteration ($j=2$), $A[1..1]$ is just one element, which is trivially sorted.
+    
+- **Maintenance:** The `while` loop moves $A[j-1], A[j-2], \dots$ one position to the right until it finds the proper position for $A[j]$. Then it inserts the value of `key`. The subarray $A[1..j]$ now consists of the original elements in sorted order.
+    
+- **Termination:** The loop terminates when $j = n+1$. By the invariant, $A[1..n]$ is sorted.
+    
+
+### 4. Worst-Case Time Complexity
+
+The worst case occurs when the array is in **reverse sorted order**.
+
+- Outer loop runs $n-1$ times.
+    
+- For each $j$, the inner `while` loop runs $j-1$ times (shifting all elements).
+    
+- Total steps: $\sum_{j=2}^{n} (j-1) = 1 + 2 + \dots + (n-1) = \frac{n(n-1)}{2}$.
+    
+- Asymptotically, this is **$\Theta(n^2)$**.
+    
+
+```C++
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <random>
+
+/**
+* INSERTION-SORT(A, n)
+* Adheres to CLRS logic with 0-indexed adjustment for C++
+*/
+
+void insertionSort(std::vector<int>& A) {
+	int n = A.size();
+	
+	// Start from the second element (j=1)
+	for (int j = 1; j < n; j++) {
+	int key = A[j]; // Extract key
+	
+	// Insert A[j] into the sorted sequence A[0..j-1]
+	int i = j - 1;
+	
+	// Shift elements of A[0..j-1] that are greater than key
+	while (i >= 0 && A[i] > key) {
+
+	A[i + 1] = A[i];
+	i = i - 1;
+	}
+// Place key in its correct position
+		A[i + 1] = key;
+	}
+}
+```
 
 ---
-### 3. **Divide and Conquer**
+# 3. **Divide and Conquer**
    - **Definition:** Breaking a problem into smaller subproblems, solving them independently, and combining the results.
    - **Use Case:** Efficiently solving problems like sorting (e.g., Merge Sort, Quick Sort) or searching (e.g., Binary Search).
    - **Example:** Merge Sort divides an array into two halves, sorts them, and then merges the sorted halves.
+
+# Algorithms that use Divide and Conquer
+
 
 ---
 ### 4. **Dynamic Programming (DP)**

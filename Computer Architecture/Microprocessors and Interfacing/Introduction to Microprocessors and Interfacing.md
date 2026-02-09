@@ -1,4 +1,5 @@
 (Primarily based on 8086 microprocessor)
+***(Follow along [[Introduction to assembly]])***
 ## Microprocessor-Based Computer System
 
 A **microprocessor-based computer system** is a digital system where the microprocessor acts as the central processing unit (CPU) that executes instructions, performs arithmetic/logic operations, and controls data flow between memory and I/O devices. Think of the microprocessor as the brain—it fetches instructions from memory, decodes what they mean, executes them, and manages communication with all other components through buses.[^1]
@@ -188,6 +189,61 @@ $$
 
 This "trick" allows two small 16-bit numbers to combine and point to a large 20-bit address.
 
+Mathematical Proof:
+### The Proof
+
+**1. Define the Maximum Values**
+
+The 8086 uses 16-bit registers.
+
+- **Max Segment ($S_{max}$):** $FFFFh$ (which is $65,535$ in decimal).
+    
+- **Max Offset ($O_{max}$):** $FFFFh$ (which is $65,535$ in decimal).
+    
+
+**2. The Formula**
+
+$$Physical Address = (Segment \times 16) + Offset$$
+
+**3. Calculate the Maximum Possible Physical Address**
+
+Let's plug in the maximum values:
+
+$$MaxAddress = (65,535 \times 16) + 65,535$$
+
+$$MaxAddress = 1,048,560 + 65,535$$
+
+$$MaxAddress = \mathbf{1,114,095}$$
+
+(in Decimal)
+
+**4. Compare against 1 Megabyte**
+
+- **1 MB defined:** $1024 \times 1024 = \mathbf{1,048,576}$ bytes.
+    
+- **The Difference:** $1,114,095 - 1,048,576 = \mathbf{65,519}$ bytes.
+    
+
+**5. Conclusion**
+
+The math generates a number that is **65,519 bytes larger** than 1 MB.
+
+In Hexadecimal, the maximum address is **10FFEFh**.
+
+- $100000h$ is the start of the 2nd Megabyte.
+    
+- So, we have gone $FFEFh$ bytes into the next megabyte.
+    
+
+### What happens to this extra memory? (The "A20 Gate" Mystery)
+
+This is a famous historical quirk!
+
+- **On the original 8086:** It only had 20 address lines. It physically could not handle bit #21 (the '1' at the front of `10FFEF`). The CPU simply ignored it, and the address **wrapped around** to zero. (e.g., `10FFEF` became `0FFEF`).
+    
+- **On newer CPUs (80286+):** They had more address lines. This extra ~64KB is called the **High Memory Area (HMA)**. Operating systems like MS-DOS used special tricks to turn on "Line A20" to access this bonus memory to store drivers!
+    
+
 ### 8086 Architecture: Two-Unit Design
 
 The 8086 is divided into two independent units that work in parallel:[^1]
@@ -255,6 +311,87 @@ The flag register contains 9 active flags (out of 16 bits):
 - **SF (Sign Flag)**: Copy of MSB of result (indicates sign in signed arithmetic)
 - **OF (Overflow Flag)**: Set when there's mismatch between carry into and carry out of MSB in signed arithmetic
 
+#### Logic for Overflow Flag:
+So there are two types of numbers in binary that we use in computers:
+- Signed and 
+- Unsigned.
+The *Overflow flag* only works for the **Signed Numbers**, and completely ignores the unsigned numbers, as for the **unsigned numbers**, we have the *Carry Flag as the watch dog*, which tells whenever an overflow has occurred for unsigned numbers. 
+
+The logic behind their working is this:
+
+The Overflow Flag (OF) uses a specific logic gate called an **XOR (Exclusive OR)** on the "Carries" of the last two bits.
+
+##### Layer 1: The Hardware Logic
+
+Internally, the Arithmetic Logic Unit (ALU) looks at two specific carry signals:
+
+1. **Carry-In ($C_{in}$):** The carry coming into the MSB (Sign Bit).
+    
+2. **Carry-Out ($C_{out}$):** The carry going out of the MSB into nothingness.
+    
+
+**The Formula:** `OF = (Carry-In to MSB) XOR (Carry-Out from MSB)`
+
+##### Layer 2: How it works (The 4 Scenarios)
+
+Let's see how this logic "catches" your $10 - 200$ scenario.
+
+| **Scenario**                          | **Cin​ to MSB** | **Cout​ from MSB** | **OF (XOR)** | **Result**    |
+| ------------------------------------- | --------------- | ------------------ | ------------ | ------------- |
+| **1. Normal Addition**                | 0               | 0                  | **0**        | No Overflow   |
+| **2. Normal Addition**                | 1               | 1                  | **0**        | No Overflow   |
+| **3. Positive + Positive = Negative** | 1               | 0                  | **1**        | **OVERFLOW!** |
+| **4. Negative + Negative = Positive** | 0               | 1                  | **1**        | **OVERFLOW!** |
+
+---
+
+##### Layer 3: Applying it to $10 - 200$
+
+In 8-bit, $10 - 200$ is treated as $10 + (-200)$.
+
+- Binary 10: `0000 1010`
+    
+- Binary -200: `0011 1000` (The "impossible" bit pattern)
+    
+
+**The Math at the MSB (Bit 7):**
+
+1. Add Bit 6: $0 + 1 = 1$. (No carry into Bit 7). **$C_{in} = 0$**.
+    
+2. Add Bit 7: $0 + 0 + (C_{in}=0) = 0$. (No carry out). **$C_{out} = 0$**.
+    
+3. **Wait!** That doesn't trigger OF... **unless** the CPU sees the "200" pattern for what it is.
+    
+
+**Correct Correction:** For a **subtraction** ($A - B$), the CPU performs $A + (\text{NOT } B) + 1$.
+
+- $10$: `0000 1010`
+    
+- $200$: `1100 1000`
+    
+- NOT $200$: `0011 0111`
+    
+- Add them:
+    
+
+```Plaintext
+      (Carries: 0111 0000)  <-- Notice $C_{in}$ to MSB is 1, $C_{out}$ is 0
+        0000 1010 (10)
+      + 0011 0111 (NOT 200)
+      +         1 (The +1 for 2's complement)
+      -----------
+        0100 0010 (42h)
+```
+
+**The XOR Result:**
+
+- **$C_{in}$ (into MSB):** 1
+    
+- **$C_{out}$ (out of MSB):** 0
+    
+- **Logic:** `1 XOR 0 = 1`. **OF turns ON.**
+
+
 #### So all these registers are just storage devices at the end right? So can I use them for the purpose that they are not listed or defined for?
 So no, you dont have to use them for the reason or purpose they are defined for. They can be used for other purpose as well, but there are some exceptions to that as well.
 
@@ -319,6 +456,173 @@ Live example given in [[3_MUPI_Architecture_II.pdf]]
 Example: `NEXT: ADD AL, 07H ; Add correction factor`
 
 **Assembler**: A program that reads assembly source code and converts it to binary machine language that the CPU can execute.
+
+## How Addressing Works with Segments: 
+
+### "Geography" of Memory.
+
+It is important to distinguish between two things:
+
+1. **Segments (The Mechanism):** The `CS`, `DS`, `SS`, `ES` registers can technically point _anywhere_. You can move them around like a flashlight in a dark room.
+    
+2. **The Memory Map (The Standard):** In the IBM PC standard (which 8086 is famous for), specific areas of the room were reserved for specific things. You couldn't just put your data anywhere!
+
+
+#### 1) The "Flashlight" Analogy for the Registers (The Sliding Window)
+
+1. **The Dark Room:** The **1MB Physical Memory** is a huge, dark warehouse.
+    
+2. **The Flashlight Beam:** The CPU can only shine a light on a **64KB chunk** of that warehouse at any one time.
+    
+3. **The Segment Register (The Hand):** This register determines **where the beam starts**.
+    
+    - If you change the Segment Register, you physically **move the beam** to a different part of the warehouse.
+        
+4. **The Offset (The Object):** The offset is just looking for an item _inside_ that lit-up beam.
+
+
+#### 2) The Standard PC Memory Map (The "640KB" Limit)
+
+The 1MB of address space is split into two main zones:
+
+1. **Lower 640KB (00000h – 9FFFFh):** RAM (Random Access Memory). This is for you, the programmer.
+    
+2. **Upper 384KB (A0000h – FFFFFh):** Reserved System Area (Video, BIOS, ROMs).
+    
+
+Here are the specific "Fixed" Addresses you need to know for exams and interfacing:
+Here is the famous **1MB Memory Map** of the 8086/8088 PC.
+
+| **Start Addr (Hex)** | **End Addr (Hex)** | **Size** | **Name**                         | **Purpose**                                                   |
+| -------------------- | ------------------ | -------- | -------------------------------- | ------------------------------------------------------------- |
+| **00000**            | **003FF**          | 1 KB     | **IVT** (Interrupt Vector Table) | Holds the addresses for interrupt handlers.                   |
+| **00400**            | **004FF**          | 256 B    | **BDA** (BIOS Data Area)         | Stores system variables (keyboard buffer, tick count).        |
+| **00500**            | **9FFFF**          | ~640 KB  | **Conventional Memory**          | **User RAM.** This is where your OS (DOS) and programs live.  |
+| **A0000**            | **BFFFF**          | 128 KB   | **Video RAM (VRAM)**             | Writing here lights up pixels/text on the screen immediately. |
+| **C0000**            | **DFFFF**          | 128 KB   | **ROM Extensions**               | BIOS for Add-on cards (like Hard Drive controllers).          |
+| **E0000**            | **FFFFF**          | 128 KB   | **System BIOS**                  | The Motherboard ROM. Contains the boot code.                  |
+
+### What do we mean by Segment Registers can technically point anywhere?
+
+#### The "4 Workers" Analogy
+
+Imagine you have 4 workers in a warehouse (Memory). You (the programmer) hold the walkie-talkies (Registers) to tell them where to stand.
+
+1. **CS (Code Segment) - The Reader:**
+    
+    - **Job:** Reads the instructions (the code).
+        
+    - **Where does it work?** Wherever you put your program code.
+        
+    - **Rule:** If you load your program at the bottom of RAM (`00000`), you set `CS=0000`. If you load it at `10000`, you set `CS=1000`.
+        
+2. **DS (Data Segment) - The Note Taker:**
+    
+    - **Job:** Reads and writes variables.
+        
+    - **Where does it work?** Wherever you decided to store your data.
+        
+    - **Rule:** Often, we put Data right after Code.
+        
+3. **SS (Stack Segment) - The Scratchpad:**
+    
+    - **Job:** Temporary storage (Stack).
+        
+    - **Where does it work?** Usually at the end of your memory block to keep it safe.
+        
+4. **ES (Extra Segment) - The Helper:**
+    
+    - **Job:** Helping move data (like copying strings).
+        
+    - **Where does it work?** Wherever the destination is.
+        
+
+
+#### The "Starting & Ending" Formula
+
+Since you control them, the addresses are calculated dynamically:
+
+- **Start Address** = `Value_in_Register` $\times$ 16 (Hex `10`)
+    
+- **End Address** = **Start Address** + 65,535 bytes (`FFFF`)
+    
+
+#### PROOF: The Multi-Segment Visualizer
+
+**Try this specific experiment to see "Where they work":**
+
+1. **Standard ".COM" Program:** Set ALL registers (`CS`, `DS`, `SS`, `ES`) to `1000`.
+    
+    - _Result:_ They all sit on top of each other. This is how simple programs work.
+        
+2. **Standard ".EXE" Program:**
+    
+    - Set `CS` = `1000` (Code at bottom)
+        
+    - Set `DS` = `2000` (Data above code)
+        
+    - Set `SS` = `3000` (Stack above data)
+        
+    - _Result:_ You will see they are now separate blocks "working" in different areas.
+
+---
+
+Check out [[MemoryAddressing.html]]
+
+## Basics of Addressing in Assembly:
+
+### 1. The Default "Marriages" (Implicit Segments)
+
+When you write an instruction, you usually only provide the **Offset** (the address inside the segment). The CPU automatically adds the **Segment** based on these strict rules:
+
+|**If you use this Offset...**|**The CPU ASSUMES this Segment:**|**Example Instruction**|**What CPU actually does**|
+|---|---|---|---|
+|**[BX]** (Base)|**DS** (Data Segment)|`MOV AX, [BX]`|`MOV AX, DS:[BX]`|
+|**[SI]** (Source Index)|**DS** (Data Segment)|`MOV AX, [SI]`|`MOV AX, DS:[SI]`|
+|**[DI]** (Dest Index)|**DS** (Data Segment)|`MOV AX, [DI]`|`MOV AX, DS:[DI]`|
+|**[Number]** (Direct)|**DS** (Data Segment)|`MOV AX, [1000h]`|`MOV AX, DS:[1000h]`|
+|**[BP]** (Base Pointer)|**SS** (Stack Segment)|`MOV AX, [BP]`|`MOV AX, SS:[BP]`|
+|**[SP]** (Stack Pointer)|**SS** (Stack Segment)|`PUSH AX`|`MOV SS:[SP], AX`|
+|**IP** (Instr Pointer)|**CS** (Code Segment)|_(Cannot be changed)_|_(Always Code)_|
+
+**Crucial Takeaway:**
+
+- If you touch data (`BX`, `SI`, `DI`, numbers), the CPU looks in **DS**.
+    
+- If you touch the stack (`BP`, `SP`), the CPU looks in **SS**.
+    
+
+---
+
+### 2. The Syntax to Change It (Segment Override)
+
+You can force the CPU to look elsewhere. This is called a **Segment Override Prefix**.
+
+**The Syntax:**
+
+Put the `Segment Register Name` followed by a **Colon (`:`)** before the offset.
+
+**Example:**
+
+Imagine `DS = 1000h` and `ES = B800h` (Video Memory).
+
+Your `BX = 0010h`.
+
+1. **Default:**
+    
+    - `MOV AX, [BX]`
+        
+    - CPU calculates: `DS` + `BX` -> `10000h + 0010h` = `10010h`.
+        
+    - _Result:_ Reads a variable from your data.
+        
+2. **Override (The Change):**
+    
+    - `MOV AX, ES:[BX]` <-- **THIS IS THE SYNTAX**
+        
+    - CPU calculates: `ES` + `BX` -> `B8000h + 0010h` = `B8010h`.
+        
+    - _Result:_ Reads a pixel from the screen!
 
 ## Addressing Modes
 

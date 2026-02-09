@@ -6,7 +6,7 @@ It works directly with the memory, registers, cache, buses, etc,.
 ![[Introduction to Microprocessors and Interfacing#Machine vs Assembly Language]]
 
 # It is different for different ISA!!!
-Assembly is different for different CPU architectures because assembly language is **the human-readable representation of a processor’s machine code**, and machine code itself is tied to how a CPU is designed.
+Assembly is different for different CPU architectures because assembly language is **the human-readable representation of a processor’s machine code**, and machine code itself is tied to how a CPU is designed, i.e, what sequence of BITS does what in that particular CPU.
 
 Here’s why it varies:
 
@@ -56,6 +56,50 @@ Here’s why it varies:
 
 - Some architectures can be little-endian, big-endian, or configurable.    
 - How memory alignment, caches, and atomic operations are handled also varies.
+
+
+# Assembler
+
+Every ISA and OS has it's own assembler, that defined the syntax for the assembly language.
+Sure the mnemonics remain the same, as they are defined by the ISA, but things like Lables, Directives, etc,., are defined by the assemblers. 
+A few are MASM, NASM, etc,.
+
+An **Assembler** is a software program that translates **Assembly Language** (human-readable text) into **Machine Code** (binary).
+
+Computers do not understand words like `MOV`, `ADD`, or `JMP`. They only understand zeros and ones. The Assembler bridges that gap.
+
+### The Process
+
+![Image of assembler process flow diagram](https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcShUz9dBmBdzwXTqVNKLNTpzM6yLu9QmABpbYm7RdmHR97t35wZKS6WC66emsHkrmAsa7m34Jb1Lsjt6Vh6-hAOuPoEr_jSvHEolJs7QRjtwQx7Gxs)
+
+Shutterstock
+
+1. **Input (Source Code):** You write a text file (`.asm`) containing instructions like `MOV AX, 1`.
+    
+2. **The Assembler:** It reads your file line by line.
+    
+    - It looks up `MOV` in a table and finds the binary code for it (e.g., `10110`).
+        
+    - It calculates memory locations for your variables and labels.
+        
+3. **Output (Object Code):** It produces a file (usually `.obj`) containing the raw machine code.
+    
+
+### Its Two Main Jobs
+
+**1. Mnemonic Translation** It converts symbols humans can remember into numbers computers can execute.
+
+- **You write:** `INC AX` (Increment Register AX)
+    
+- **Assembler writes:** `01000000` (The opcode `40` in hex)
+    
+
+**2. Address Calculation (The Real MVP)** This is the most important feature.
+
+- Without an assembler, if you wanted to `JUMP` to a specific line of code, you would have to count exactly how many bytes away it is (e.g., "Jump forward 14 bytes").
+    
+- With an assembler, you just place a **Label** (like `StartLoop:`). The assembler does the math and figures out the exact address for you.
+
 
 # x86 Assembly mnemonics
 ## What is x86 Assembly?
@@ -407,94 +451,1407 @@ MOV [DI], BX           ; Put DATA1 value into DATA2's spot [cite: 428]
 
 ## LDS, LES, LSS
 
-To understand **LDS**, **LES** and **LSS**, you first need to understand that the 8086 doesn't just use one number to find a memory location—it uses a **pair** of numbers.
+*(There are two parts, first there is explanation and other is the quick revision overview.)*
 
-### 1. The "Big Picture" Concepts
+### Layer 1: The Big Picture & Motivation (Why do these exist?)
 
-Before we touch the commands, we have to define the "Double-Pointer" system of the 8086.
+Imagine you are a delivery driver (the CPU). To deliver a package, you need an address. In the simple view (like a C pointer), an address is just a house number: `1234`. But in the x86 segmented memory model, a full address is actually a **City** (Segment) and a **House Number** (Offset).
 
-- **Segment (The Neighborhood):** A 64KB block of memory.
+- **Segment Register (CS, DS, ES, SS):** The City.
     
-- **Offset (The House Number):** The specific spot inside that segment.
+- **General Register (BX, SI, DI, SP):** The House Number.
     
-- **Far Pointer:** A 32-bit (4-byte) value that contains both the **Offset** and the **Segment**.
-    
-    - Think of it like a full mailing address (City + Street) versus just a street name.
 
----
-### 2. What are LDS and LES?
+**The Problem:** If you want to move your delivery truck to a completely new city, you have to update **both** the City and the House Number. If you use `MOV`, you have to do it in two steps:
 
-These are **Load Pointer** instructions. They are like "Power-MOV" commands because they move **two** pieces of data at once: a new offset and a new segment.
+1. Update the House Number (`MOV BX, ...`) -> _Wait, I'm at the new house number but still in the old city! (Wrong location)_
+    
+2. Update the City (`MOV DS, ...`) -> _Okay, now I'm in the right place._
+    
 
-- **LDS (Load pointer using DS):** Loads a 32-bit pointer from memory. It puts the first two bytes into a **Register** and the next two bytes into the **DS** (Data Segment) register.
-    
-- **LES (Load pointer using ES):** Does the exact same thing, but puts the second part into the **ES** (Extra Segment) register.
-    
+This two-step process is slow and, in the case of the Stack (SS:SP), **dangerous** (we'll see why in Layer 6).
+
+**The Solution:** `LDS`, `LES`, and `LSS` are **atomic teleportation** commands. They load **both** the "City" (Segment) and the "House Number" (Offset) from memory into the CPU registers in one single shot.
 
 ---
 
-### 3. Why do we need them? (LEA vs. LDS/LES)
+### Layer 2: Conceptual Breakdown
 
-- **LEA:** Only gives you the **Offset**. It assumes you are staying in your current neighborhood (segment).
+These instructions stand for:
+
+- **LDS**: **L**oad **D**ata **S**egment (loads `DS` and a general register).
     
-- **LDS/LES:** Give you the **Offset AND the Segment**. You use these when you need to "jump" to a completely different part of the memory warehouse.
+- **LES**: **L**oad **E**xtra **S**egment (loads `ES` and a general register).
     
+- **LSS**: **L**oad **S**tack **S**egment (loads `SS` and a general register).
+    
+
+They all do the exact same mechanical action; they just target different Segment registers.
+
+**The "Far Pointer" Concept:** In memory, a "full address" (often called a **Far Pointer**) is stored as 4 bytes (in 16-bit mode):
+
+- **First 2 bytes:** The Offset (House Number).
+    
+- **Next 2 bytes:** The Segment (City).
+    
+
+When you run `LDS BX, [memory_address]`, the CPU goes to `memory_address`, grabs the first 2 bytes and puts them in **BX**, then grabs the next 2 bytes and puts them in **DS**.
 
 ---
 
-### 4. How the Command Works (Step-by-Step)
+### Layer 3: Visual Reinforcement
 
-Let's look at the syntax: `LDS Destination, Source`
+Let's look at how memory maps to the registers during an `LDS` instruction.
 
-**The Rules:**
+**Scenario:** We want to load a pointer stored at memory address `0x1000`. The memory at `0x1000` contains: `00 20 00 50` (hex).
 
-1. **Destination:** Must be a **General Purpose Register** (like SI, DI, BX).
+**Instruction:** `LDS BX, [0x1000]`
+
+Plaintext
+
+```
+       MEMORY (RAM)                            CPU REGISTERS
+   +------------------+                   +------------------+
+   | Address | Value  |                   |                  |
+   +------------------+           +-----> |   BX Register    |
+   | 0x1000  |  00    |  (Low byte)       | (Offset)         |
+   | 0x1001  |  20    |  (High byte)      | Value: 2000h     |
+   +------------------+      ^            +------------------+
+                             |
+   +------------------+      |            +------------------+
+   | 0x1002  |  00    |------+----------> |   DS Register    |
+   | 0x1003  |  50    |                   | (Segment)        |
+   +------------------+                   | Value: 5000h     |
+                                          +------------------+
+```
+
+- **Step 1:** CPU reads `2000h` from `0x1000` -> Puts it in **BX**.
     
-2. **Source:** Must be a **Memory Location** (using brackets `[]`) that contains a 32-bit pointer.
+- **Step 2:** CPU reads `5000h` from `0x1002` -> Puts it in **DS**.
     
 
-**Example Execution:**
-
-Suppose you have a 4-byte pointer stored in memory at a label called `MY_PTR`.
-
-- Memory `MY_PTR` contains: `00 10 00 20` (Hex).
-    
-
-**Command:** `LDS SI, [MY_PTR]`
-
-**What happens inside the CPU:**
-
-1. The CPU goes to `MY_PTR`.
-    
-2. It takes the first 16 bits (`1000H`) and puts them into **SI** (The Offset).
-    
-3. It takes the next 16 bits (`2000H`) and puts them into **DS** (The Segment).
-    
-
-Now, your "pointer" is fully set up. Any future commands using `SI` will look in the new segment `2000H` at offset `1000H`.
+**Result:** You are now pointing to offset `2000` inside segment `5000`.
 
 ---
 
-### 5. Detailed Comparison Table
+### Layer 4: Step-by-Step Walkthrough
 
-|**Instruction**|**Destination 1**|**Destination 2 (Hidden)**|**Source Type**|**Best Use Case**|
+Let's compare `MOV`, `LEA`, and `LDS` so you never confuse them.
+
+1. **`MOV BX, [0x1000]`**
+    
+    - Go to memory `0x1000`.
+        
+    - Grab the 2 bytes there (`2000h`).
+        
+    - Put them in `BX`.
+        
+    - _Result:_ `BX = 2000h`. `DS` is unchanged.
+        
+2. **`LEA BX, [0x1000]`**
+    
+    - Look at the number inside the brackets (`0x1000`).
+        
+    - Put that number in `BX`.
+        
+    - _Result:_ `BX = 1000h`. (Used for math or calculating pointers).
+        
+3. **`LDS BX, [0x1000]`**
+    
+    - Go to memory `0x1000`.
+        
+    - Grab 2 bytes (`2000h`) -> Put in `BX`.
+        
+    - Grab next 2 bytes (`5000h`) -> Put in `DS`.
+        
+    - _Result:_ `BX = 2000h`, `DS = 5000h`.
+
+### Layer 5: Common Pitfalls & Debugging
+
+1. **Endianness Confusion:**
+    
+    - Remember **Little Endian**: The "little" end (offset) comes first in memory. The "big" end (segment) comes second.
+        
+    - If you define your data manually as `DW 0x5000, 0x2000`, `LDS` will load `0x5000` into the general register and `0x2000` into the segment register.
+        
+2. **Confusing LEA and LDS:**
+    
+    - If you want the _address_ of a variable, use `LEA`.
+        
+    - If you want the _contents_ of a far pointer stored at that variable, use `LDS`.
+        
+3. **32-bit Mode (EAX/EBX):**
+    
+    - If you are in 32-bit mode (like on a modern OS), the "Offset" is 4 bytes (32 bits).
+        
+    - `LDS EBX, [MEM]` will read **6 bytes** total:
+        
+        - 4 bytes for EBX (Offset).
+            
+        - 2 bytes for DS (Segment).
+
+### Quick Overview
+
+These instructions atomically load **two** registers from memory:
+
+1. A **General Register** (for Offset).
+    
+2. A **Segment Register** (for Segment).
+    
+
+They all follow the format: `OPCODE DestinationReg, [SourceMemory]`
+
+|**Instruction**|**Mnemonics Meaning**|**Loads Segment Into...**|**Loads Offset Into...**|**Main Use Case**|
 |---|---|---|---|---|
-|**LEA**|Any Reg|None|Memory|Calculating a local address.|
-|**LDS**|Any Reg|**DS** Register|Memory (32-bit)|Switching to a new Data Segment.|
-|**LES**|Any Reg|**ES** Register|Memory (32-bit)|Switching to the Extra Segment.|
+|**`LDS`**|**L**oad **D**ata **S**egment|**`DS`**|Specified Reg (e.g., `SI`)|Setting up source pointer for string operations.|
+|**`LES`**|**L**oad **E**xtra **S**egment|**`ES`**|Specified Reg (e.g., `DI`)|Setting up destination pointer for string operations.|
+|**`LSS`**|**L**oad **S**tack **S**egment|**`SS`**|**`SP`** (usually)|safely switching stacks without crashing interrupts.|
+|**`LCS`**|_(Does not exist)_|N/A|N/A|_Typo/Error._ (Code Segment `CS` can only be changed via Jumps/Calls).|
+
+**Memory Layout (Little Endian Rule):**
+
+When loading from `[Address]`:
+
+- `[Address]` & `[Address+1]` $\rightarrow$ Goes to **Offset Register**.
+    
+- `[Address+2]` & `[Address+3]` $\rightarrow$ Goes to **Segment Register**.
+    
+
+**Example:**
+
+Code snippet
+
+```
+LDS SI, [0x1234] 
+; 1. Reads word at 0x1234 -> Puts in SI (Offset)
+; 2. Reads word at 0x1236 -> Puts in DS (Segment)
+```
+
+
+## String Data Transfer And Manipulation Commands in Assembly
+
+### Layer 1: Big Picture & Motivation
+
+In standard assembly, moving a block of 100 characters would normally require a loop with multiple instructions (load, store, increment pointer, decrement counter, jump). **String instructions** exist to do this in a single step.
+
+- **Real-world use:** Copying text in a word processor, clearing a video buffer (screen), or searching for a specific command in a packet of data.
+    
 
 ---
 
-### 6. Common Beginner Mistakes
+### Layer 2: Conceptual Breakdown
 
-- **Using a Register as Source:** You cannot do `LDS SI, BX`. The source **must** be memory because a single register isn't big enough to hold a 32-bit far pointer.
+String operations rely on three fundamental building blocks:
+
+1. **Pointers (SI and DI):**
     
-- **Confusing with MOV:** `MOV DS, [MY_PTR]` only moves 16 bits. It would only load the segment, leaving your offset completely wrong. `LDS` does both at once safely.
+    - **SI (Source Index):** Points to the source data, usually in the Data Segment (`DS:SI`).
+        
+    - **DI (Destination Index):** Points to the destination, always in the Extra Segment (`ES:DI`).
+        
+2. **The Direction Flag (DF):** This bit in the *Flag register* determines the "direction" of processing.
     
-- **Segment Restrictions:** Remember that you can't load the **CS** (Code Segment) register using these commands; the CPU manages that through JUMP and CALL instructions.
+    - **CLD (Clear Direction):** Increments SI/DI (moves forward).
+        
+    - **STD (Set Direction):** Decrements SI/DI (moves backward).
+        
+3. **The Count (CX):** Holds the number of times the operation should repeat.
     
 
-**Next Step:** Would you like to see how we use these pointers to move large blocks of data, which is where **LES** is most commonly used in 8086 programming?
+---
+
+### Layer 3: Visual Reinforcement
+
+- **Direction Flag (D) = 0:** SI/DI → SI+1 / DI+1 (Ascending)
+    
+- **Direction Flag (D) = 1:** SI/DI → SI-1 / DI-1 (Descending)
+    
+
+---
+
+### Layer 4: Step-by-Step Walkthrough
+
+There are five core instructions:
+
+1. **MOVS (Move String):** Copies data from `[SI]` to `[DI]`.
+    
+2. **LODS (Load String):** Loads data from `[SI]` into the Accumulator (`AL/AX/EAX`).
+    
+3. **STOS (Store String):** Stores data from the Accumulator into `[DI]`.
+    
+4. **CMPS (Compare Strings):** Subtracts `[DI]` from `[SI]` to set flags (useful for checking if two strings are identical).
+    
+5. **SCAS (Scan String):** Subtracts `[DI]` from the Accumulator to find a specific value.
+    
+
+**The Secret Sauce: REP Prefix** By adding `REP` before these instructions, the CPU automatically:
+
+1. Executes the instruction.
+    
+2. Increments/Decrements SI and DI.
+    
+3. Decrements CX.
+    
+4. Repeats until `CX = 0`.
+    
+
+---
+
+### Layer 5: Code Example (Copying a String)
+
+This minimal example copies a 5-byte string from one location to another.
+
+Code snippet
+
+```
+; Setup
+MOV SI, OFFSET SourceStr ; SI points to source
+MOV DI, OFFSET DestStr   ; DI points to destination
+MOV CX, 5                ; Count = 5 bytes
+CLD                      ; Auto-increment (D=0)
+
+; The actual transfer
+REP MOVSB                ; Repeat Move String Byte 5 times
+```
+
+- **Change Impact:** If you change `CLD` to `STD`, the pointers move backward. You would need to point SI and DI to the **end** of the strings for this to work.
+    
+
+---
+
+### Layer 6: Common Pitfalls
+
+1. **Forgetting ES:** Unlike SI (which defaults to DS), DI **must** point to the Extra Segment (`ES`). If `ES` is not initialized to your data area, you will write to a random part of memory.
+    
+2. **Wrong Direction:** If the Direction Flag is accidentally set (`D=1`), your pointers will move backward, likely corrupting previous data. Always use `CLD` to be safe.
+    
+3. **CX Initialization:** Forgetting to set `CX` results in the operation running for whatever random value happens to be in that register.
+    
+
+**Does this make sense so far?** Specifically, is the distinction between why we use `SI` for source and `DI` for destination clear?
+
+
+### Quick Overview 
+#### 1. MOVS (Move String)
+
+**The Big Picture:** Copy-pasting a block of memory from one place to another.
+
+- **Action:** Copies data from `[DS:SI]` to `[ES:DI]`.
+    
+- **Variants:** `MOVSB` (Byte), `MOVSW` (Word), `MOVSD` (Doubleword).
+    
+- **Common Use:** Moving arrays or buffers.
+    
+
+> **Analogy:** Moving a stack of books from one shelf to another, one by one.
+
+#### 2. STOS (Store String)
+
+**The Big Picture:** Filling a memory range with a specific constant value.
+
+- **Action:** Copies the value in the **Accumulator** (`AL/AX/EAX`) into `[ES:DI]`.
+    
+- **Variants:** `STOSB`, `STOSW`, `STOSD`.
+    
+- **Common Use:** Initializing an array to zero or clearing the screen buffer.
+    
+
+> **Analogy:** A painter using a roller to paint an entire wall a single color.
+
+#### 3. LODS (Load String)
+
+**The Big Picture:** Bringing data from memory into the CPU to process it.
+
+- **Action:** Copies data from `[DS:SI]` into the **Accumulator** (`AL/AX/EAX`).
+    
+- **Variants:** `LODSB`, `LODSW`, `LODSD`.
+    
+- **Note:** We rarely use `REP` with `LODS` because it would just overwrite the Accumulator repeatedly, leaving only the last value. Usually used in a manual loop.
+    
+
+> **Analogy:** Picking up a single ingredient from the pantry to inspect/prep it.
+
+#### 4. CMPS (Compare Strings)
+
+**The Big Picture:** Checking if two strings or memory blocks are identical.
+
+- **Action:** Subtracts `[ES:DI]` from `[DS:SI]` to set flags (Zero Flag, Carry Flag, etc.) but **does not store the result**.
+    
+- **Variants:** `CMPSB`, `CMPSW`, `CMPSD`.
+    
+- **Common Use:** String comparison (`strcmp` in C). Used with `REPE` (Repeat while Equal).
+    
+
+> **Analogy:** Comparing two lists line-by-line to see where they differ.
+
+#### 5. SCAS (Scan String)
+
+**The Big Picture:** Searching for a specific "needle" in a "haystack."
+
+- **Action:** Subtracts `[ES:DI]` from the **Accumulator** and sets flags.
+    
+- **Variants:** `SCASB`, `SCASW`, `SCASD`.
+    
+- **Common Use:** Finding a specific character (like a null terminator `\0`) in a string. Used with `REPNE` (Repeat while Not Equal).
+    
+
+> **Analogy:** Looking through a bin of apples to find the one that is "Red."
+
+---
+
+### Quick Reference Table
+
+|**Instruction**|**Source**|**Destination**|**Register Used**|**Typical Prefix**|
+|---|---|---|---|---|
+|**MOVS**|`[SI]`|`[DI]`|None (Direct)|`REP`|
+|**STOS**|Accum|`[DI]`|`AL/AX/EAX`|`REP`|
+|**LODS**|`[SI]`|Accum|`AL/AX/EAX`|None (Manual loop)|
+|**CMPS**|`[SI]`|`[DI]`|None (Compare)|`REPE` / `REPNE`|
+|**SCAS**|Accum|`[DI]`|`AL/AX/EAX`|`REPE` / `REPNE`|
+
+---
+
+### Step-by-Step Logic Check
+
+If I want to find the letter 'A' in a paragraph stored in memory:
+
+1. Load 'A' into `AL`.
+    
+2. Point `DI` to the start of the paragraph.
+    
+3. Use `CLD` (Forward).
+    
+4. Use `REPNE SCASB`.
+    
+5. **Result:** The loop stops when `AL` matches `[DI]`. `DI` will point to the location right after the 'A'.
+
+
+## REP
+### Layer 1: Big Picture & Motivation
+
+In standard programming, if you want to do something 100 times, you write a `for` or `while` loop. In Assembly, writing a manual loop (label, decrement, jump) takes up multiple bytes of code and several CPU cycles for each iteration.
+
+The **REP (Repeat)** prefix is a hardware-level loop. It tells the CPU: _"Don't just do this instruction once; do it over and over until the counter reaches zero."_ 
+It is specifically designed to work with the **String Instructions** we just discussed (MOVS, STOS, etc.), making memory operations incredibly fast.
+
+---
+
+### Layer 2: Conceptual Breakdown
+
+The `REP` prefix relies on three "hard-wired" components:
+
+1. **The Instruction:** It must be a string instruction (like `MOVSB`).
+    
+2. **The Counter (`CX` or `ECX`):** The CPU automatically looks at this register to know how many times to repeat.
+    
+3. **The Termination Condition:** For basic `REP`, it stops when `CX = 0`. For others (like `REPE`), it can also stop if a certain flag changes.
+    
+
+---
+
+### Layer 3: Visual & Diagrammatic Reinforcement
+
+The logic inside the CPU looks like this:
+
+1. Check if `CX == 0`.
+    
+2. If yes, exit and move to the next line of code.
+    
+3. If no, execute the string instruction (e.g., move one byte).
+    
+4. **Automatically decrement `CX`** and **automatically update pointers** (`SI`/`DI`).
+    
+5. Jump back to step 1.
+    
+
+---
+
+### Layer 4: Step-by-Step Walkthrough (The "REP family")
+
+There are actually three versions of the repeat prefix, depending on whether you are copying data or searching for data:
+
+1. **`REP` (Repeat):**
+    
+    - **Usage:** With `MOVS` or `STOS`.
+        
+    - **Condition:** Repeat while `CX != 0`.
+        
+    - **Goal:** Just get the job done (Copying/Filling).
+        
+2. **`REPE` / `REPZ` (Repeat while Equal / Zero):**
+    
+    - **Usage:** With `CMPS` or `SCAS`.
+        
+    - **Condition:** Repeat while `CX != 0` **AND** the Zero Flag (`ZF`) is 1.
+        
+    - **Goal:** Keep comparing as long as the data matches. Stop as soon as a difference is found.
+        
+3. **`REPNE` / `REPNZ` (Repeat while Not Equal / Not Zero):**
+    
+    - **Usage:** With `CMPS` or `SCAS`.
+        
+    - **Condition:** Repeat while `CX != 0` **AND** the Zero Flag (`ZF`) is 0.
+        
+    - **Goal:** Search for a specific value. Stop as soon as you find a match.
+
+
+## CMP and JUMP Statements in Assembly
+
+### Layer 1: Big Picture & Motivation for CMP
+
+In programming, we constantly make decisions: "If the temperature is > 30, turn on the fan" or "If the password is correct, log in."
+
+In Assembly, the CPU cannot "see" an entire condition at once. It has to perform a mathematical operation first to see how two numbers relate to each other. The **CMP (Compare)** instruction is the "decision-maker." It looks at two values and sets the status flags (like a scoreboard) so that the next instruction (a Jump) knows what to do.
+
+---
+
+### Layer 2: Conceptual Breakdown for CMP
+
+The most important thing to remember: **CMP is just a Subtraction that forgets the answer.**
+
+1. **The Operation:** `CMP Destination, Source` performs `Destination - Source`.
+    
+2. **The Result:** The numerical result of the subtraction is **discarded**. The destination register does NOT change.
+    
+3. **The Flags:** Only the **Flags Register** (the "Status Scoreboard") is updated.
+    
+    - **Zero Flag (ZF):** Set to 1 if the numbers are equal (Result = 0).
+    - **Sign Flag (SF):** Set to 1 if the result is negative (Dest < Source).
+    - **Carry Flag (CF):** Set to 1 if an unsigned "borrow" occurred (Dest < Source).
+[This is weird don't you think? the SF and CF?](The%20CF%20And%20SF%20Confusion)
+
+---
+
+### Layer 3: Visual & Diagrammatic Reinforcement for CMP
+
+Imagine CMP as a balance scale:
+
+- **Weights Equal:** The "Zero" light turns on.
+- **Left heavier than Right:** The "Sign" and "Carry" lights stay off.    
+- **Right heavier than Left:** The "Carry" light (Borrow) turns on.
+
+---
+
+### Layer 4: Step-by-Step Walkthrough for CMP
+
+Let’s see what happens inside the CPU during `CMP AL, 10h`:
+
+1. **Fetch:** CPU reads the instruction.
+    
+2. **Internal Subtract:** If `AL` contains `15h`, the CPU calculates `15h - 10h = 05h`.
+    
+3. **Update Flags:**
+    
+    - `05h` is not zero $\rightarrow$ **ZF = 0**
+    - `05h` is positive $\rightarrow$ **SF = 0**
+    - No borrow needed $\rightarrow$ **CF = 0**
+        
+4. **Discard Result:** The `05h` is thrown away. `AL` remains `15h`.
+
+### Layer 5: Combining with JUMP Statements
+
+In a standard program, the CPU is like a train on a straight track, executing instructions one after another (Linear Execution). However, real-world logic requires **forks in the road** (if-else) and **loops** (for/while).
+
+**Jump (JMP) instructions** allow the CPU to break this linear flow by changing the **Instruction Pointer (IP/EIP)**.
+
+- **Real-world use:** Checking if a user entered the correct PIN, repeating a task 10 times, or skipping over a "Secret Menu" section of code unless a specific button is pressed.
+
+
+Jump instructions are divided into two main categories:
+
+1. **Unconditional Jumps (`JMP`):** * The "Go to" command. No questions asked. The CPU hits this and immediately teleports to a new location.
+    
+2. **Conditional Jumps (`JZ`, `JNZ`, `JG`, etc.):** * The "If" command. The CPU looks at the **Flags Register** (the scoreboard we discussed in the `CMP` lesson). If the condition is met, it jumps; if not, it simply moves to the very next line.
+
+The CPU calculates the "target address." In most cases, it doesn't store a full 32-bit address. Instead, it stores a **Relative Offset** (e.g., "Jump 20 bytes forward" or "Jump 5 bytes backward").
+
+#### The Basics: Labels and Flags
+
+Before the list, two quick concepts:
+
+1. **Labels:** Since you don't know them yet, just think of a label (e.g., `MY_START:`) as a **bookmark** in your code. A jump command tells the CPU to teleport to that bookmark.
+    
+2. **Flags:** The CPU has a "Status Register." When you compare two numbers, the CPU flips switches called flags. The most important ones for jumps are:
+    
+    - **ZF (Zero Flag):** Set to 1 if the result was zero (meaning the numbers were equal).
+        
+    - **CF (Carry Flag):** Set if an operation required a "carry" or "borrow" (used for unsigned math).
+        
+    - **SF (Sign Flag):** Set if the result is negative.
+        
+
+#### Comparison Jump Table
+
+Most jumps follow a `CMP A, B` instruction. This instruction subtracts B from A (without saving the result) just to set the flags.
+
+|**Command**|**Meaning**|**Condition**|**Flag State**|
+|---|---|---|---|
+|**JZ / JE**|Jump if Zero / Equal|$A = B$|$ZF = 1$|
+|**JNZ / JNE**|Jump if Not Zero / Not Equal|$A \neq B$|$ZF = 0$|
+|**JG / JNLE**|Jump if Greater (Signed)|$A > B$|$ZF = 0$ and $SF = OF$|
+|**JL / JNGE**|Jump if Less (Signed)|$A < B$|$SF \neq OF$|
+|**JA / JNB**|Jump if Above (Unsigned)|$A > B$|$CF = 0$ and $ZF = 0$|
+|**JB / JNA**|Jump if Below (Unsigned)|$A < B$|$CF = 1$|
+|**JMP**|Unconditional Jump|Always|None (Always Jumps)|
+
+#### Example: Finding a Character in a String
+
+Since you know string operations and `LEA`, here is how you use a comparison and a jump to find a specific character in memory.
+
+
+```assembly
+LEA SI, my_string    ; Load effective address of string into SI
+MOV AL, '!'          ; We are looking for the '!' character
+
+CHECK_CHAR:          ; This is a LABEL (our bookmark)
+    LODSB            ; Load byte at DS:SI into AL and increment SI
+    CMP AL, 0        ; Is it the end of the string (null terminator)?
+    JZ FINISHED      ; If ZF=1 (it is 0), jump to FINISHED
+
+    CMP AL, '!'      ; Compare current character with '!'
+    JE FOUND_IT      ; If ZF=1 (they match), jump to FOUND_IT
+    
+    JMP CHECK_CHAR   ; If not found yet, jump back to start of loop
+
+FOUND_IT:
+    ; ... code to handle finding the character ...
+
+FINISHED:
+    ; ... code to exit ...
+```
+
+### Key Takeaways and common pitfalls
+1. **Confusing the Order:** `CMP AL, BL` is `AL - BL`. If you flip them, the flags will be the exact opposite. Always remember: **Destination - Source**.
+    
+2. **Forgetting it's Non-Destructive:** Students often think `CMP` changes the register value like `SUB` does. It doesn't. If you want to keep the result of the subtraction, use `SUB`.
+    
+3. **Signed vs. Unsigned:**  Use `JG` (Jump Greater) / `JL` (Jump Less) for **signed** numbers.
+    
+    - Use `JA` (Jump Above) / `JB` (Jump Below) for **unsigned** numbers.
+        
+    - Using the wrong jump can lead to logic errors when dealing with negative numbers (e.g., is -1 "above" 0? Unsigned, yes; Signed, no).
+    
+4. **JE/JZ** are the same opcode; they just check if the Zero Flag is active.
+    
+5. **Unsigned vs Signed:** Use **Above/Below (JA/JB)** for memory addresses or raw data. Use **Greater/Less (JG/JL)** for standard math with negative numbers.
+	
+6. **JMP** is a "teleport" that doesn't care about flags; it is usually used to close a loop or skip an `ELSE` block.
+
+
+## INC, DEC, and ADC
+
+#### 1. INC (Increment) & DEC (Decrement)
+
+- **Function:** Adds or subtracts exactly **1** from a register or memory location.
+    
+- **The "gotcha":** These instructions update most flags (Zero, Sign, Overflow) but **do NOT affect the Carry Flag (CF)**. This is designed so you can use INC/DEC to control a loop counter without messing up the carry bit you might be using for a math calculation inside that loop.
+    
+
+#### 2. ADC (Add with Carry)
+
+- **Function:** Adds three things together: **Operand A + Operand B + Carry Flag (CF)**.
+    
+- **Use Case:** Used for **Multi-word Arithmetic**. If you have a 16-bit processor, you can only add 16 bits at a time. To add 32-bit numbers, you do it in two chunks. The ADC instruction bridges the gap between the lower chunk and the upper chunk.
+    
+
+---
+
+### Layer 3: Visual Reinforcement
+
+Let's visualize the **ADC** operation. Imagine we are adding two large numbers on an 8-bit system. We split them into "Low Byte" and "High Byte".
+
+**Step 1:** Add Low Bytes using `ADD`.
+
+$$\begin{array}{r@{\quad}l} \texttt{1111 1111} & (\text{Low Byte A}) \\ + \texttt{0000 0001} & (\text{Low Byte B}) \\ \hline \texttt{0000 0000} & (\text{Result}) \rightarrow \text{Carry Flag (CF) becomes 1} \end{array}$$
+
+**Step 2:** Add High Bytes using `ADC`.
+
+$$\begin{array}{r@{\quad}l} \texttt{0000 0010} & (\text{High Byte A}) \\ \texttt{0010 0000} & (\text{High Byte B}) \\ + \texttt{ 1} & (\textbf{Carry Flag from Step 1}) \\ \hline \texttt{0010 0011} & (\text{Final Result}) \end{array}$$
+
+---
+
+### Layer 4: Step-by-Step Walkthrough
+
+Let's walk through the processor's logic for `ADC AL, BL` (Add BL to AL with Carry).
+
+1. **Fetch:** The CPU fetches the `ADC` opcode.
+    
+2. **Read Inputs:**
+    
+    - It reads the value in `AL` (Accumulator Low).
+        
+    - It reads the value in `BL` (Base Low).
+        
+    - It reads the current state of the **Carry Flag (CF)** in the Status Register.
+        
+3. **Execute:** It calculates: $\text{Result} = \text{AL} + \text{BL} + \text{CF}$.
+    
+4. **Write Back:** It stores the Result in `AL`.
+    
+5. **Update Flags:** It updates **all** status flags (Carry, Parity, Auxiliary Carry, Zero, Sign, Overflow) based on the result.
+    
+
+---
+
+### Layer 5: Code Example (Multi-Byte Addition)
+
+We will demonstrate adding two 32-bit numbers (`0x1234FFFF` + `0x00000002`) using 16-bit registers (AX and DX).
+
+**Scenario:**
+
+- Number A: `0000 0002` (High: DX) `FFFF` (Low: AX)
+    
+- Number B: `0000 0000` (High: BX) `0001` (Low: CX)
+    
+
+**Assembly Code:**
+
+Code snippet
+
+```
+; Setup the registers (First Principles: Load data first)
+MOV DX, 0000h   ; Top half of Number A
+MOV AX, FFFFh   ; Bottom half of Number A (Large number!)
+MOV BX, 0000h   ; Top half of Number B
+MOV CX, 0001h   ; Bottom half of Number B
+
+; Step 1: Add the lower 16 bits
+ADD AX, CX      ; FFFF + 0001 = 0000. 
+                ; CAUTION: This overflows 16 bits! 
+                ; The Carry Flag (CF) is now SET (1).
+
+; Step 2: Add the upper 16 bits WITH the carry
+ADC DX, BX      ; DX = DX + BX + CF
+                ; DX = 0000 + 0000 + 1
+                ; DX is now 0001.
+
+; Final Result in DX:AX is 0001:0000h (which is 65536 decimal)
+```
+
+**What about INC?**
+
+Code snippet
+
+```
+INC AX          ; If AX was 0000, it becomes 0001. 
+                ; Flags like Zero (Z) and Sign (S) update.
+                ; Carry Flag (CF) does NOT change! 
+```
+
+
+## SUB 
+We can break the `SUB` command into three building blocks:
+
+1. **The Destination (The Prep Bowl):** This is where the first number lives and where the final answer will be kept. It can be a register (like `AX`) or a memory location.
+    
+2. **The Source (The Scoop):** This is the value you are taking away. It can be a register, a memory location, or a constant number (immediate data).
+    
+3. **The Flags (The Chef's Notes):** The CPU doesn't just give you the answer; it leaves "notes" in the **EFLAGS register** about the result (e.g., "Is the answer zero?", "Is it a negative number?").
+    
+
+**The Syntax:**
+
+`SUB Destination, Source` $\rightarrow$ (Destination = Destination - Source)
+
+---
+
+### Step-by-Step Walkthrough (The Execution Cycle)
+
+When the CPU sees `SUB AX, BX`:
+
+1. **Fetch:** The CPU pulls the `SUB` instruction from memory.
+    
+2. **Decode:** It realizes it needs to perform subtraction.
+    
+3. **Read:** It grabs the values currently inside `AX` and `BX`.
+    
+4. **Execute:** The Arithmetic Logic Unit (ALU) performs the math.
+    
+5. **Write-Back:** The new result is saved into `AX`.
+    
+6. **Flag Update:** The CPU updates the status flags (Z, S, C, O, A, P) to reflect the result.
+    
+
+---
+
+### Code & Practical Examples
+
+#### Assembly Example (x86)
+
+Code snippet
+
+```
+MOV AX, 10H    ; Put 16 (10 hex) into AX
+SUB AX, 05H    ; Subtract 5 from AX. AX now holds 0BH (11 decimal)
+```
+
+#### C/C++ Inline Example
+
+In modern programming, we often use C++, but we can peek "under the hood" using an inline assembler block:
+
+C++
+
+```
+int health = 100;
+int damage = 20;
+
+_asm {
+    mov eax, health  ; Load health into EAX
+    sub eax, damage  ; Subtract damage from EAX
+    mov health, eax  ; Store result back in health variable
+}
+```
+
+_If we changed `damage` to 110, the "Sign Flag" (S) would trigger because the result is negative!_
+
+---
+
+### Common Pitfalls & Debugging
+
+1. **Memory-to-Memory Subtraction:** You **cannot** subtract a memory location directly from another memory location (e.g., `SUB [var1], [var2]` is illegal). You must move one into a register first.
+    
+2. **The Order Matters:** Remember, it's `Destination - Source`. If you swap them, you get a completely different answer!
+    
+3. **Forgetting Flags:** If you're doing "multi-precision" subtraction (like 64-bit math on a 32-bit system), you must use `SBB` (Subtract with Borrow) for the higher bits to account for any "borrows" from the lower bits.
+
+
+## Multiplication and Division
+
+**What is it?** Multiplication (`MUL`/`IMUL`) and Division (`DIV`/`IDIV`) are the CPU's way of performing rapid scaling.
+
+**Why do we need it?**
+
+- **Graphics:** Calculating where a pixel should appear on a screen (e.g., $Index = Row \times Width + Column$).
+    
+- **Sensors:** Converting a raw voltage from a temperature sensor into degrees Celsius by multiplying by a scaling factor.
+    
+- **Averages:** If you have the total sum of 10 heartbeats, you use division to find the average heart rate.
+    
+
+
+### Layer 2: Conceptual Breakdown
+
+There are two major versions of these commands:
+
+1. **Unsigned (`MUL` / `DIV`):** Treats numbers as simple positive values (0 to 255 for a byte).
+    
+2. **Signed (`IMUL` / `IDIV`):** Treats numbers as "Integers," allowing for negative values using Two's Complement.
+    
+
+**The "Double-Width" Rule:**
+
+In the physical world, if you multiply two 2-digit numbers (like $99 \times 99$), the result can be 4 digits ($9,801$). The CPU follows this rule:
+
+- Two **8-bit** numbers produce a **16-bit** product.
+    
+- Two **16-bit** numbers produce a **32-bit** product.
+    
+- Two **32-bit** numbers produce a **64-bit** product.
+    
+
+---
+
+### Layer 3: Visual & Diagrammatic Reinforcement
+
+When performing these operations, the CPU uses "implicit" registers. You don't always tell it where to put the result; it already knows.
+
+#### The Multiplication Map
+
+When you use `MUL` or `IMUL`, the CPU always starts with a value in the accumulator (`AL`, `AX`, or `EAX`) and places the result in a "double-width" destination.
+
+- **8-bit Map:** `AL` (8-bit) $\times$ `Source` (8-bit) $\rightarrow$ **Result in `AX`** (16-bit).
+    
+- **16-bit Map:** `AX` (16-bit) $\times$ `Source` (16-bit) $\rightarrow$ **Result in `DX` (High) and `AX` (Low)** (32-bit total).
+    
+- **32-bit Map:** `EAX` (32-bit) $\times$ `Source` (32-bit) $\rightarrow$ **Result in `EDX` (High) and `EAX` (Low)** (64-bit total).
+
+#### The Division Map
+
+Division is the inverse. You must provide a "double-width" dividend in specific registers before calling `DIV` or `IDIV`.
+
+- **8-bit Division Map:**
+    
+    - **Dividend:** Must be in `AX` (16-bit).
+        
+    - **Result:** Quotient goes to **`AL`**, Remainder goes to **`AH`**.
+        
+- **16-bit Division Map:**
+    
+    - **Dividend:** Must be in `DX` (High) and `AX` (Low) (32-bit total).
+        
+    - **Result:** Quotient goes to **`AX`**, Remainder goes to **`DX`**.
+        
+- **32-bit Division Map:**
+    
+    - **Dividend:** Must be in `EDX:EAX` (64-bit total).
+        
+    - **Result:** Quotient goes to **`EAX`**, Remainder goes to **`EDX`**.
+
+---
+
+### Layer 4: Step-by-Step Walkthrough
+
+#### 1. Multiplication (`MUL` and `IMUL`)
+
+For 8-bit multiplication, the **multiplicand** (the first number) is **always** in the `AL` register. You only specify the **multiplier** (the second number), which can be a register or memory.
+
+Note: Immediate multiplication (e.g., `MUL 5`) is NOT allowed in standard 8086/8088 instructions.
+
+**Example Walkthrough: 8-bit Multiplication**
+
+1. `MOV AL, 5` (Put first number in `AL`)
+    
+2. `MOV BL, 10` (Put second number in `BL`)
+    
+3. `MUL BL` (The CPU calculates $AL \times BL$. The 16-bit result is stored in `AX`).
+    
+
+#### 2. Division (`DIV` and `IDIV`)
+
+Division is the opposite: it starts with a **double-width dividend** and divides it by a **single-width divisor**.
+
+**Example Walkthrough: 8-bit Division**
+
+1. **Prepare the Dividend:** Put the 16-bit number you want to divide into `AX`.
+    
+2. **Execute:** `DIV CL` (Divide `AX` by `CL`).
+    
+3. **Check Results:** * The **Quotient** (how many times it fits) goes into `AL`.
+    
+    - The **Remainder** (what's left over) goes into `AH`.
+        
+
+
+### Layer 5: Code Examples
+
+**16-bit Multiplication (Producing a 32-bit result):**
+
+Code snippet
+
+```
+MOV AX, 2000H   ; Multiplicand in AX
+MOV CX, 0002H   ; Multiplier in CX
+MUL CX          ; DX:AX = AX * CX
+; Result: DX = 0000, AX = 4000H [cite: 285]
+```
+
+**Signed Division Example:**
+
+If we divide $+16$ (`0010H`) by $-3$ (`0FDH`) using `IDIV`:
+
+Code snippet
+
+```
+MOV AX, 0010H   ; Dividend
+MOV BL, 0FDH    ; Divisor (-3)
+IDIV BL         ; Divide AX by BL
+; AL = Quotient, AH = Remainder [cite: 331, 396]
+```
+
+---
+
+### Layer 6: Common Pitfalls & Debugging
+
+1. **Divide Overflow:** This happens if the quotient is too large to fit in the result register (e.g., dividing a huge 16-bit number by `1`). The CPU will trigger an interrupt/error.
+    
+2. **Divide by Zero:** Attempting to divide by `0` will crash your program immediately. **Always** check your divisor before dividing!
+    
+3. **Forgetting DX:** In 16-bit division, the CPU divides the _entire_ `DX:AX` pair. If you only care about `AX`, you **must** clear `DX` to zero (for unsigned) or use `CWD` (Convert Word to Doubleword) for signed to extend the sign bit into `DX`.
+    
+4. **Predicting Flags:** Unlike addition, the flags for division are **unpredictable**. Don't rely on the Zero flag after a `DIV`!
+
+
+## ASCII Related Mnemonics 
+
+### 1. Understanding ASCII Codes
+
+**ASCII** (American Standard Code for Information Interchange) uses a **7-bit binary code** to represent characters such as letters, numbers, and punctuation.
+
+In the context of 8086 arithmetic, we focus on **ASCII-coded numbers** (0-9), which are represented by hex values **30H to 39H**.
+
+- **Decimal 0** is `30H` (Binary: `0011 0000`)
+    
+- **Decimal 9** is `39H` (Binary: `0011 1001`)
+    
+
+#### Why do we need ASCII Arithmetic?
+
+Microprocessors naturally perform binary or hex arithmetic. However, when a user types "5" on a keyboard, the processor receives `35H`. If you add the ASCII for "5" (`35H`) and "5" (`35H`), the result is `6AH`, which is not the ASCII for "10". ASCII instructions "fix" these results so they can be easily converted back into human-readable characters.
+
+---
+
+### 2. The Auxiliary Carry Flag (AF)
+
+The **Auxiliary Carry Flag (AF)** is crucial for ASCII and BCD arithmetic.
+
+- **Definition:** The AF is set if there is a **borrow or carry from bit 3 to bit 4** (the low nibble to the high nibble) during an 8-bit arithmetic operation.
+    
+- **Role:** The ASCII adjust instructions (like AAA) check the AF to decide if a decimal adjustment is necessary (e.g., if the result of an addition in the low nibble exceeded 9).
+    
+
+---
+
+### 3. ASCII Adjust Instructions
+
+These instructions specifically adjust the **AL** register (and sometimes **AH**) to ensure the result represents a valid decimal value.
+
+#### AAA: ASCII Adjust after Addition
+
+**What it does:** Adjusts the result of an `ADD` or `ADC` operation.
+
+1. **Check:** If the low nibble of **AL > 9** OR **AF = 1**:
+    
+    - Increment **AL** by 6.
+        
+    - Increment **AH** by 1.
+        
+    - Set **AF** and **CF** (Carry Flag) to 1.
+        
+2. **Always:** Clears the high nibble of **AL**.
+
+Now here, setting AF to 1 seems like a scam but we are just doing what AF exists to do, i.e., tell whenever there has been a carry from bit 3 to 4, which there has been in case of our BCD addition 
+
+
+**Example:** Adding ASCII '1' (`31H`) and '9' (`39H`).
+
+- `MOV AX, 0031H`
+    
+- `ADD AL, 39H` $\rightarrow$ Result: `AL = 6AH`, `AF = 0` (Binary: `0110 1010`).
+    
+- `AAA` $\rightarrow$ Since low nibble (`0AH`) > 9:
+    
+    - `AL = 6A + 6 = 70H`.
+        
+    - `AH = 0 + 1 = 01H`.
+        
+    - Clear high nibble of `AL` $\rightarrow$ `AL = 00H`.
+        
+- **Final Result:** `AX = 0100H`. (Adding `3030H` to this gives `3130H`, which is ASCII '1' and '0') .
+    
+
+#### AAS: ASCII Adjust after Subtraction
+
+**What it does:** Adjusts the result of a `SUB` or `SBB` operation.
+
+- It functions similarly to AAA. If the result in the low nibble is greater than 9 or a borrow occurred (AF=1), it subtracts 6 from AL and decrements AH.
+    
+
+#### AAM: ASCII Adjust after Multiplication
+
+**What it does:** Converts the product of two **unpacked BCD** numbers (00H-09H) in **AX** into a two-digit unpacked BCD number.
+
+- **Process:** $AH = AL / 10$; $AL = AL \text{ MOD } 10$.
+    
+
+**Example:** Multiply 5 and 7 and convert to ASCII.
+
+- `MOV AL, 5`
+    
+- `MOV BL, 7`
+    
+- `MUL BL` $\rightarrow$ `AL = 35` (Binary: `23H`).
+    
+- `AAM` $\rightarrow$ $35 / 10 = 3$ (Quotient in `AH`), $35 \text{ MOD } 10 = 5$ (Remainder in `AL`).
+    
+    - Result: `AX = 0305H`.
+        
+- `OR AX, 3030H` $\rightarrow$ Result: `AX = 3335H` (ASCII '3' and '5').
+    
+
+#### AAD: ASCII Adjust before Division
+
+**What it does:** Prepared two unpacked BCD digits in **AH** and **AL** for a division.
+
+- **Process:** It multiplies **AH** by 10 and adds it to **AL**, then clears **AH**. This turns the two BCD digits into a single binary/hex value that the `DIV` instruction can process correctly.
+    
+
+---
+
+### 4. Is BCD used here?
+
+**Yes.** ASCII arithmetic is essentially a form of **Unpacked BCD** arithmetic.
+
+- **BCD (Binary Coded Decimal):** Represents each decimal digit with 4 bits.
+    
+- **Unpacked BCD:** Stores one digit per byte (e.g., `05H`).
+    
+- **ASCII Numbers:** Are basically Unpacked BCD with `3` in the high nibble (e.g., `35H`).
+    
+- The adjust instructions (AAA, AAS, etc.) strip away or account for the ASCII high nibble (`3`) to perform math on the underlying BCD values.
+
+
+## DAA and DAS and how are the alike AAA, AAS
+DAA and DAS are Decimal Adjustments for BCD calculations. 
+So they must be like AAA and AAS right?
+
+### The Core Difference: Unpacked vs. Packed
+
+The distinction lies in **storage density**:
+
+- **AAA/AAS (Unpacked):** These are for ASCII/Unpacked BCD, where you have **one digit per byte** (e.g., `05H`). This is why they only ever look at the **low nibble** and always **clear the high nibble** of AL.
+    
+- **DAA/DAS (Packed):** These are for **Packed BCD**, where you have **two digits per byte** (e.g., `57H`). Because there are two digits, these instructions have to adjust **both** the low nibble and the high nibble in a single byte.
+    
+
+---
+
+### DAA (Decimal Adjust after Addition)
+
+Unlike AAA, which just checks if the low nibble > 9, **DAA** performs a two-stage check to handle two digits at once:
+
+1. **Stage 1 (Low Nibble):** If the low nibble of `AL` is > 9 OR **AF = 1**, it adds `06H` to `AL` and sets **AF**.
+    
+2. **Stage 2 (High Nibble):** If the original `AL` was > `99H` OR **CF = 1**, it adds `60H` to `AL` and sets **CF**.
+    
+
+**Crucial Point:** DAA does **not** clear the high nibble because that high nibble contains your second decimal digit!
+
+#### Example: Adding 39 + 12 in Packed BCD
+
+Code snippet
+
+```
+MOV AL, 39H    ; Packed BCD '39'
+ADD AL, 12H    ; Packed BCD '12'
+; Raw binary result: AL = 4BH, AF = 1 (9+2=11, which is B, carry to bit 4) [cite: 54, 55]
+DAA            ; DAA Logic triggers:
+               ; 1. Low nibble 'B' > 9 OR AF=1? YES. 
+               ;    AL = 4B + 06 = 51H. AF=1.
+               ; 2. AL > 99H or CF=1? NO.
+; Final Result: AL = 51H. (39 + 12 = 51 in decimal!) 
+```
+
+---
+
+### DAS (Decimal Adjust after Subtraction)
+
+DAS works exactly like DAA but uses subtraction to fix the "borrows".
+
+- If the low nibble > 9 or **AF = 1**, it subtracts `06H`.
+    
+- If the original `AL` > `99H` or **CF = 1**, it subtracts `60H`.
+    
+
+---
+
+### Summary:
+
+| **Feature**         | **AAA / AAS**         | **DAA / DAS**                      |
+| ------------------- | --------------------- | ---------------------------------- |
+| **Data Format**     | Unpacked BCD / ASCII  | Packed BCD                         |
+| **Digits per byte** | 1 digit               | 2 digits                           |
+| **High Nibble**     | **Cleared** to 0      | **Preserved** (it's the 10s digit) |
+| **Registers**       | Affects `AL` and `AH` | Affects **only** `AL`              |
+| **Usage**           | After `ADD`/`SUB`     | After `ADD`/`SUB`                  |
+
+## Logic and Bit-Manipulation Instructions
+
+These instructions provide bit-level control, allowing bits to be set, cleared, or inverted.
+
+- **AND:** Performs a logical bit-by-bit AND. Used for **masking** to clear specific bits to 0.
+    
+    - **Example:** `AND AL, 0FH` clears the high nibble of `AL` while keeping the low nibble unchanged.
+        
+- **OR:** Performs a logical bit-by-bit inclusive-OR. Used to set specific bits to 1.
+    
+- **XOR (Exclusive-OR):** Performs a logical XOR. Often used to **clear a register to zero** (e.g., `XOR CH, CH`) because it is more memory-efficient than `MOV CH, 0`. It also inverts bits.
+    
+- **NOT:** Performs logical inversion (one's complement), changing 0s to 1s and vice-versa.
+    
+- **NEG:** Performs arithmetic sign inversion (two's complement), effectively multiplying a number by -1.
+    
+- **TEST:** Performs an AND operation but **does not change the destination operand**. It only updates flags (ZF, PF, SF).
+    
+    - **Example:** `TEST AL, 1` checks if the rightmost bit is set.
+        
+
+---
+
+## Shift Instructions
+
+Shifts move bits left or right, effectively performing fast multiplication or division by powers of 2.
+
+- **SHL / SAL (Shift Left / Shift Arithmetic Left):** Shifts bits left, filling the vacated LSB with 0. The MSB is shifted into the Carry Flag (CF). Both instructions are identical in operation.
+    
+- **SHR (Shift Right):** Shifts bits right, filling the MSB with 0. The LSB moves into CF.
+    
+- **SAR (Shift Arithmetic Right):** Shifts bits right but **preserves the sign bit** by filling the MSB with a copy of the old MSB.
+    
+
+---
+
+## Rotate Instructions
+
+Rotates move bits from one end of a register to the other, or through the Carry Flag.
+
+- **ROL (Rotate Left):** Moves the MSB into both the LSB position and the Carry Flag.
+    
+- **ROR (Rotate Right):** Moves the LSB into both the MSB position and the Carry Flag.
+    
+- **RCL (Rotate Left through Carry):** Rotates bits left, with the Carry Flag acting as an extra bit between the MSB and LSB.
+    
+- **RCR (Rotate Right through Carry):** Rotates bits right through the Carry Flag.
+    
+
+**Note on Counts:** For both shifts and rotates, the shift count can be immediate (e.g., `SHL AX, 1`) or stored in the `CL` register.
+
+
+## Loops in Assembly
+
+### 1. The `LOOP` Instruction
+
+The `LOOP` instruction is the most direct way to create a fixed-count loop. It relies entirely on the **CX** (Count) register.
+
+**How it works internally:**
+
+1. It decrements **CX** by 1 (`CX = CX - 1`).
+    
+2. It checks if **CX** is zero.
+    
+3. If **CX != 0**, it performs a short jump to the specified label.
+    
+4. If **CX = 0**, it continues to the next instruction in the program.
+    
+
+**Example: Printing a character 5 times**
+
+Code snippet
+
+```
+MOV AH, 02H    ; Function to print character
+MOV DL, 'A'    ; Character to print
+MOV CX, 5      ; Initialize loop counter to 5
+
+PrintLoop:
+    INT 21H    ; Call DOS interrupt
+    LOOP PrintLoop ; Dec CX, jump to PrintLoop if CX != 0
+; After 5 iterations, CX becomes 0 and loop terminates
+```
+
+---
+
+### 2. Manual Loops (Jumps + CMP)
+
+While `LOOP` is convenient, manual loops provide more flexibility because you can use any register as a counter or base the exit condition on something other than a zero-count (like finding a specific value in an array).
+
+**The typical structure:**
+
+- **Initialization:** Set your counter or pointer.
+    
+- **Body:** Perform the task.
+    
+- **Update:** Increment/decrement your counter or pointer.
+    
+- **Condition:** Use `CMP` to check a value and a conditional jump to repeat or exit.
+    
+
+**Example: Summing an array of 10 numbers**
+
+Code snippet
+
+```
+MOV SI, OFFSET ARRAY ; Point to start of array
+MOV CX, 10           ; Counter
+XOR AX, AX           ; Clear AX to store sum
+
+SumNext:
+    ADD AX, [SI]     ; Add current element to sum
+    INC SI           ; Move to next element (for byte array)
+    DEC CX           ; Manual decrement
+    JNZ SumNext      ; Jump to SumNext if CX is Not Zero 
+```
+
+---
+
+### 3. Conditional Loop Instructions
+
+The 8086 provides specialized loop instructions that check both the **CX** register and the **Zero Flag (ZF)**.
+
+- **LOOPE / LOOPZ (Loop while Equal/Zero):**
+    
+    - Decrements **CX**.
+        
+    - Jumps if **CX != 0** AND **ZF = 1**.
+        
+    - Use case: Scanning an array to find the first _non-zero_ element (loop continues as long as elements are zero).
+        
+- **LOOPNE / LOOPNZ (Loop while Not Equal/Not Zero):**
+    
+    - Decrements **CX**.
+        
+    - Jumps if **CX != 0** AND **ZF = 0**.
+        
+    - Use case: Searching for a specific value in a buffer (loop continues as long as the value is _not_ found).
+        
+
+---
+
+### 4. Critical Rules for Loops
+
+1. **CX Initialization:** If **CX** is 0 when the `LOOP` instruction is first reached, it will decrement to `FFFFH` (65,535) and loop over 65,000 times before stopping. Always ensure **CX** is positive or use `JCXZ` (Jump if CX is Zero) to skip the loop entirely.
+    
+2. **Short Jumps:** The `LOOP` instruction uses a "short jump," meaning the label must be within **+127 to -128 bytes** of the current instruction. If your loop body is huge, you must use a `JMP` instruction instead.
+    
+3. **Flag Impact:** The `LOOP` instruction itself **does not affect the flags**, even though it decrements **CX**. However, manual instructions like `DEC CX` **do** affect the Zero Flag, which is why manual loops use `JNZ`.
+
+
+## CALL and RET in Procedures
+(Look into [[#]])
+
+
+
+# Introduction to MASM Assembler
+
+**MASM** stands for **Microsoft Macro Assembler**.
+
+It is a software tool (a translator) that takes the human-readable code you write (Assembly) and converts it into the raw binary code the processor understands (Machine Code).
+
+### What it actually does
+
+You write a text file (ending in `.asm`). The CPU cannot run this file. You must run it through MASM.
+
+1. **Input:** You give MASM your source code (e.g., `MOV AX, 5`).
+    
+2. **Processing:** MASM reads your directives (like `.DATA`) to organize memory and translates your instructions (like `MOV`) into hex/binary.
+    
+3. **Output:** It produces an **Object File** (`.obj`). This contains the machine code but isn't a runnable program yet (it needs a Linker for that).
+    
+
+### Why MASM?
+
+- **Target:** It is designed specifically for **Intel x86** processors (the chips inside most PCs).
+    
+- **Syntax:** It uses **Intel Syntax**, which is the standard "Destination, Source" format (e.g., `MOV Destination, Source`).
+    
+- **"Macro" Feature:** It allows you to define **Macros** (shortcuts). If you have a chunk of 10 lines of code you use often, you can give it a name and type just that name; MASM will paste the 10 lines for you during assembly.
+    
+
+### The Breakdown
+
+- **It is NOT the language:** The language is "x86 Assembly."
+    
+- **It IS the compiler:** Think of MASM as the "compiler" for assembly language on Windows.
+    
+
+### Simple Workflow
+
+1. Write `program.asm` (Text).
+    
+2. Run **MASM** $\rightarrow$ gets `program.obj` (Machine parts).
+    
+3. Run **Linker** $\rightarrow$ gets `program.exe` (Finished Windows app).
+
+
+## A few things that needs to be address to avoid future conflict of interest for linux users:
+
+**1. Is MASM only for Windows?** **Yes.** It is a Microsoft product. It is built to create programs specifically for the Windows operating system (and historically MS-DOS). If you were on Linux, you would likely use **NASM** or **GAS** instead.
+
+**2. Is it just an "addition" to normal assembly?** **No.** It is a **Dialect.** There is no such thing as "Normal Assembly" that exists on its own as a text file. You _always_ need a specific tool (an Assembler) to read your code.
+
+- **The Processor Instructions (`MOV`, `ADD`, `SUB`)**: These are standard for all Intel/AMD chips. Every assembler uses these.
+    
+- **The Syntax & Directives (`.DATA`, `DWORD`, `OFFSET`)**: This is the "Dialect." MASM has its own style. NASM has a different style.
+    
+
+Think of it like this:
+
+- **The Language:** English.
+    
+- **The Dialect:** American vs. British.
+    
+- **The Result:** Both are understood by the human (or CPU), but the spelling and grammar rules (directives) differ slightly.
+    
+
+**3. Does it allow for directives?** **Yes, but ALL assemblers use directives.** Every assembler needs to know "where does the code start?" or "make space for a variable."
+
+- **MASM** uses `.DATA` and `DWORD`.
+    
+- **NASM** (another popular assembler) uses `SECTION .data` and `resd`.
+    
+
+**The "BS-Free" Summary:**
+
+- **Instructions (CPU):** Universal (Hardware). `MOV` is always `MOV`.
+    
+- **Directives (Assembler):** Specific to the tool. MASM directives don't work in NASM.
+    
+- **MASM:** The Microsoft tool that understands Microsoft-style directives.
+
+
+# MASM Directives
+
+assembly directives are a fundamental part of **MASM** (Microsoft Macro Assembler).
+
+In fact, you cannot write a functional program in MASM without them. While assembly _instructions_ (like `MOV`, `ADD`, or `JMP`) tell the processor what to do at runtime, **directives** tell the MASM assembler how to build the program during the assembly process.
+
+Here is the breakdown of their role and some common examples.
+
+### What Directives Do
+
+Directives (often called pseudo-ops) do not translate into machine code. Instead, they handle tasks such as:
+
+- **Defining Segments:** Telling the assembler which parts of the file are code, data, or stack.
+    
+- **Allocating Memory:** Reserving space for variables.
+    
+- **Procedure Management:** Marking the beginning and end of functions.
+    
+- **Conditional Assembly:** Including or excluding blocks of code based on specific conditions.
+    
+
+### Common MASM Directives
+
+You will likely encounter these categories of directives in almost every MASM program:
+
+**1. Data Definition** Used to define variables and reserve memory.
+
+- `DB` (Define Byte): Allocates 1 byte.
+    
+- `DW` (Define Word): Allocates 2 bytes.
+    
+- `DD` (Define Doubleword): Allocates 4 bytes.
+    
+- `EQU`: Defines a constant value (similar to `#define` in C).
+    
+
+**2. Segment & Section Control** Used to organize the program's memory structure.
+
+- `.DATA`: Marks the start of the initialized data segment.
+    
+- `.CODE`: Marks the start of the executable code segment.
+    
+- `.STACK`: Defines the size of the runtime stack.
+    
+- `.MODEL`: Sets the memory model (e.g., `.MODEL SMALL`, `.MODEL FLAT`).
+    
+
+**[[Procedural Directives in MASM]]** Used to define subroutines (functions).
+
+- `PROC`: Signals the start of a procedure.
+- `ENDP`: Signals the end of a procedure.
+- `PROTO`: Declares a function prototype (often used when interfacing with C/C++ or Windows APIs).
+
+
+
+
+### Example: Directives vs. Instructions
+
+In the snippet below, the **directives** are responsible for structure and memory, while the **instructions** perform the logic.
+
+Code snippet
+
+```
+.DATA                   ; DIRECTIVE: Start data segment
+    val1 DW 10          ; DIRECTIVE: Allocate 2 bytes, initialize to 10
+
+.CODE                   ; DIRECTIVE: Start code segment
+main PROC               ; DIRECTIVE: Start procedure
+    MOV AX, val1        ; INSTRUCTION: Move data into register
+    ADD AX, 5           ; INSTRUCTION: Add 5 to register
+    RET                 ; INSTRUCTION: Return from procedure
+main ENDP               ; DIRECTIVE: End procedure
+END main                ; DIRECTIVE: End of file, entry point is main
+```
 
 
 # Variables and Data Types in x86 Assembly for Beginners

@@ -67,8 +67,9 @@ int main() {
 
 ---
 
-## Big O Notation
-
+## Notations
+***Note the condition of $N_o$:***
+### Big O
 Big O describes the **upper bound** of algorithm runtime as input size (n) approaches infinity.
 
 ### Formal Definition
@@ -77,10 +78,12 @@ f(n) = O(g(n)) if there exist constants c and n₀ such that:
 f(n) ≤ c · g(n) for all n ≥ n₀
 ```
 
-### Other Notations (Quick Reference)
+
 - **Big Ω (Omega)**: Lower bound (best case)
 - **Big Θ (Theta)**: Tight bound (average case)
 - **Big O**: Upper bound (worst case) ← Most commonly used
+
+### Big Omega
 
 ---
 
@@ -236,7 +239,8 @@ void permute(vector<int>& arr, int start, vector<vector<int>>& result) {
 
 ---
 
-## How to Measure Time Complexity Quickly
+# How to Measure Time Complexity
+## Quick Rules to get estimates
 
 ### Rule 1: Drop Constants
 ```cpp
@@ -419,6 +423,139 @@ map<int, int> countFrequencySorted(vector<int>& arr) {
 ```
 
 ---
+## Substitution Method
+The **substitution method** is a formal way to solve recurrences by "guessing" the form of the solution and then using **mathematical induction** to prove that the guess is correct.
+
+It is a two-step process:
+
+1. **Guess** the form of the solution (often based on experience or a recursion tree).
+    
+2. **Prove** it using induction to find the specific constants $c$ and $n_0$.
+    
+
+---
+
+## A Step-by-Step Example
+
+Let’s solve the recurrence:
+
+$$T(n) = 2T(n/2) + n$$
+
+_(This is the recurrence for Merge Sort)_.
+
+### Step 1: Make a Guess
+
+Looking at the structure, we guess that the solution is $T(n) = O(n \log n)$. This means we need to prove that $T(n) \le cn \log n$ for some constant $c$.
+
+### Step 2: The Inductive Proof
+
+We assume our guess holds for all values smaller than $n$ (specifically for $n/2$).
+
+**1. The Assumption:** Assume $T(n/2) \le c(n/2) \log(n/2)$.
+
+**2. Substitute into the Recurrence:**
+
+Take the original equation and replace $T(n/2)$ with our assumption:
+
+$$T(n) \le 2 [c(n/2) \log(n/2)] + n$$
+
+**3. Simplify the Algebra:**
+
+- Multiply the $2$ and the $n/2$:
+    
+    $$T(n) \le cn \log(n/2) + n$$
+    
+- Use the log property $\log(a/b) = \log a - \log b$:
+    
+    $$T(n) \le cn (\log n - \log 2) + n$$
+    
+- Since $\log_2 2 = 1$:
+    
+    $$T(n) \le cn \log n - cn(1) + n$$
+    
+    $$T(n) \le cn \log n - cn + n$$
+    
+
+**4. Show it Matches the Form:**
+
+We want to show that $T(n) \le cn \log n$. Looking at our simplified equation:
+
+$$T(n) \le cn \log n - (cn - n)$$
+
+For this to be true, the term $(cn - n)$ must be **greater than or equal to zero**.
+
+$$cn - n \ge 0 \implies cn \ge n \implies c \ge 1$$
+
+So, as long as we pick a constant **$c \ge 1$**, the proof works!
+
+---
+
+## Common Pitfalls to Avoid
+
+### 1. The Base Case
+
+Don't forget that induction requires a base case (e.g., $T(1)$). In asymptotic notation, we can often skip $n=1$ if the function is undefined there (like $\log 1 = 0$) and start our proof at $n=2$ or $n=3$.
+
+### 2. Missing the Constant
+
+You cannot say $T(n) \le O(n^2)$ inside your induction. You **must** use the specific constant $c$ (e.g., $T(n) \le cn^2$). Without the constant, the algebra won't actually prove anything.
+
+### 3. Being "Almost" Right
+
+If you guess $T(n) = cn^2$ but end up with $cn^2 + n$, the proof fails . In that case, you must **strengthen the hypothesis** by subtracting a lower-order term, like $cn^2 - dn$.
+
+For example:
+
+To show why the substitution proof fails and how to fix it, we will use the **Substitution Method**, which involves guessing the form of the solution and then using mathematical induction to find the constants.
+
+---
+
+**1. Why $T(n) \le cn^2$ Fails**
+
+We want to prove that $T(n) = O(n^2)$ by assuming $T(n) \le cn^2$ for some constant $c > 0$.
+
+- **The Assumption:** Assume $T(k) \le ck^2$ for all $k < n$.
+
+- **The Substitution:**
+    $$T(n) = 4T(n/2) + n$$
+    $$T(n) \le 4(c(n/2)^2) + n$$
+    $$T(n) \le 4(cn^2/4) + n$$
+    $$T(n) \le cn^2 + n$$
+
+- **The Problem:** For the induction to hold, we need to show that $cn^2 + n \le cn^2$. However, since $n > 0$, this is **impossible** for any positive constant $c$. The extra $+n$ term "pollutes" the proof, and we cannot get back to our original form of $cn^2$.
+
+
+**2. Subtracting a Lower-Order Term**
+
+To fix this, we make a stronger inductive hypothesis by subtracting a lower-order term. Let’s assume $T(n) \le cn^2 - dn$ for constants $c > 0$ and $d > 0$.
+
+- **The New Assumption:** Assume $T(k) \le ck^2 - dk$ for all $k < n$.
+    
+- **The Substitution:**
+    
+    $$T(n) = 4T(n/2) + n$$
+    
+    $$T(n) \le 4(c(n/2)^2 - d(n/2)) + n$$
+    
+    $$T(n) \le 4(cn^2/4 - dn/2) + n$$
+    
+    $$T(n) \le cn^2 - 2dn + n$$
+    
+- **The Goal:** We need $cn^2 - 2dn + n \le cn^2 - dn$.
+    
+- **Solving for $d$:**
+    
+    $$-2dn + n \le -dn$$
+    
+    $$n \le dn$$
+    
+    $$d \ge 1$$
+
+
+**Conclusion**
+
+By choosing $d \ge 1$, the inequality holds. We then pick a $c$ large enough to satisfy the base cases of the recurrence. This proves that $T(n) = O(n^2)$. A similar proof can be used for the lower bound $\Omega(n^2)$ to establish $T(n) = \Theta(n^2)$.
+
 
 ## Master Theorem
 

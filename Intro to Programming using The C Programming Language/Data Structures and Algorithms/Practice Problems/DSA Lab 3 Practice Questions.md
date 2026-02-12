@@ -1,5 +1,3 @@
-# **DSA Lab 3 Practice Problems**
-
 Topic: Binary Search
 
 ## **Resources**

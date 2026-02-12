@@ -233,6 +233,10 @@ void insertionSort(std::vector<int>& A) {
 
 # Algorithms that use Divide and Conquer
 
+- ## [[Quick Sort]]
+- ## [[Merge Sort]]
+- ## [[Binary Search]]
+
 
 ---
 ### 4. **Dynamic Programming (DP)**

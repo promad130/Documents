@@ -1665,7 +1665,7 @@ SumNext:
 
 ### 3. Conditional Loop Instructions
 
-The 8086 provides specialized loop instructions that check both the **CX** register and the **Zero Flag (ZF)**.
+The 8086 provides specialized loop instructions that cheassemblyck both the **CX** register and the **Zero Flag (ZF)**.
 
 - **LOOPE / LOOPZ (Loop while Equal/Zero):**
     

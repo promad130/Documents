@@ -535,8 +535,7 @@ Use `map` when you need sorted order; use `unordered_map` for faster lookups.
 
 # unordered_map in STL
 
-
-`unordered_map` in C++ STL is a container that stores **key-value pairs** where keys are unique. Unlike `map`, it is **unordered** (no sorting) and uses a **hash table** for storage instead of a balanced tree.[^9][^10]
+`unordered_map` in C++ STL is a container that stores **key-value pairs** where keys are unique. Unlike `map`, it is **unordered** (no sorting) and uses a **hash table** for storage instead of a balanced tree.
 
 ## Basic Syntax
 

@@ -860,15 +860,15 @@ Example for meaning:
 
 ## 5. Sign extension of 8‑bit displacement
 
-When MOD=01, the displacement is 8 bits. But the effective address calculations are 16‑bit, so the 8‑bit displacement is **sign‑extended** to 16 bits. [^1][^10]
+When MOD=01, the displacement is 8 bits. But the effective address calculations are 16‑bit, so the 8‑bit displacement is **sign‑extended** to 16 bits.
 
-- Range of 8‑bit signed: $-128$ to $+127$ (80H to 7FH in hex). [^10]
+- Range of 8‑bit signed: $-128$ to $+127$ (80H to 7FH in hex).
 - If top bit (bit 7) is 0 (0x00–0x7F), extend with 0s:
-    - Example: 7FH → 007FH. [^1][^11]
+    - Example: 7FH → 007FH. 
 - If top bit is 1 (0x80–0xFF), extend with 1s (two’s complement):
-    - Example: 80H → FF80H; FFH → FFFFH. [^1][^11]
+    - Example: 80H → FF80H; FFH → FFFFH. 
 
-This allows short displacements (relative + or −) to be encoded compactly. [^12]
+This allows short displacements (relative + or −) to be encoded compactly. 
 
 ***
 
@@ -996,4 +996,351 @@ When you see instructions like `MOV reg, reg/mem` or `ADD reg/mem, reg`, mentall
 # Revise:
 
 ![[Memory Allocation#Endianness]]
+
+***(Check out till and including MASM in [[Introduction to assembly]] now)***
+
+---
+# Interrupts (INT)
+
+### Layer 1: Big Picture & Motivation (The "Busy Chef" Analogy)
+
+Imagine you are a master chef (the **CPU**) working in a busy kitchen. You have a cake baking in the oven that will take 30 minutes.
+
+You have two ways to handle this:
+
+1. **Polling (The Amateur Way):** You stop chopping vegetables every 5 seconds, walk to the oven, stare at the cake to see if it's done, then walk back. You waste huge amounts of time walking back and forth.
+    
+2. **Interrupts (The Pro Way):** You set a timer and go back to chopping vegetables. When the timer rings (the **Interrupt**), you _immediately_ stop chopping, take the cake out, and then resume chopping exactly where you left off.
+    
+
+**Why do we need this?** In early or simple systems, we used **polling**—software that continuously checks: "Is a key pressed? Is a key pressed?". This wastes CPU cycles. **Interrupts** allow the hardware to "poke" the CPU only when attention is needed. This frees the CPU to execute other software (like printing a report) while waiting for slow events (like a human typing).
+
+---
+
+### Layer 2: Conceptual Breakdown
+
+An interrupt system relies on four main components. Think of them as the protocol for our Chef:
+
+1. **The Trigger (Hardware Pins/Software Instructions):**
+    
+    - **Hardware:** Physical pins on the chip, like **INTR** (Interrupt Request) or **NMI** (Non-Maskable Interrupt), connected to devices like keyboards or sensors.
+        
+    - **Software:** Instructions like `INT 21h` that your program calls intentionally.
+        
+2. **The Lookup (Interrupt Vector Table - IVT):**
+    
+    - When the "bell rings," the CPU needs to know _what to do_. It looks up a specific address in a table located in the first 1024 bytes of memory. This table holds the addresses (vectors) of the code to run.
+        
+3. **The Handler (Interrupt Service Routine - ISR):**
+    
+    - This is the specific "recipe" or small program that runs to handle the event (e.g., code that reads the key from the keyboard buffer).
+        
+4. **The Return (IRET):**
+    
+    - After the handler finishes, the CPU must go back to the _exact_ instruction it was executing before the interruption. We use a special instruction, **IRET** (Interrupt Return), to do this.
+        
+
+---
+
+### Layer 3: Visual & Diagrammatic Reinforcement
+
+Let's visualize the **Interrupt Vector Table (IVT)**. In Real Mode (standard for 8086/8088), this table is strictly defined.
+
+**The Map:**
+
+- **Location:** `00000H` to `003FFH` (First 1K of memory).
+    
+- **Size:** Contains 256 vectors (labeled 0 to 255).
+    
+- **Entry Size:** Each vector is **4 bytes**.
+    
+    - 2 Bytes: **IP** (Instruction Pointer - Offset)
+        
+    - 2 Bytes: **CS** (Code Segment - Base)
+        
+- **Total:** 256 vectors $\times$ 4 bytes = 1024 bytes.
+    
+
+**Key Vectors:**
+
+- **Vector 0:** Divide Error (if you try to divide by zero).
+    
+- **Vector 1:** Single Step (used for debuggers).
+    
+- **Vector 2:** NMI (Non-Maskable Interrupt - for critical errors like power failure).
+    
+
+---
+
+### Layer 4: Step-by-Step Walkthrough (The Interrupt Cycle)
+
+When an interrupt occurs (e.g., `INTR` pin goes high), the CPU doesn't just jump immediately. It follows a strict protocol to ensure it can return safely.
+
+1. **Finish Current Instruction:** The CPU completes the instruction currently moving through the pipeline.
+    
+2. **Push Flags:** It saves the current Status Register (Flags) onto the Stack so we don't lose the state of our math operations.
+    
+3. **Disable Interrupts:** It clears the **IF** (Interrupt Flag) and **TF** (Trap Flag). This prevents _another_ interrupt from interrupting us immediately (unless it's an NMI).
+    
+4. **Push Return Address:** It pushes the current **CS** (Code Segment) and **IP** (Instruction Pointer) onto the Stack. This marks our "bookmark" to return to.
+    
+5. **Fetch Vector:** It reads the IVT. It takes the interrupt number (say, type 5), multiplies it by 4 (5 $\times$ 4 = 20), and reads the address at memory location 20.
+    
+6. **Jump:** It loads that fetched address into CS and IP. The CPU is now executing the **ISR**.
+    
+7. **Execute ISR:** The handler code runs.
+    
+8. **Return:** The ISR ends with `IRET`. This pops IP, CS, and the Flags back off the stack, restoring the CPU to its exact previous state.
+    
+
+---
+
+### Layer 5: Code Example (x86 Assembly)
+
+Here is a simple example of how you might write a custom ISR and install it. We will replace the "Divide by Zero" handler (Vector 0).
+
+**Scenario:** We want to run a custom procedure if a divide error occurs.
+
+Code snippet
+
+```
+; ASSUME DS points to segment 0000h (IVT location)
+
+; 1. Installation (Setup Phase)
+CLI             ; Clear Interrupts - Disable them while we mess with the table! [cite: 215]
+MOV AX, 0       ; Point ES to the bottom of memory
+MOV ES, AX
+
+; Save the address of OUR procedure into Vector 0 (Address 0000h)
+MOV WORD PTR ES:[0], OFFSET My_Div_Handler  ; Store IP (Low Word)
+MOV WORD PTR ES:[2], CS                     ; Store CS (High Word)
+STI             ; Set Interrupts - Re-enable them [cite: 215]
+
+; ... Main program code ...
+MOV AX, 100
+MOV BL, 0
+DIV BL          ; CRASH! This triggers INT 0
+
+; ---------------------------------------------------------
+; 2. The Interrupt Service Routine (ISR)
+My_Div_Handler PROC FAR
+    ; Save any registers we plan to use
+    PUSH AX
+    PUSH DX
+
+    ; <Insert code here to handle error, e.g., print "Error!">
+
+    ; Restore registers
+    POP DX
+    POP AX
+
+    IRET        ; SPECIAL RETURN! Pops IP, CS, and Flags 
+My_Div_Handler ENDP
+```
+
+**Key Observation:** Note that we used `IRET` at the end, not `RET`. `RET` only pops the address. `IRET` pops the address **AND** the flags. If you use `RET`, your system will crash because the flags are left stuck on the stack.
+
+---
+
+### Layer 6: Common Pitfalls & Debugging
+
+1. **Using `RET` instead of `IRET`**:
+    
+    - _Symptom:_ The program crashes or behaves erratically upon returning from an interrupt.
+        
+    - _Fix:_ Always end an ISR with `IRET` (or `IRETD` for 32-bit protected mode).
+        
+2. **Forgetting to Save Registers**:
+    
+    - _Symptom:_ Your main program's variables mysteriously change value.
+        
+    - _Fix:_ If your ISR uses `AX` or `BX`, you _must_ `PUSH` them at the start and `POP` them at the end. The main program doesn't know the ISR ran, so it expects registers to stay untouched.
+        
+3. **Blocking Interrupts for Too Long**:
+    
+    - _Symptom:_ The system feels "sluggish" or misses keystrokes.
+        
+    - _Fix:_ Keep your ISRs short and fast. Do the minimum work needed and return. If you stay in an ISR too long with interrupts disabled, you miss other critical events.
+        
+
+---
+
+### `IRET` and `IRETD` Commands
+#### Layer 1: The "Time Machine" Analogy
+
+Imagine you are playing a video game (the Main Program). Suddenly, the phone rings (Interrupt). You pause the game to answer the phone.
+
+When you finish the call, you don't just want to unpause the game. You need to make sure:
+
+1. You are at the exact same pixel (Location).
+    
+2. Your health, ammo, and score are exactly the same as before (State).
+    
+
+- **`RET` (Standard Return):** Puts you back at the location, but your "health/ammo" (Flags) might be corrupted by whatever happened during the phone call.
+    
+- **`IRET` (Interrupt Return):** A time machine that restores **Location + State**.
+
+
+#### Layer 2: The Definition (`IRET` vs `IRETD`)
+
+Just like we have Real Mode (16-bit) and Protected Mode (32-bit), we have two versions of this instruction.
+
+|**Instruction**|**Full Name**|**Mode**|**Register Width**|
+|---|---|---|---|
+|**`IRET`**|Interrupt Return|**Real Mode** (16-bit)|Pops `IP`, `CS`, `FLAGS`|
+|**`IRETD`**|Interrupt Return **Double**|**Protected Mode** (32-bit)|Pops `EIP`, `CS`, `EFLAGS`|
+
+**Note:** Your slides specifically mention that these instructions are used **only** with software or hardware interrupt service procedures. You cannot use them for normal subroutines (functions).
+
+
+#### Layer 3: The Stack Mechanics (Visualizing the Pop)
+
+When you execute `IRET`, the CPU performs three distinct "Pop" operations from the stack hardware.
+
+**The Sequence (16-bit `IRET`):**
+
+1. **Pop IP (Instruction Pointer):** Restores the "Offset" of the next instruction.
+    
+2. **Pop CS (Code Segment):** Restores the "Segment" of the next instruction.
+    
+    - _Together, CS:IP tells the CPU exactly where it was in the code._
+        
+3. **Pop FLAGS:** Restores the Status Register (Zero Flag, Carry Flag, Interrupt Flag, etc.).
+    
+
+**The Sequence (32-bit `IRETD`):**
+
+It does the exact same thing, but it pops the extended 32-bit versions: `EIP` and `EFLAGS`.
+
+
+#### Layer 4: The "Manual" Equivalent
+
+Your slides offer a fascinating insight: You could _theoretically_ simulate an `IRET` using two other instructions.
+
+Since `IRET` restores flags and then returns far, it is logically equivalent to:
+
+Code snippet
+
+```
+; The Manual Way (Do not actually do this in an ISR!)
+POPF        ; Pop the top of stack into the Flags register
+RETF        ; Return Far (Pop IP, then Pop CS)
+```
+
+**Why don't we use this manual method?**
+
+Because interrupts are asynchronous. If an NMI (Non-Maskable Interrupt) hits _between_ the `POPF` and the `RETF`, your system state could be corrupted. `IRET` does it all atomically (in one unbreakable step).
+
+
+### Check for Understanding
+
+**Summary:**
+
+Interrupts are hardware or software signals that pause the main program to handle urgent events. They use a **Vector Table** to find the address of the code to run. The CPU automatically saves its state (Flags, CS, IP) onto the stack before jumping, and the **IRET** instruction restores that state so the main program never knows it was interrupted.
+
+1. **`RET`**: Pops Return Address (IP/CS). Used for `CALL`.
+2. **`IRET`**: Pops Return Address (IP/CS) **+ Flags**. Used for `INT`.
+3. **`IRETD`**: The 32-bit version for Protected Mode.
+
+**Quick Quiz:**
+
+1. What is the difference between `INTR` and `NMI`?
+    
+2. If I trigger **INT 5**, at which memory address does the CPU look for the vector? (Hint: Multiply by 4).
+    
+3. Why does the CPU automatically clear the Interrupt Flag (IF) when an interrupt starts?
+    
+4. If you accidentally write a normal `RET` at the end of your Interrupt Service Routine instead of `IRET`, what specific register remains "stuck" on the stack, eventually causing a stack overflow crash?
+
+**Answers:**
+
+1. `INTR` can be masked (ignored) by software (using CLI); `NMI` (Non-Maskable Interrupt) cannot be ignored.
+    
+2. Address `00014H` (5 $\times$ 4 = 20, which is 14 in Hex).
+    
+3. To prevent a new interrupt from interrupting the current one immediately, which could cause a stack overflow if they happen too fast.
+	
+4. _(Hint: `RET` pops 4 bytes (CS+IP). `IRET` pops 6 bytes (CS+IP+Flags). What was left behind?)_
+---
+
+
+# Real Mode vs. Protected Mode
+They are the modes in which the CPU works in the x86 computer architecture.
+
+### Layer 1: The Analogy (The "Wild West" vs. The "Gated Community")
+
+- **Real Mode (The Wild West):**
+    
+    Imagine a small village where everyone knows everyone. You can walk into anyone's house, open their fridge, and eat their food. There are no locks.
+    
+    - **Pros:** Simple, fast, total freedom.
+    - **Cons:** If the village idiot (a bad program) burns down a house, the whole village might burn down.
+    - **Who uses it?** MS-DOS, early BIOS, and simple embedded microcontrollers.
+    
+- **Protected Mode (The Gated City):**
+    
+    Now imagine a modern apartment complex. You have a key card. It only opens _your_ door. You cannot enter your neighbor's apartment. There is a security guard (the hardware) watching the cameras.
+    
+    - **Pros:** Safe. If your neighbor causes a fire, the sprinklers isolate it to just their room.
+        
+    - **Cons:** Complex. You need permission for everything.
+        
+    - **Who uses it?** Windows, Linux, macOS, Android.
+        
+
+---
+
+### Layer 2: Conceptual Breakdown (The Specs)
+
+According to the comparison table in your file, here are the technical differences:
+
+1. **Memory Reach (Addressing):**
+    
+    - **Real Mode:** Can only see **1 MB** of RAM. Even if you install 32 GB, it ignores everything above the first 1 MB.
+    - **Protected Mode:** Can address **16 MB** (on a 286) up to **4 GB+** (on 386 and later).
+    
+2. **Safety (Memory Protection):**
+    
+    - **Real Mode:** **No Protection.** Your program can accidentally write over the Operating System code, causing a crash.    
+    - **Protected Mode:** **Protection Available.** If a program tries to access memory it doesn't own, the CPU throws a "General Protection Fault" (GPF) and terminates just that program.
+    
+3. **Multitasking Support:**
+    
+    - **Real Mode:** Single-tasking. One program runs at a time.
+        
+    - **Protected Mode:** Supports **Virtual Memory** (up to 64 TB!) and hardware context switching, allowing you to run Spotify, Chrome, and Word all at once.
+        
+
+---
+
+### Layer 3: Visualizing the Difference
+
+Let's look at how they handle **Interrupts**, which is a key distinction mentioned in your slides.
+
+- **Real Mode (IVT):**
+    
+    - The "Phone Book" (Vector Table) is **fixed** at memory address `00000H`.    
+    - Each entry is simple: just **4 bytes** (CS:IP address).
+	
+- **Protected Mode (IDT):**
+	
+    - The "Phone Book" is replaced by an **Interrupt Descriptor Table (IDT)**.
+    - Each entry is huge: **8 bytes** (descriptors) that contain not just the address, but also security permissions (e.g., "Can a user program call this? Or only the OS?").
+
+---
+
+### Layer 4: Why do we care? (The "Boot" Process)
+
+You might ask: _"If Real Mode is so old and unsafe, why do we still learn it?"_
+
+**The Secret:** Every x86 Intel processor (even the Core i9 in your laptop) **wakes up in Real Mode**.
+
+1. **Power On:** The chip acts like an old 8086 (1 MB limit, no security). This ensures backward compatibility.
+2. **BIOS/Bootloader:** It initializes the hardware in this simple mode.
+3. **Switch:** The Operating System (Windows/Linux) executes a special instruction to **switch** the CPU into Protected Mode to unlock the full power and memory.
+
+
+## File Operations using `INT24H`:
+![[Introduction to assembly#File Operations in using `INT24`]]
 

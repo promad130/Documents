@@ -577,7 +577,7 @@ Where:
 
 Let **$c = log_b(a)$** (critical exponent)
 
-#### Case 1: $f(n) = O(n^d)$ where d < c
+#### Case 1: $f(n) = O(n^d)$ where d < c, i.e., $f(n) = O(n^{log_ba})$
 **Result**: $$T(n) = Θ(n^c) = Θ(n^{(log_ba)})$$
 
 *Recursion dominates*

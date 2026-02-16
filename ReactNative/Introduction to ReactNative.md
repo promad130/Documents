@@ -85,6 +85,17 @@ const styles = StyleSheet.create({
 2. **Component function** - returns JSX (looks like HTML but isn't). JSX stands for **JavaScript XML** (or JavaScript Syntax Extension), and it lets you write HTML-like code directly inside JavaScript files. It's a syntax extension that makes building user interfaces easier by allowing markup and logic to live together.
 3. **StyleSheet** - defines your styles using JavaScript objects
 
+Now, we write in `.tsx` files in React-Native. The **`.tsx`** file extension stands for **TypeScript JSX**.
+
+It is a specific file type used in web development that combines **TypeScript** (a typed superset of JavaScript) with **JSX** (JavaScript XML), which is syntax primarily used by the React framework to write HTML-like code within JavaScript.
+
+Here is a breakdown of why this specific extension exists and how it differs from others:
+
+### 1. The Core Combination
+
+- **TypeScript (`.ts`):** Standard TypeScript files allow you to write JavaScript with static types (strings, numbers, interfaces, etc.) to catch errors early. However, standard `.ts` files generally do not support JSX syntax.
+- **JSX:** This syntax allows you to write tags like `<div>Hello</div>` directly in your code.
+- **`.tsx`:** This extension tells the TypeScript compiler: _"This file contains TypeScript syntax, but also expect JSX tags, so please handle them correctly instead of throwing syntax errors."_
 
 # JSX
 
@@ -219,6 +230,9 @@ React.createElement('div', null,
   <p>World</p>
 </div>
 ```
+
+# Starting out:
+
 
 # Components in ReactNative
 

@@ -1,3 +1,5 @@
+***(Follow Along [[Introduction to Verilog]])***
+
 Digital Design is an engineering discipline that works with designing digital systems that take in some data, do some operations and produce an output.
 These digital systems usually work with binary system, i.e., only two values(i.e., 0 and 1). They are the foundation to modern computing and smartphones, and digital communication equipment.
 

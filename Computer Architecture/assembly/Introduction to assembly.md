@@ -79,9 +79,8 @@ Shutterstock
 2. **The Assembler:** It reads your file line by line.
     
     - It looks up `MOV` in a table and finds the binary code for it (e.g., `10110`).
-        
     - It calculates memory locations for your variables and labels.
-        
+    
 3. **Output (Object Code):** It produces a file (usually `.obj`) containing the raw machine code.
     
 
@@ -1854,14 +1853,14 @@ Directives (often called pseudo-ops) do not translate into machine code. Instead
 
 You will likely encounter these categories of directives in almost every MASM program:
 
-#### **1. Data Definition** Used to define variables and reserve memory. They are ALLOCATORS
+#### **Data Definition** Used to define variables and reserve memory. They are ALLOCATORS
 
 - `DB` (Define Byte): Allocates 1 byte.
 - `DW` (Define Word): Allocates 2 bytes.
 - `DD` (Define Doubleword): Allocates 4 bytes.
 - `EQU`: Defines a constant value (similar to `#define` in C).
 
-#### **2. Segment & Section Control** Used to organize the program's memory structure.
+#### **[[Segment & Section Control]]** Used to organize the program's memory structure.
 
 - `.DATA`: Marks the start of the initialized data segment.
 - `.CODE`: Marks the start of the executable code segment.
@@ -1901,6 +1900,522 @@ main ENDP               ; DIRECTIVE: End procedure
 END main                ; DIRECTIVE: End of file, entry point is main
 ```
 
+
+
+
+
+# Interrupts
+(First Read and follow along [[Introduction to Microprocessors and Interfacing#Interrupts]])
+
+## The `INT3` and `INTO` commands
+### Part 1: `INT 3` (The Debugger's Secret Weapon)
+
+#### Layer 1: Motivation
+
+Imagine you are writing a program and it crashes, but you don't know where. You open a debugger (like in VS Code or Keil) and click the **red dot** next to a line of code to set a "Breakpoint." When the code runs, it magically freezes exactly at that line so you can inspect variables.
+
+**How does the hardware do that?** It uses the `INT 3` instruction.
+
+#### Layer 2: The "One-Byte" Magic
+
+In x86 assembly, the standard `INT` instruction takes **2 bytes**:
+
+- Byte 1: Opcode `CD`
+- Byte 2: The interrupt number (e.g., `21`)
+
+**`INT 3` is unique because it is only 1 byte long.**
+
+- Opcode: `CC`
+
+**Why does size matter?**
+
+To pause your program, the debugger actually **deletes** your instruction in memory and replaces it with `INT 3`.
+
+If `INT 3` were 2 bytes long, it might overwrite part of the _next_ instruction, corrupting your program. Since it is 1 byte, it can safely replace the first byte of _any_ instruction without touching the neighbors.
+
+#### Layer 3: The Mechanism
+
+When the CPU executes this `CC` opcode (INT 3):
+
+1. It behaves like a normal interrupt: Pushes Flags, CS, and IP to the stack.
+    
+2. It looks up **Vector 3** in the table.
+    
+3. **Vector 3 Address:** `3 x 4 = 12` (or `0000CH` in Hex).
+    
+4. It jumps to the address stored there (which is usually the Debugger's pause routine).
+
+#### Layer 4: Example (How a Debugger works)
+
+Let's trace what happens under the hood when you set a breakpoint.
+
+**Original Code in Memory:**
+
+
+```Assembly
+Address   Opcode    Instruction
+00100     B8 05 00  MOV AX, 5   <-- You want to stop here
+00103     40        INC AX
+```
+
+**Step A: You set a Breakpoint**
+
+The debugger software secretly patches memory address `00100`.
+
+Code snippet
+
+```Assembly
+Address   Opcode    Instruction
+00100     CC        INT 3       <-- Replaces 'B8'
+00101     05 00     (Leftover junk data from the MOV)
+00103     40        INC AX
+```
+
+**Step B: Execution**
+
+The CPU hits `CC`. It immediately triggers **Vector 3**. The Interrupt Handler runs, freezing the screen and showing you the registers.
+
+**Step C: Resume**
+
+When you click "Continue," the debugger restores the original `B8` byte and executes the `MOV AX, 5` normally.
+
+---
+
+### Part 2: `INTO` (The Math Safety Net)
+
+#### Layer 1: Motivation
+
+In signed math (working with positive and negative numbers), it is very easy to accidentally "overflow."
+
+- Example: An 8-bit register can hold numbers from -128 to +127.
+    
+- If you add `100 + 50`, the result is `150`. This is too big for a signed 8-bit number, so it wraps around to `-106`. This is a disaster for banking software!
+    
+
+Normally, you have to check for this manually after every math instruction:
+
+Code snippet
+
+```
+ADD AX, BX
+JO ERROR_HANDLER  ; Jump if Overflow Flag = 1
+```
+
+This clutters your code. Intel gave us a shortcut: **`INTO`**.
+
+#### Layer 2: The Logic
+
+`INTO` stands for **Interrupt on Overflow**. It is a **Conditional Interrupt**.
+
+- **Logic:** It looks at the **Overflow Flag (OF)** in the status register.
+    
+    - **If OF = 0:** The instruction does nothing (it acts like a NOP - No Operation).
+        
+    - **If OF = 1:** It triggers an interrupt automatically.
+        
+
+#### Layer 3: The Mechanism
+
+If the overflow flag is set:
+
+1. The CPU triggers **Vector 4**.
+    
+2. **Vector 4 Address:** `4 x 4 = 16` (or `00010H` in Hex).
+    
+3. It pushes Flags, CS, IP and jumps to the Error Handler.
+    
+
+#### Layer 4: Example Code
+
+Here is how you would use it to safely add numbers.
+
+Code snippet
+
+```
+MOV AL, 100     ; Load 100 (Positive)
+MOV BL, 50      ; Load 50 (Positive)
+
+ADD AL, BL      ; 100 + 50 = 150.
+                ; In signed 8-bit, 150 is interpreted as -106.
+                ; The CPU sets the Overflow Flag (OF=1).
+
+INTO            ; CHECKPOINT!
+                ; Since OF=1, this triggers INT 4.
+                ; The CPU jumps to the Overflow Handler.
+
+MOV CL, 10      ; This line is NEVER reached because we jumped away.
+```
+
+---
+
+### Summary Checklist
+
+|**Feature**|**INT 3**|**INTO**|
+|---|---|---|
+|**Full Name**|Breakpoint Interrupt|Interrupt on Overflow|
+|**Trigger**|Always (Unconditional)|Only if Overflow Flag (OF) = 1|
+|**Vector Number**|**3**|**4**|
+|**Vector Address**|`0000CH`|`00010H`|
+|**Size**|**1 Byte** (`CC`)|1 Byte (`CE`)|
+|**Main Use**|Debugging (Breakpoints)|Error handling in signed math|
+
+**Quick Quiz to Check Understanding:**
+
+1. Why can't we just use the normal `INT 3` opcode (`CD 03`) for breakpoints? Why did Intel create a special 1-byte opcode (`CC`)?
+    
+2. If I run `SUB AX, BX` and the result is correct (no error), what does the `INTO` instruction do immediately afterward?
+    
+
+_(Take a moment to think about the answer, then scroll down)_
+
+.
+
+.
+
+.
+
+**Answers:**
+
+1. Because `CD 03` is 2 bytes long. If we replaced a 1-byte instruction with a 2-byte breakpoint, we would overwrite and corrupt the _next_ instruction in memory.
+    
+2. It does nothing (acts like a NOP) because the Overflow Flag is 0. Execution simply continues to the next line.
+
+## `INT24H` Command
+
+If you are coming from C or Python, you are used to having a "Standard Library" (`#include <stdio.h>` or `import os`).
+In x86 Assembly, you don't have libraries. You have **Interrupt 21h**.
+
+### Layer 1: The "Swiss Army Knife" Analogy
+
+Imagine you are a handy worker (the **User Program**). You want to build a house, but you are not allowed to touch the water pipes or the electric grid directly (the **Hardware**).
+
+Instead, you have a walkie-talkie connected to the **Site Manager** (the **Operating System / MS-DOS**, [[What is MS-DOS?]]*).
+
+- **The Channel:** The walkie-talkie channel is always **`INT 21H`**.
+    
+- **The Code Words:** You can't just say "Help." You have to use specific codes.
+    
+    - "Code 02" means "Output a character."
+        
+    - "Code 09" means "Print a string."
+        
+    - "Code 4C" means "I quit, I'm going home."
+        
+
+This is exactly how `INT 21H` works. It is a single interrupt entry point that provides over 100 different functions.
+
+### Layer 2: The Protocol (The `AH` Register)
+
+Since there is only _one_ interrupt vector for the whole OS (`21H`), how does the computer know if you want to print to the screen or read from the keyboard?
+
+**The Selector Switch:** The **`AH` Register** (Accumulator High). Before you call `INT 21H`, you must load a specific number into `AH`. This number tells MS-DOS which function to run.
+
+**The Workflow:**
+
+1. **Set `AH`** $\rightarrow$ Function ID (e.g., `09H`).
+    
+2. **Set Data** $\rightarrow$ Put arguments in other registers (like `DX` or `DL`).
+    
+3. **Call** $\rightarrow$ Execute `INT 21H`.
+    
+4. **Result** $\rightarrow$ Returns values in `AL` or `AX` (if applicable).
+    
+
+### Layer 3: The "Big Three" Functions
+
+#### Interrupt Vectors Defined by Intel:
+![[Pasted image 20260216025249.png]]
+
+#### Important AH Values:
+![[Pasted image 20260216025421.png]]
+
+#### 1. The "Exit" Function (`AH = 4CH`)
+
+In C, when `main()` finishes, the program ends. In Assembly, if you don't explicitly stop, the CPU just keeps executing whatever junk memory is next (often crashing the system). You **must** tell the OS to take back control.
+
+- **Code:**
+    
+    Code snippet
+    
+    ```
+    MOV AH, 4CH   ; Function: Terminate with return code
+    INT 21H       ; Transfer control back to MS-DOS
+    ```
+    
+
+#### 2. The "Print Character" Function (`AH = 02H`)
+
+Used to print a single ASCII letter to the screen.
+
+- **Input:** Load the character you want to print into **`DL`**.
+    
+- **Code:**
+    
+    Code snippet
+    
+    ```
+    MOV AH, 02H   ; Function: Write Character
+    MOV DL, 'A'   ; The character to print goes in DL (not DX!)
+    INT 21H       ; Result: 'A' appears on screen
+    ```
+    
+
+#### 3. The "Print String" Function (`AH = 09H`)
+
+Used to print a whole sentence. This is the `printf()` of the assembly world.
+
+- **Input:** Load the **Effective Address (Offset)** of the string into **`DX`**.
+    
+- **The Catch:** The string **MUST** end with a **`$`** sign.
+    
+    - In C, strings end with `\0` (Null).
+        
+    - In DOS, strings end with `$`. If you forget this, it will keep printing garbage from memory until it finds a random `$` somewhere.
+        
+- **Code:**
+    
+    Code snippet
+    
+    ```
+    .DATA
+    MSG DB 'Hello Class$'  ; Note the $ terminator!
+    
+    .CODE
+    MOV AH, 09H            ; Function: Write String
+    LEA DX, MSG            ; Load Address of MSG into DX
+    INT 21H                ; Result: "Hello Class"
+    ```
+    
+
+---
+
+### Layer 4: A Visual Hierarchy
+
+Slide 8 of your file shows a beautiful diagram of how this fits together.
+
+1. **Application Program:** (You are here). You talk to...
+    
+2. **MS-DOS Kernel (`INT 21H`):** The logic layer. It talks to...
+    
+3. **BIOS (`INT 10H`, etc.):** The "Basic Input/Output System." This is firmware burnt into the motherboard. It talks to...
+    
+4. **Hardware:** The actual electrons, monitor, and keyboard.
+    
+
+**Why not talk to BIOS directly?**
+
+You can! But DOS functions (`INT 21H`) are easier. For example, `INT 21H` can read a file from a disk. BIOS only knows how to read "Sector 5, Track 3." DOS handles the complex logic of converting "Sector 5" into "MyEssay.txt."
+
+### Summary & Example
+
+Here is a complete, working program using this topic. This matches the example logic on **Page 19**.
+
+Code snippet
+
+```
+.MODEL SMALL
+.STACK 100H
+.DATA
+    GREET DB 'Welcome to MUPI!$'  ; String ending in $
+
+.CODE
+MAIN PROC
+    ; 1. Initialize Data Segment (Standard Boilerplate)
+    MOV AX, @DATA
+    MOV DS, AX
+
+    ; 2. Print the String (Function 09H)
+    MOV AH, 09H         ; Select "Print String"
+    LEA DX, GREET       ; Point DX to the text
+    INT 21H             ; Call OS
+
+    ; 3. Print a Newline (Manually printing Char 10 and 13)
+    MOV AH, 02H         ; Select "Print Char"
+    MOV DL, 0AH         ; Line Feed
+    INT 21H
+    MOV DL, 0DH         ; Carriage Return
+    INT 21H
+
+    ; 4. Exit to DOS (Function 4CH)
+    MOV AH, 4CH         ; Select "Terminate"
+    INT 21H             ; Bye!
+MAIN ENDP
+END MAIN
+```
+
+**Quick Check:**
+
+If I want to print the letter 'Z', I put 'Z' into the `DL` register and call `INT 21H`. But nothing happens. The screen is blank.
+
+**What one instruction did I forget?**
+
+_(Hint: Did I tell the Site Manager **what** I wanted to do?)_
+
+
+## File Operations in using `INT24`
+
+### Layer 1: The Concept (The "Ticket" Analogy)
+
+Imagine you go to a coat check at a theater.
+
+1. **Drop Off (Open):** You give them your coat. They don't give you the coat back immediately; they give you a **numbered ticket** (e.g., #42).
+    
+2. **Retrieve (Read/Write):** Later, when you want your coat, you don't describe the coat ("It's black and wool"). You just give them **Ticket #42**.
+    
+3. **Leave (Close):** You hand back the ticket, and the transaction is done.
+    
+
+In DOS (and modern OSs like Windows/Linux), this "Ticket" is called a **File Handle**.
+
+- It is just a 16-bit number (like `0005`).
+    
+- You **never** use the filename (`MYFILE.TXT`) after the first step. You only use the Handle.
+    
+
+---
+
+### Layer 2: The Protocol (3 Steps)
+
+The file operations follow a strict sequence. All of them use `INT 21H`, but with different `AH` values.
+
+#### Step 1: Open (Get the Ticket)
+
+- **Action:** Tell DOS the filename. DOS checks if it exists and gives you a Handle.
+    
+- **Function:** `AH = 3DH` (Open existing) or `3CH` (Create new).
+    
+- **Key Input:** `DX` points to the filename string (must end with 0, not $). `AL` sets the mode (0=Read, 1=Write, 2=Read/Write).
+    
+    +1
+    
+- **Key Output:** If successful, `AX` contains the **File Handle**. You **must** save this into a variable.
+    
+
+#### Step 2: Work (Read/Write using Ticket)
+
+- **Action:** Move data between the file and a memory buffer.
+    
+- **Function:** `AH = 3FH` (Read) or `40H` (Write).
+    
+    +1
+    
+- **Key Input:** `BX` = **The File Handle** (from Step 1).
+    
+    +1
+    
+- **Key Output:** `AX` = Number of bytes actually processed.
+    
+
+#### Step 3: Close (Return Ticket)
+
+- **Action:** Tell DOS you are finished so it can save changes to the disk.
+    
+- **Function:** `AH = 3EH`.
+    
+- **Key Input:** `BX` = The File Handle.
+    
+
+---
+
+### Layer 3: Code Walkthrough (Reading a File)
+
+Let's look at the specific example provided in your file (Slide 25) for reading a file.
+
+**Scenario:** We want to read 512 bytes from a file.
+
+**1. Data Setup**
+
+We need variables to store the filename, the handle, and the data we read.
+
+Code snippet
+
+```
+.DATA
+    FNAME   DB 'MYDATA.TXT', 0  ; ASCII String ending in 0 (NULL) 
+    HANDLE  DW ?                ; Variable to save the Ticket #
+    BUFFER  DB 512 DUP(0)       ; Empty space to dump the file contents [cite: 405]
+```
+
+**2. The Code (Step-by-Step)**
+
+**A. Open the File**
+
+Code snippet
+
+```
+MOV AH, 3DH       ; Function: Open File [cite: 372]
+LEA DX, FNAME     ; "Here is the name of the coat" [cite: 373]
+MOV AL, 0         ; Mode: Read Only [cite: 376]
+INT 21H           ; Call DOS
+
+JC ERROR_HANDLER  ; If Carry Flag=1, it failed (File not found) 
+MOV HANDLE, AX    ; SUCCESS! Save the Ticket # (AX) into our variable 
+```
+
+**B. Read from File**
+
+Code snippet
+
+```
+MOV AH, 3FH       ; Function: Read File [cite: 387]
+MOV BX, HANDLE    ; Load the Ticket # we saved earlier [cite: 389]
+MOV CX, 512       ; "I want 512 bytes" [cite: 390]
+LEA DX, BUFFER    ; "Put them here in memory" [cite: 391]
+INT 21H           ; Call DOS
+
+JC READ_ERROR     ; Check for errors [cite: 394]
+; Now AX holds the number of bytes actually read (e.g., 50 bytes) [cite: 392]
+```
+
+**C. Close the File**
+
+Code snippet
+
+```
+MOV AH, 3EH       ; Function: Close File 
+MOV BX, HANDLE    ; "Here is the ticket back"
+INT 21H
+```
+
+---
+
+### Layer 4: Common Pitfalls
+
+1. **The "End of String" Confusion:**
+    
+    - **Printing (`AH=09h`):** String must end with **`$`**.
+        
+    - **Filenames (`AH=3Dh`):** String must end with **`0`** (NULL byte).
+        
+    - _Why?_ Because printing is a DOS feature, but filenames follow C-language standards (ASCIIZ).
+        
+2. **Forgetting to Save the Handle:**
+    
+    - When you open a file, the handle is in `AX`. If you then do some math and overwrite `AX` before saving it to a variable (like `MOV HANDLE, AX`), you have lost your access to the file forever.
+        
+3. **The Carry Flag (CF):**
+    
+    - In `INT 21H` file operations, DOS uses the **Carry Flag** to indicate success or failure.
+        
+    - **CF = 0:** Success.
+        
+    - **CF = 1:** Error. The error code (e.g., "File Not Found") is in `AX`. always check `JC` (Jump if Carry) after a file operation.
+        
+
+### Summary Checklist
+
+- **Open** (`3DH`) $\rightarrow$ Get Handle (`AX`).
+    
+- **Read** (`3FH`) / **Write** (`40H`) $\rightarrow$ Use Handle (`BX`).
+    
+- **Close** (`3EH`) $\rightarrow$ Release Handle.
+    
+
+**Quick Check:**
+
+If I successfully open a file and `AX` returns `0005`, but then I mistakenly execute `MOV BX, 0004` before calling the Read function, what will happen?
+
+_(Hint: Does Ticket #4 belong to you?)_
 
 # Variables and Data Types in x86 Assembly for Beginners
 

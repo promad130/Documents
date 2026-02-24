@@ -132,7 +132,7 @@ The basic elements of programming are the fundamental building blocks you use to
 5. **[[Functions]]:** 
 	These are reusable blocks of code that perform a specific task. Functions can take input values (arguments or parameters) and can return a value. They help to organize code, make it more readable, and avoid repetition.
     
-6. **[[Control Flow Statements]]:** 
+6. [[Control Flow Statements]]: 
 	These statements determine the order in which instructions are executed. They allow you to create programs that can make decisions and repeat actions. Key control flow statements include:
     
     - **Conditional statements (if-else):** Execute different blocks of code based on whether a condition is true or false.

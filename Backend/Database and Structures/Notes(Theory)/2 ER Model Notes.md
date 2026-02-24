@@ -133,8 +133,6 @@ Defines whether all entities must participate in a relationship.
 
 ### 1. Super Key
 
-To answer your specific question: **No, a Super Key is not necessarily the "maximum" set.**
-
 A **Super Key** is simply **any** set of attributes (columns) that can uniquely identify a row in a table. It doesn't have to be large or maximum; it just has to be unique.
 
 - **The Logic:** If you take a unique identifier (like an ID) and add random other columns to it (like Name or Age), that combination is _still unique_. Therefore, it is still a Super Key.
@@ -179,9 +177,7 @@ Here is how they map to actual SQL commands:
 
 Here is how you would define these constraints in a MySQL table creation script. In this example, `ID` is the Primary Key, but `Email` is a Candidate Key (because it's also unique).
 
-SQL
-
-```
+```SQL
 CREATE TABLE Users (
     ID int NOT NULL,
     Email varchar(255) NOT NULL,
@@ -197,7 +193,7 @@ CREATE TABLE Users (
 
 ### **Primary Key**: 
 
-The candidate key selected as the main identifier.[^1]
+The candidate key selected as the main identifier.
 
 - Must be unique and cannot be NULL
 - Only one per table
@@ -215,7 +211,7 @@ The combination of primary keys from participating entities forms the super key 
 
 ## Weak Entity Sets
 
-**Strong Entity**: Has its own primary key and exists independently.[^6][^7][^1]
+**Strong Entity**: Has its own primary key and exists independently.
 
 - Notation: Single rectangle
 
@@ -240,6 +236,21 @@ Another Example: Employee (strong) → Dependent (weak)[^1]
 
 - Dependent identified by (employee_id, dependent_name)
 
+![[Pasted image 20260222112338.png]]
+```SQL
+CREATE TABLE Payment (
+    payment_number INT NOT NULL,
+    loan_number INT NOT NULL,
+    payment_amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    
+    -- The primary key is a combination of the loan and the specific payment number
+    PRIMARY KEY (payment_number, loan_number),
+    
+    -- The foreign key linking back to the parent entity
+    FOREIGN KEY (loan_number) REFERENCES Loan(loan_number)
+);
+```
 
 ## Aggregation
 
@@ -252,28 +263,23 @@ Used when you need to model a relationship involving another relationship.[^1]
 
 ## ER Diagram Notation Summary
 
-| Element | Notation |
-| :-- | :-- |
-| Entity Set | Rectangle [^1] |
-| Weak Entity | Double Rectangle [^1] |
-| Attribute | Ellipse [^1] |
-| Derived Attribute | Dashed Ellipse [^1] |
-| Multivalued Attribute | Double Ellipse [^1] |
-| Relationship | Diamond [^1] |
-| Identifying Relationship | Double Diamond [^1] |
-| Total Participation | Double Line [^1] |
-| Partial Participation | Single Line [^1] |
+| Element                  | Notation              |
+| :----------------------- | :-------------------- |
+| Entity Set               | Rectangle [^1]        |
+| Weak Entity              | Double Rectangle [^1] |
+| Attribute                | Ellipse [^1]          |
+| Derived Attribute        | Dashed Ellipse [^1]   |
+| Multivalued Attribute    | Double Ellipse [^1]   |
+| Relationship             | Diamond [^1]          |
+| Identifying Relationship | Double Diamond [^1]   |
+| Total Participation      | Double Line [^1]      |
+| Partial Participation    | Single Line [^1]      |
 
 ## Mapping ER to Tables
 
-**Entity Sets**: Each becomes a table; entity name = table name.[^1]
-
-**Simple Attributes**: Each becomes a column.[^1]
-
-**Composite Attributes**: Only leaf-level sub-attributes become columns.[^1]
-
-**Multivalued Attributes**: Create a separate table with the entity's primary key.[^1]
-
-**Binary Relationships**: Create a table with primary keys from both entities.[^1]
-
+**Entity Sets**: Each becomes a table; entity name = table name.
+**Simple Attributes**: Each becomes a column.
+**Composite Attributes**: Only leaf-level sub-attributes become columns.
+**Multivalued Attributes**: Create a separate table with the entity's primary key.
+**Binary Relationships**: Create a table with primary keys from both entities.
 **Unary Relationships**: Add a foreign key column in the same table referencing its own primary key.

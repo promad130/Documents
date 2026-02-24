@@ -2001,3 +2001,52 @@ SHOW ENGINES;
 | **CASCADE** | Automatically deletes/updates children |
 | **SET NULL** | Sets FK to NULL (requires nullable column) |
 | **InnoDB** | Only engine that enforces FK constraints |
+
+
+# Execution of EER Diagrams
+This file covers the exact next step you need for Lab 5 and your mid-sem: **Mapping your EER diagrams into actual Relational Tables.** Drawing the diagram is only half the battle. Now you have to convert those Superclasses, Subclasses, and Union Types into a database schema. Here is the no-bullshit breakdown of the rules from Navathe Chapter 9.
+
+### Mapping Superclasses and Subclasses (4 Options)
+
+When you have a superclass/subclass relationship, you have four distinct ways to convert it into tables. The constraint (Disjoint/Overlapping, Total/Partial) dictates which option you should use.
+
+**Option 8A: The "Safe Bet" (Multiple Tables)**
+
+- **How it works:** Create one table for the superclass and one table for _each_ subclass. The primary key of the superclass becomes the primary key _and_ foreign key in all subclass tables.
+    
+- **When to use it:** This works for **any** specialization (Total, Partial, Disjoint, or Overlapping). It's the most flexible but requires SQL `JOIN`s to get complete data.
+    
+
+**Option 8B: The "Subclass Only" Approach (Multiple Tables)**
+
+- **How it works:** You completely delete the superclass table. You only create tables for the subclasses. You copy all the superclass attributes directly into each subclass table.
+    
+- **When to use it:** Only use this if the constraint is **Total**. If it were Partial, entities that don't belong to a subclass would have nowhere to be stored because the superclass table is gone!
+    
+
+**Option 8C: The "Single Giant Table" (One Type Attribute)**
+
+- **How it works:** You smash the superclass and all subclasses into one massive table. You add a single new column called a "Type Attribute" (or discriminator) to tell you which subclass the row belongs to (e.g., `Job_Type = 'Secretary'`). Attributes for other subclasses just get filled with `NULL`.
+    
+- **When to use it:** Only use this if the constraint is **Disjoint**. Since there's only one "Type" column, a row can only belong to one subclass.
+    
+
+**Option 8D: The "Single Giant Table" (Multiple Boolean Attributes)**
+
+- **How it works:** Again, one massive table for everything. But instead of one "Type" column, you add a Boolean (True/False) flag for _every_ subclass (e.g., `Is_Manufactured = Yes`, `Is_Purchased = Yes`).
+    
+- **When to use it:** This is perfect for **Overlapping** constraints because an entity can have "True" for multiple subclasses at the same time.
+    
+
+---
+
+### Mapping Categories (Union Types)
+
+Remember the `OWNER` category that could be a `PERSON`, a `BANK`, or a `COMPANY`? Mapping these is tricky because the superclasses usually have completely different Primary Keys (e.g., SSN for Person, BName for Bank).
+
+- **The Fix (Surrogate Key):** You create a brand new table for the Category (e.g., `OWNER`). Since you can't reuse the primary keys from the superclasses, you invent a new one—a **Surrogate Key** (like `Owner_ID`). You then put this Surrogate Key into the superclass tables as a Foreign Key to link them up.
+    
+
+---
+
+If you mess up these mappings in Thursday's Lab 5, your SQL queries won't work. Want to test this out by applying these 4 options to the "General Hospital" or "NFL" database scenarios we looked at earlier?

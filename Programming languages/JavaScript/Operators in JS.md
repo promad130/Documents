@@ -1,5 +1,5 @@
 **Topics Covered:**
-**Tags:** [[Operators]] [[JavaScript]]
+**Tags:** [[Operators]] [[Introduction to JavaScript]]
 
 ## Operators in JavaScript
 Operators in JavaScript are special symbols or keywords used to perform operations on values (operands). They are fundamental to writing expressions and controlling logic in your code.

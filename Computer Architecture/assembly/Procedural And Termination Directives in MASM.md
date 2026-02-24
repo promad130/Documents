@@ -94,3 +94,37 @@ When you use these directives, MASM is silently building a **Stack Frame** for y
 3. **Saved BP**: Pushed by the Prologue.
     
 4. **Local Variables**: Space reserved by `SUB SP, n` (Negative offset from BP).
+
+# Module Termination Directive
+
+### 1. `END` ([[END Directive in MASM]])
+
+- **Type:** **Assembly Control / Module Termination**
+    
+- **Scope:** The entire file (Source Module).
+    
+- **Action:** Tells the **Assembler** (MASM) to stop reading the file immediately.
+    
+- **Optional Argument:** The Entry Point label (e.g., `END MAIN`).
+    
+
+### 2. `ENDP` (End Procedure)
+
+- **Type:** **Procedure Definition**
+    
+- **Scope:** A specific block of code (function).
+    
+- **Action:** Marks the end of a procedure block (like a closing curly brace `}` in C).
+    
+- **Syntax:** `MAIN ENDP`
+    
+
+### 3. `ENDS` (End Segment)
+
+- **Type:** **Segment Definition**
+    
+- **Scope:** A memory segment.
+    
+- **Action:** Marks the end of a segment block (e.g., end of data or stack).
+    
+- **Syntax:** `MY_DATA ENDS` (Used in the "Old/Full" segment definitions, not the `.DATA` simplified models).

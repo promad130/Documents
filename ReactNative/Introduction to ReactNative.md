@@ -94,7 +94,9 @@ Here is a breakdown of why this specific extension exists and how it differs fro
 ### 1. The Core Combination
 
 - **TypeScript (`.ts`):** Standard TypeScript files allow you to write JavaScript with static types (strings, numbers, interfaces, etc.) to catch errors early. However, standard `.ts` files generally do not support JSX syntax.
+	
 - **JSX:** This syntax allows you to write tags like `<div>Hello</div>` directly in your code.
+	
 - **`.tsx`:** This extension tells the TypeScript compiler: _"This file contains TypeScript syntax, but also expect JSX tags, so please handle them correctly instead of throwing syntax errors."_
 
 # JSX
@@ -233,6 +235,153 @@ React.createElement('div', null,
 
 # Starting out:
 
+You are likely looking at a folder structure that seems deceptively simple compared to older tutorials. The latest version of React Native Expo (SDK 50+) has shifted entirely to a **file-based routing system** called **Expo Router**.
+
+Instead of writing code to define your navigation structure, your **file structure** _is_ your navigation structure.
+
+Here is a comprehensive breakdown of the starting point.
+
+---
+
+### 1. The Core: The `app` Directory
+
+In the modern version, the heart of your application is the `app` folder. This is not just a place to store files; it is your router. Every file you create inside this folder automatically becomes a screen in your app.
+
+- **How it works:** If you create a file named `settings.tsx` inside the `app` folder, you automatically get a route usable via `/settings`. You do not need to manually register this screen in a configuration file.
+    
+- **The benefit:** It mimics how the web works (like Next.js). You can organize screens by simply organizing files.
+    
+
+> **💡 Legacy Comparison:**
+> 
+> In older versions (React Navigation), you had to manually import every screen component into a central `App.js` file and pass them into a `<Stack.Navigator>` or `<Tab.Navigator>`. If you forgot to register a screen, you couldn't navigate to it.
+
+---
+
+### 2. The Entry Point: `app/index.tsx`
+
+This is arguably the most important file to understand immediately. This file represents the **root screen** of your app—the first thing a user sees when they launch the application (correlating to the path `/`).
+
+- **Function:** It exports a standard React Native component (usually a functional component).
+    
+- **Usage:** You build your UI here using `<View>`, `<Text>`, and other components, just like any other component.
+    
+
+TypeScript
+
+```
+import { View, Text } from 'react-native';
+
+export default function HomeScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Welcome to the App!</Text>
+    </View>
+  );
+}
+```
+
+> **💡 Legacy Comparison:**
+> 
+> Historically, the entry point was a file named `App.js` located in the root directory. That file typically contained the entire logic for the app's setup, including providers and the root navigator. Now, `App.js` is gone; `app/index.tsx` is just the _content_ of the first page.
+
+---
+
+### 3. The Wrapper: `app/_layout.tsx`
+
+If `index.tsx` is the _content_, then `_layout.tsx` is the _frame_. This file is special because it wraps around your screens. It persists while you navigate between different screens.
+
+- **Role:** It defines the **Navigation UI** (like the header bar, tab bar, or a drawer) and global providers (like Theme Providers, Auth Providers, or Redux stores).
+    
+- **The `<Slot />` or `<Stack />`:** Inside this file, you will usually see a component exported from `expo-router` (like `<Stack />`). This component acts as a placeholder where your screens (like `index.tsx`) will be rendered.
+    
+
+Example of a Stack Layout (creates a native navigation stack with headers):
+
+TypeScript
+
+```
+import { Stack } from 'expo-router';
+
+export default function Layout() {
+  return (
+    <Stack>
+      {/* Configures the header for the index route */}
+      <Stack.Screen name="index" options={{ title: 'Home' }} />
+    </Stack>
+  );
+}
+```
+
+> **💡 Legacy Comparison:**
+> 
+> In the old version, this logic lived inside the `NavigationContainer` in `App.js`. You had to wrap your whole app in providers manually. In Expo Router, the `_layout` file handles this hierarchy automatically—anything in `_layout` applies to every screen inside that folder.
+
+---
+
+### 4. Navigation & Linking
+
+Since routes are files, navigating is done using URLs, even though it renders native views.
+
+- **The `<Link>` Component:** You use this to move between screens. It works similarly to an `<a>` tag in HTML.
+    
+- **Type Safety:** The latest Expo handles TypeScript automatically. If you try to link to `/profile` but the file `app/profile.tsx` does not exist, your editor will flag it as an error.
+    
+
+TypeScript
+
+```
+import { Link } from 'expo-router';
+
+// In your view
+<Link href="/settings">Go to Settings</Link>
+```
+
+> **💡 Legacy Comparison:**
+> 
+> Previously, you used a hook `const navigation = useNavigation();` and called functions like `navigation.navigate('Settings')`. While you can still use the imperative router object (`router.push('/settings')`), the declarative `<Link>` component is now the preferred standard for simple UI navigation.
+
+---
+
+### 5. Dynamic Routes (`[id].tsx`)
+
+Modern Expo handles "parameterized" screens (like a user profile `user/123`) using square brackets in filenames.
+
+- **How it works:** If you name a file `app/user/[id].tsx`, it will match any route like `/user/1` or `/user/abc`.
+    
+- **Accessing Data:** Inside that file, you use a hook `useLocalSearchParams()` to grab the `id` from the URL.
+    
+
+> **💡 Legacy Comparison:**
+> 
+> You used to have to define routes with generic parameters like `Stack.Screen name="User" component={User} initialParams={{ id: 42 }}`. You then extracted params via `route.params`. The new file-naming convention replaces that configuration entirely.
+
+---
+
+### 6. Configuration: `app.json`
+
+Located in the root (outside `app`), this file controls the "metadata" of your native app. This is where you configure things that aren't code, but _properties_ of the app bundle.
+
+- **Key Settings:**
+    
+    - **slug/name:** The internal name and display name of your app.
+        
+    - **splash:** Settings for the launch screen image.
+        
+    - **ios/android:** Specific build settings like bundle identifiers (`com.yourname.app`) and permissions.
+        
+
+> **💡 Legacy Comparison:**
+> 
+> This file has remained largely consistent. However, in the "Old Architecture" (bare React Native CLI), these settings were scattered across native files like `Info.plist` (iOS) and `AndroidManifest.xml` (Android). Expo abstracts these into this single JSON file.
+
+### Summary Checklist for the "New" Start
+
+1. **Open `app/_layout.tsx`** to see _how_ your app navigates (Stack, Tabs, or Drawer).
+    
+2. **Open `app/index.tsx`** to edit the first screen the user sees.
+    
+3. **Create a new file** in `app/` to create a new screen.
 
 # Components in ReactNative
 

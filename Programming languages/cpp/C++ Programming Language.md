@@ -69,6 +69,8 @@ There are a few starting features that are required to get started with a progra
 Now that all the basic stuff is covered, time to look at Pointers in C++.
 As C++ is just an extension of C, the logic and syntax of pointers here is same as that in [[Pointers and Working with Memory Allocation]].
 
+Now, lets have a look at [[Object Oriented Programming in C++]], this will only cover the syntax, so for the theory check out [[Object Oriented Programming]].
+
 # STL
 
 C++ STL (Standard Template Library) is a powerful library of pre-built, reusable template classes and functions that help you efficiently manage data and implement common algorithms without writing everything from scratch.
@@ -109,10 +111,11 @@ This sorts the vector without writing sorting logic yourself.
 ![[Data Structures in C++#2. STL (Standard Template Library) Containers]]
 
 
-# Containers in STL
+# [[Linked Lists in STL]]
+
 
 # Pair in STL
-`pair` in C++ STL is a simple container that stores two values together as a single unit. The values can be of different data types.[^1][^2]
+`pair` in C++ STL is a simple container that stores two values together as a single unit. The values can be of different data types.
 
 ## Basic Syntax
 
@@ -364,7 +367,7 @@ for(int i = 0; i < matrix.size(); i++) {
 
 # map in STL
 
-`map` in C++ STL is a container that stores data as **key-value pairs**, where each key is unique. It automatically keeps keys **sorted** and is implemented using a **Red-Black Tree** (balanced binary search tree).[^1][^2][^3]
+`map` in C++ STL is a container that stores data as **key-value pairs**, where each key is unique. It automatically keeps keys **sorted** and is implemented using a **Red-Black Tree** (balanced binary search tree).
 
 ## Basic Syntax
 
@@ -489,12 +492,12 @@ for (auto it = m.begin(); it != m.end(); it++) {
 
 ## Time Complexity (Integer/Char Keys)
 
-| Operation | Time Complexity |
-| :-- | :-- |
-| Insert | O(log n) [^1][^6] |
-| Access (`[]` or `at()`) | O(log n) [^7][^3] |
-| Find/Search | O(log n) [^8][^3] |
-| Erase | O(log n) [^1] |
+| Operation               | Time Complexity |
+| :---------------------- | :-------------- |
+| Insert                  | O(log n)        |
+| Access (`[]` or `at()`) | O(log n)        |
+| Find/Search             | O(log n)        |
+| Erase                   | O(log n)        |
 
 Where `n` = number of elements in the map.[^3]
 

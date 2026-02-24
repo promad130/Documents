@@ -52,7 +52,7 @@ All the respective things to be included in a struct has to be included at the t
 Hence if you try to do this and try to declare it's terms like:
 ```c
 A = {}; 
-Hi, this is a secret msg```
+```
 
 in **C**, it will cause a **compilation error** because this syntax is **not valid** for struct assignment.
 

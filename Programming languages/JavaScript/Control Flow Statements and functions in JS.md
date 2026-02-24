@@ -1,6 +1,6 @@
 **Expected to know:** [[Control Flow Statements]] [[Looping Statements]] [[Conditional Statements]] [[Functions]] [[Jump Statements]]
 **Topics Covered:** [[#Control Flow in JavaScript]] 
-**Tags:**  [[Control Flow Statements]], [[Looping Statements]], [[Conditional Statements]], [[Functions]], [[JavaScript]], [[Jump Statements]]
+**Tags:**  [[Control Flow Statements]], [[Looping Statements]], [[Conditional Statements]], [[Functions]], [[Introduction to JavaScript]], [[Jump Statements]]
 
 ![[Syntax of JS#Functions]]
 ## Control Flow in JavaScript

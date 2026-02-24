@@ -350,9 +350,7 @@ Let's see how this logic "catches" your $10 - 200$ scenario.
 In 8-bit, $10 - 200$ is treated as $10 + (-200)$.
 
 - Binary 10: `0000 1010`
-    
 - Binary -200: `0011 1000` (The "impossible" bit pattern)
-    
 
 **The Math at the MSB (Bit 7):**
 
@@ -1001,7 +999,9 @@ When you see instructions like `MOV reg, reg/mem` or `ADD reg/mem, reg`, mentall
 
 ---
 # Interrupts (INT)
+![[Pasted image 20260223083452.png]]
 
+## Introduction to Interrupts:
 ### Layer 1: Big Picture & Motivation (The "Busy Chef" Analogy)
 
 Imagine you are a master chef (the **CPU**) working in a busy kitchen. You have a cake baking in the oven that will take 30 minutes.
@@ -1072,26 +1072,18 @@ Let's visualize the **Interrupt Vector Table (IVT)**. In Real Mode (standard for
 
 ---
 
-### Layer 4: Step-by-Step Walkthrough (The Interrupt Cycle)
+### Layer 4: Step-by-Step Walkthrough (The Interrupt Cycle) OR EFFECT OF INTERRUPTS ON THE STACK (IMPORTANT)
 
 When an interrupt occurs (e.g., `INTR` pin goes high), the CPU doesn't just jump immediately. It follows a strict protocol to ensure it can return safely.
 
 1. **Finish Current Instruction:** The CPU completes the instruction currently moving through the pipeline.
-    
 2. **Push Flags:** It saves the current Status Register (Flags) onto the Stack so we don't lose the state of our math operations.
-    
 3. **Disable Interrupts:** It clears the **IF** (Interrupt Flag) and **TF** (Trap Flag). This prevents _another_ interrupt from interrupting us immediately (unless it's an NMI).
-    
 4. **Push Return Address:** It pushes the current **CS** (Code Segment) and **IP** (Instruction Pointer) onto the Stack. This marks our "bookmark" to return to.
-    
 5. **Fetch Vector:** It reads the IVT. It takes the interrupt number (say, type 5), multiplies it by 4 (5 $\times$ 4 = 20), and reads the address at memory location 20.
-    
 6. **Jump:** It loads that fetched address into CS and IP. The CPU is now executing the **ISR**.
-    
 7. **Execute ISR:** The handler code runs.
-    
 8. **Return:** The ISR ends with `IRET`. This pops IP, CS, and the Flags back off the stack, restoring the CPU to its exact previous state.
-    
 
 ---
 
@@ -1101,9 +1093,8 @@ Here is a simple example of how you might write a custom ISR and install it. We 
 
 **Scenario:** We want to run a custom procedure if a divide error occurs.
 
-Code snippet
+```Code snippet
 
-```
 ; ASSUME DS points to segment 0000h (IVT location)
 
 ; 1. Installation (Setup Phase)
@@ -1141,30 +1132,23 @@ My_Div_Handler ENDP
 **Key Observation:** Note that we used `IRET` at the end, not `RET`. `RET` only pops the address. `IRET` pops the address **AND** the flags. If you use `RET`, your system will crash because the flags are left stuck on the stack.
 
 ---
-
 ### Layer 6: Common Pitfalls & Debugging
-
 1. **Using `RET` instead of `IRET`**:
     
-    - _Symptom:_ The program crashes or behaves erratically upon returning from an interrupt.
-        
+	- _Symptom:_ The program crashes or behaves erratically upon returning from an interrupt.
     - _Fix:_ Always end an ISR with `IRET` (or `IRETD` for 32-bit protected mode).
-        
+    
 2. **Forgetting to Save Registers**:
     
-    - _Symptom:_ Your main program's variables mysteriously change value.
-        
+    - _Symptom:_ Your main program's variables mysteriously change value.    
     - _Fix:_ If your ISR uses `AX` or `BX`, you _must_ `PUSH` them at the start and `POP` them at the end. The main program doesn't know the ISR ran, so it expects registers to stay untouched.
-        
-3. **Blocking Interrupts for Too Long**:
     
-    - _Symptom:_ The system feels "sluggish" or misses keystrokes.
-        
+3. **Blocking Interrupts for Too Long**:
+	
+	- _Symptom:_ The system feels "sluggish" or misses keystrokes.
     - _Fix:_ Keep your ISRs short and fast. Do the minimum work needed and return. If you stay in an ISR too long with interrupts disabled, you miss other critical events.
-        
 
 ---
-
 ### `IRET` and `IRETD` Commands
 #### Layer 1: The "Time Machine" Analogy
 
@@ -1172,18 +1156,14 @@ Imagine you are playing a video game (the Main Program). Suddenly, the phone rin
 
 When you finish the call, you don't just want to unpause the game. You need to make sure:
 
-1. You are at the exact same pixel (Location).
-    
+1. You are at the exact same pixel (Location).    
 2. Your health, ammo, and score are exactly the same as before (State).
-    
 
 - **`RET` (Standard Return):** Puts you back at the location, but your "health/ammo" (Flags) might be corrupted by whatever happened during the phone call.
     
 - **`IRET` (Interrupt Return):** A time machine that restores **Location + State**.
 
-
 #### Layer 2: The Definition (`IRET` vs `IRETD`)
-
 Just like we have Real Mode (16-bit) and Protected Mode (32-bit), we have two versions of this instruction.
 
 |**Instruction**|**Full Name**|**Mode**|**Register Width**|
@@ -1195,34 +1175,25 @@ Just like we have Real Mode (16-bit) and Protected Mode (32-bit), we have two ve
 
 
 #### Layer 3: The Stack Mechanics (Visualizing the Pop)
-
 When you execute `IRET`, the CPU performs three distinct "Pop" operations from the stack hardware.
 
 **The Sequence (16-bit `IRET`):**
 
 1. **Pop IP (Instruction Pointer):** Restores the "Offset" of the next instruction.
-    
 2. **Pop CS (Code Segment):** Restores the "Segment" of the next instruction.
-    
     - _Together, CS:IP tells the CPU exactly where it was in the code._
-        
 3. **Pop FLAGS:** Restores the Status Register (Zero Flag, Carry Flag, Interrupt Flag, etc.).
-    
 
 **The Sequence (32-bit `IRETD`):**
 
 It does the exact same thing, but it pops the extended 32-bit versions: `EIP` and `EFLAGS`.
 
-
 #### Layer 4: The "Manual" Equivalent
-
 Your slides offer a fascinating insight: You could _theoretically_ simulate an `IRET` using two other instructions.
 
 Since `IRET` restores flags and then returns far, it is logically equivalent to:
 
-Code snippet
-
-```
+```Code snippet
 ; The Manual Way (Do not actually do this in an ISR!)
 POPF        ; Pop the top of stack into the Flags register
 RETF        ; Return Far (Pop IP, then Pop CS)
@@ -1231,7 +1202,6 @@ RETF        ; Return Far (Pop IP, then Pop CS)
 **Why don't we use this manual method?**
 
 Because interrupts are asynchronous. If an NMI (Non-Maskable Interrupt) hits _between_ the `POPF` and the `RETF`, your system state could be corrupted. `IRET` does it all atomically (in one unbreakable step).
-
 
 ### Check for Understanding
 
@@ -1245,25 +1215,190 @@ Interrupts are hardware or software signals that pause the main program to handl
 
 **Quick Quiz:**
 
-1. What is the difference between `INTR` and `NMI`?
-    
+1. What is the difference between `INTR` and `NMI`?    
 2. If I trigger **INT 5**, at which memory address does the CPU look for the vector? (Hint: Multiply by 4).
-    
 3. Why does the CPU automatically clear the Interrupt Flag (IF) when an interrupt starts?
-    
 4. If you accidentally write a normal `RET` at the end of your Interrupt Service Routine instead of `IRET`, what specific register remains "stuck" on the stack, eventually causing a stack overflow crash?
 
 **Answers:**
 
 1. `INTR` can be masked (ignored) by software (using CLI); `NMI` (Non-Maskable Interrupt) cannot be ignored.
-    
 2. Address `00014H` (5 $\times$ 4 = 20, which is 14 in Hex).
-    
 3. To prevent a new interrupt from interrupting the current one immediately, which could cause a stack overflow if they happen too fast.
-	
 4. _(Hint: `RET` pops 4 bytes (CS+IP). `IRET` pops 6 bytes (CS+IP+Flags). What was left behind?)_
+
+---
+## What does an Input Interrupt takes in as a value?
+
+To clear up the biggest misconception right away: **the keyboard does not send ASCII or Unicode to the computer.** The conversion to those standard codes happens _after_ the interrupt, entirely in software.
+
+When you press a key, the hardware deals purely in physical locations, not letters. Here is the exact step-by-step journey of a keystroke, from the moment your finger pushes down to the moment a letter appears on your screen.
+
+### 1. The Hardware Trigger: Scancodes
+
+When you press a key, an electrical circuit closes on the keyboard's internal matrix. A tiny microcontroller inside the keyboard detects this specific coordinate and generates a raw, hardware-specific number called a **Scancode** (specifically, a "Make Code"). When you release the key, it sends a "Break Code."
+
+For example, pressing the 'A' key might send a scancode of `0x1E`. The keyboard has no idea what 'A' is; it just knows "the key in the second row, first column was pressed."
+
+### 2. The Hardware Interrupt
+
+The keyboard sends this scancode to the computer's motherboard (via USB or historically, a PS/2 controller).
+
+1. The motherboard's I/O controller receives the scancode and immediately signals the computer's Programmable Interrupt Controller (PIC).
+    
+2. The PIC sends a hardware **Interrupt Request (IRQ)** directly to the CPU.
+    
+3. The CPU immediately halts whatever program it is currently running. To ensure it doesn't lose its place, it pushes its current state (the Instruction Pointer, Code Segment, and Status Flags) onto the stack.
+    
+4. The CPU then consults the **Interrupt Vector Table (IVT)** to find the memory address of the specific piece of code meant to handle keyboard inputs, known as the Interrupt Service Routine (ISR) or keyboard driver.
+    
+
+### 3. The Software Translation (Where ASCII comes in)
+
+Now that the CPU has jumped into the OS's keyboard driver, the software takes over.
+
+1. The driver reads the raw scancode from a specific hardware I/O port.
+    
+2. The driver looks at the current state of modifier keys (is Shift held down? Is Caps Lock on?).
+    
+3. The driver uses a lookup table based on your configured keyboard layout (US QWERTY, Dvorak, French AZERTY, etc.).
+    
+4. **The Translation:** The driver maps that physical scancode (`0x1E`) into a standardized digital encoding. If no modifiers are pressed, `0x1E` becomes the ASCII value `97` (lowercase 'a'). If Shift is held, it becomes ASCII `65` (uppercase 'A').
+    
+
+The OS then takes that ASCII/Unicode value and puts it into an input buffer for your current active application (like a text editor or a game) to read.
+
 ---
 
+### Why ASCII and Not Other Standards?
+
+Early computers couldn't talk to each other because every manufacturer used their own arbitrary binary codes for letters. A standardized character encoding was desperately needed. Here is how the standard codes evolved:
+
+#### 1. Baudot Code (The Predecessor)
+
+Invented in the 1870s for telegraphs, this was a 5-bit code. 5 bits only gives you 32 possible combinations ($2^5 = 32$). Because the English alphabet has 26 letters, there wasn't enough room for numbers and punctuation. They had to use special "shift" characters to toggle the machine between "letter mode" and "number mode." It was highly inefficient for computing.
+
+#### 2. EBCDIC (The Rival)
+
+Created by IBM for its massive mainframes in the 1960s, EBCDIC (Extended Binary Coded Decimal Interchange Code) was an 8-bit standard. However, it was famously frustrating for programmers. The letters weren't entirely sequential! The binary values for A through I were sequential, but then there was a gap before J through R. Sorting data alphabetically in EBCDIC required complex workarounds.
+
+#### 3. ASCII (The Victor)
+
+ASCII (American Standard Code for Information Interchange) was developed in the 1960s alongside EBCDIC but was largely based on teleprinter standards. It was a 7-bit code ($2^7 = 128$ characters), which perfectly fit the English alphabet (upper and lower case), numbers 0-9, punctuation, and control characters (like "Carriage Return" or "Escape").
+
+ASCII won the standard war because:
+
+- **Sequential Logic:** Letters were perfectly sequential. 'A' is 65, 'B' is 66, 'C' is 67. If you wanted to check if a character was a capital letter in code, you just had to check if its value was between 65 and 90.
+    
+- **Case Toggling:** The difference between an uppercase letter and its lowercase counterpart was exactly one bit. (e.g., 'A' is binary `01000001`, 'a' is `01100001`). This made writing compilers and string manipulation incredibly fast on early hardware.
+    
+
+#### 4. Unicode (The Modern Standard)
+
+As computers went global, ASCII's 128 characters weren't enough to handle Russian Cyrillic, Chinese Kanji, Arabic, or emojis. Unicode (specifically UTF-8 encoding) was introduced to solve this. UTF-8 is brilliant because it is perfectly backwards-compatible with ASCII. The first 128 characters of Unicode are identical to the 128 characters of ASCII, but Unicode can dynamically expand up to 4 bytes to represent over a million different characters.
+
+***(Cover [[Introduction to assembly#Interrupts]])***
+
+# A Few Examples
+
+## Taking in the Character Input and storing it into AL:
+We use AH = 01H with INT 21H, and it stores the value in AL
+
+### subtract from the ASCII
+```code 
+MOV AH, 01H
+INT 21H
+; we now have the ASCII of input in AL
+SUB AL, 30H ; convert to numerical value
+```
+
+### subtract '0'
+```code
+MOV AH, 01H
+INT 21H
+
+SUB AL, '0'
+```
+
+### Mask the Lower BITS
+```code
+MOV AH, 01H
+INT 21H
+AND AL, 0FH
+```
+```TEXT
+E.g.
+'7' = 37H
+37H AND 0FH = 07
+Fast method, Input has to be a digit
+```
+
+### Multi-Digit Input in ASCII
+```code
+.model small
+.stack 100h
+
+.data
+    prompt db "Enter a number: $"
+    
+    ; --- THE BUFFER STRUCTURE ---
+    buffer_max db 6         ; Max 5 digits + 1 for Carriage Return (max 16-bit int is 65535)
+    buffer_len db ?         ; DOS will write the actual typed length here
+    buffer_str db 6 dup(?)  ; The actual string of ASCII chars goes here
+
+    result dw 0             ; Variable to store our final converted integer
+
+.code
+main proc
+    ; Initialize Data Segment
+    mov ax, @data
+    mov ds, ax
+
+    ; --- 1. PROMPT THE USER ---
+    lea dx, prompt          ; Load Effective Address of prompt
+    mov ah, 09h             ; DOS function: Print String
+    int 21h                 ; Call DOS interrupt
+
+    ; --- 2. TAKE STRING INPUT ---
+    lea dx, buffer_max      ; DX must point to the FIRST byte of the buffer structure
+    mov ah, 0Ah             ; DOS function: Buffered Input
+    int 21h                 ; Call DOS interrupt
+
+    ; --- 3. CONVERT ASCII TO INTEGER ---
+    lea si, buffer_str      ; Point Source Index (SI) to the actual ASCII characters
+    mov cl, buffer_len      ; Load the actual length into CL for our loop counter
+    mov ch, 0               ; Clear CH so CX is exactly the string length
+    
+    mov ax, 0               ; AX will be our Running Total (start at 0)
+    mov bx, 10              ; BX is our multiplier (10)
+
+convert_loop:
+    ; Multiply current running total (AX) by 10
+    mul bx                  ; AX = AX * 10
+
+    ; Get the next ASCII character from the buffer
+    mov dl, [si]            ; Read 1 byte from memory at address SI
+    sub dl, '0'             ; Subtract ASCII 48 to get the real numeric value
+    mov dh, 0               ; Clear DH so DX just contains our single digit (0-9)
+    
+    ; Add the new digit to the running total
+    add ax, dx              ; AX = (AX * 10) + new_digit
+
+    ; Move to the next character in the buffer
+    inc si                  ; Move pointer forward by 1 byte
+    
+    ; Loop handles CX decrement and jump
+    loop convert_loop       ; Decrement CX. If CX != 0, jump back to convert_loop
+
+    ; --- 4. STORE THE RESULT ---
+    mov result, ax          ; Store the final integer from AX into memory
+
+    ; Exit Program cleanly
+    mov ah, 4Ch
+    int 21h
+main endp
+end main
+``` 
 
 # Real Mode vs. Protected Mode
 They are the modes in which the CPU works in the x86 computer architecture.
@@ -1341,6 +1476,8 @@ You might ask: _"If Real Mode is so old and unsafe, why do we still learn it?"_
 3. **Switch:** The Operating System (Windows/Linux) executes a special instruction to **switch** the CPU into Protected Mode to unlock the full power and memory.
 
 
-## File Operations using `INT24H`:
+# File Operations using `INT24H`:
 ![[Introduction to assembly#File Operations in using `INT24`]]
 
+# Some important interrupts:
+[[Introduction to assembly#`INT24H` Command]]

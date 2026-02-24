@@ -250,3 +250,113 @@ const person = new Person();
 console.log(person.greet()); // Hello my name is Default Name
 
 ```
+
+
+# Interfaces in JS
+In JavaScript, the concept of **Interfaces** is a bit of a "good news/bad news" situation.
+
+The "bad news" is that **JavaScript (Vanilla JS) does not have a formal `interface` keyword.** Unlike Java or C#, JavaScript is a dynamically typed language, so it doesn't natively enforce structure at compile time.
+
+The "good news" is that we achieve the same goal using **TypeScript** or **Object Composition**.
+
+---
+
+## 1. The Modern Standard: TypeScript Interfaces
+
+If you are working on a professional project, you are likely using TypeScript. Here, interfaces are a first-class citizen. They define the "shape" an object must have.
+
+### Syntax
+
+TypeScript
+
+```
+interface User {
+  readonly id: number;      // Cannot be changed after creation
+  name: string;
+  email: string;
+  age?: number;             // Optional property
+  greet(): string;          // Method signature
+}
+
+const person: User = {
+  id: 1,
+  name: "Alex",
+  email: "alex@example.com",
+  greet() {
+    return `Hello, I'm ${this.name}`;
+  }
+};
+```
+
+### Key Features
+
+- **Duck Typing:** If it looks like a duck and quacks like a duck, it’s a duck. If an object matches the interface's structure, TypeScript is happy.
+    
+- **Extending:** You can build interfaces on top of each other.
+    
+    TypeScript
+    
+    ```
+    interface Admin extends User {
+      role: 'superadmin' | 'editor';
+    }
+    ```
+    
+
+---
+
+## 2. Vanilla JavaScript: The "Pattern" Approach
+
+Since JS doesn't have an `interface` keyword, we use **Class Inheritance** or **Documentation** to mimic the behavior.
+
+### The Abstract Class Pattern
+
+You can create a "Base" class that throws errors if a method isn't implemented. This forces a developer to "implement" the interface in the subclass.
+
+JavaScript
+
+```
+class ShapeInterface {
+  constructor() {
+    if (this.constructor === ShapeInterface) {
+      throw new Error("Object of Abstract Class cannot be created");
+    }
+  }
+
+  getArea() {
+    throw new Error("Method 'getArea()' must be implemented.");
+  }
+}
+
+class Circle extends ShapeInterface {
+  constructor(radius) {
+    super();
+    this.radius = radius;
+  }
+
+  getArea() {
+    return Math.PI * this.radius ** 2;
+  }
+}
+```
+
+---
+
+## 3. Important Concepts to Remember
+
+|**Concept**|**Description**|
+|---|---|
+|**Contract**|An interface is a contract. It doesn't tell you _how_ to do something; it just says _what_ must be there.|
+|**Zero Runtime Cost**|In TypeScript, interfaces are completely removed during transpilation. They don't bloat your final JS file.|
+|**Structural Typing**|Unlike Java, you don't always have to say `implements InterfaceName`. If the object has the required properties, it passes.|
+
+---
+
+## Summary
+
+- **Vanilla JS:** Use classes and throw errors for missing methods.
+    
+- **TypeScript:** Use the `interface` keyword for robust, type-safe code.
+    
+- **Purpose:** To ensure different parts of your code can communicate reliably by agreeing on a specific data structure.
+    

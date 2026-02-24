@@ -88,7 +88,10 @@ Lets start with [[Syntax of JS]].
 [[Control Flow Statements and functions in JS]] 
 [[Data Structures in JS]] 
 And with those basic elements, lets have a look at [[Ways to Iterate over Array in JS]].
-[[Object Oriented Programming in JS]]
+
+What is TypeScript?
+
+[[Object Oriented Programming in JS (Including TypeScript)]]
 (Add how js was initiallity ran on browsers, and introduce modules and stuff)
 You might be wondering that where is all these things done? Is it in the browser or the tab or what?
 Well, there is something called Window Object, which is like the ultimate boss:

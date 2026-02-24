@@ -359,7 +359,7 @@ int main()
 So here, the pointer of the struct is passed, so instead of copying stuff, we just make a pointer which takes up much less space as the space of the pointer is same, i.e., 8 bytes, and then we can use dereference operator in the function!!!
 
 ---
-# Arrow Operator;
+# Arrow Operator
 
 So, for a pointer variable that is pointing that has members, we can use this variable.
 For example, a struct has variables that we can access using the dot (.) operator, but when we have a pointer to a struct, first we  need to access it using dereference and then we can use the members!

@@ -1422,16 +1422,59 @@ Microprocessors naturally perform binary or hex arithmetic. However, when a user
 
 The **Auxiliary Carry Flag (AF)** is crucial for ASCII and BCD arithmetic.
 
-- **Definition:** The AF is set if there is a **borrow or carry from bit 3 to bit 4** (the low nibble to the high nibble) during an 8-bit arithmetic operation.
-    
+- **Definition:** The AF is set if there is a **borrow or carry from bit 3(i.e., 0, 1, 2, 3, 4, 5, 6, 7, with 0 is LSB and 7 is MSB) to bit 4** (the low *nibble* to the high *nibble*) during an 8-bit arithmetic operation.
 - **Role:** The ASCII adjust instructions (like AAA) check the AF to decide if a decimal adjustment is necessary (e.g., if the result of an addition in the low nibble exceeded 9).
-    
 
 ---
 
 ### 3. ASCII Adjust Instructions
 
-These instructions specifically adjust the **AL** register (and sometimes **AH**) to ensure the result represents a valid decimal value.
+#### Layer 1: The "Jacket" Analogy (Big Picture)
+
+Think of the `0x30` (the hex value that turns a raw number into a printable character) as a **Jacket**.
+
+- The number `5` is the pure human body.
+    
+- The ASCII character `'5'` (`0x35`) is the human wearing a heavy winter jacket (`0x30`).
+    
+
+Your summary implied we do math while they are still wearing the jackets. But if you try to wrestle (do math) while wearing heavy winter jackets, things get clumsy.
+
+#### Layer 2: The Secret Middle Step (Unpacked BCD)
+
+The CPU's ASCII instructions don't actually output fully jacketed ASCII characters. They output an intermediate format called **Unpacked BCD** (Binary Coded Decimal).
+
+- **Raw ASCII:** `0x35` (Jacket ON - ready for the screen)
+    
+- **Unpacked BCD:** `0x05` (Jacket OFF - ready for the ISA adjusters)
+    
+
+**Here is the exact truth:**
+
+1. If you add two raw ASCII characters (`0x35` + `0x34`), you get `0x69`.
+    
+2. If you call `AAA` on `0x69`, the hardware looks at the lower part (the 9), says "this is valid," and **forces the upper part to zero**.
+    
+3. The result in `AL` becomes `0x09` (Unpacked BCD).
+    
+4. _Notice what happened!_ The CPU ripped the jacket off! It is no longer `0x39` (ASCII). It is just `0x09`.
+    
+
+Therefore, even when you use the magical ISA ASCII adjusters, **you still have to manually add `0x30` back at the very end to put the jacket back on before giving it to the OS to print!**
+
+---
+
+#### Syntax Definition Reminder
+
+Let's quickly define the data type we just discovered, as it's heavily referenced in the Intel manual:
+
+**Unpacked BCD (Binary Coded Decimal)**
+
+- **Definition:** A 1-byte value where only the lower 4 bits (the lower nibble) contain a valid decimal digit (0-9). The upper 4 bits MUST be zero.
+    
+- **Example:** `0x07` is valid Unpacked BCD. `0x37` is ASCII. `0x0A` is invalid BCD (because A is 10).
+    
+- **Rule:** All ASCII Adjust instructions (`AAA`, `AAS`, `AAM`, `AAD`) are specifically designed to convert between pure binary and **Unpacked BCD**, _not_ final printable ASCII.
 
 #### AAA: ASCII Adjust after Addition
 
@@ -1440,11 +1483,8 @@ These instructions specifically adjust the **AL** register (and sometimes **AH**
 1. **Check:** If the low nibble of **AL > 9** OR **AF = 1**:
     
     - Increment **AL** by 6.
-        
     - Increment **AH** by 1.
-        
     - Set **AF** and **CF** (Carry Flag) to 1.
-        
 2. **Always:** Clears the high nibble of **AL**.
 
 Now here, setting AF to 1 seems like a scam but we are just doing what AF exists to do, i.e., tell whenever there has been a carry from bit 3 to 4, which there has been in case of our BCD addition 
@@ -1501,7 +1541,6 @@ Now here, setting AF to 1 seems like a scam but we are just doing what AF exists
 **What it does:** Prepared two unpacked BCD digits in **AH** and **AL** for a division.
 
 - **Process:** It multiplies **AH** by 10 and adds it to **AL**, then clears **AH**. This turns the two BCD digits into a single binary/hex value that the `DIV` instruction can process correctly.
-    
 
 ---
 

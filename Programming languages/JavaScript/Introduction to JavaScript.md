@@ -100,6 +100,8 @@ Well, there is something called Window Object, which is like the ultimate boss:
 
 Good, now with all that, lets move onto [[Asynchronous JS]] 
 
+Now Take a look into [[Introduction to TypeScript]]
+
 ---
 # npm, a JS package Manager
 ***(pre-requisite: need to know basics of [[Bash]])***

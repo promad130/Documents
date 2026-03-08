@@ -267,9 +267,9 @@ This is arguably the most important file to understand immediately. This file re
 - **Usage:** You build your UI here using `<View>`, `<Text>`, and other components, just like any other component.
     
 
-TypeScript
 
-```
+```TypeScript
+
 import { View, Text } from 'react-native';
 
 export default function HomeScreen() {
@@ -298,9 +298,8 @@ If `index.tsx` is the _content_, then `_layout.tsx` is the _frame_. This file is
 
 Example of a Stack Layout (creates a native navigation stack with headers):
 
-TypeScript
 
-```
+```TypeScript
 import { Stack } from 'expo-router';
 
 export default function Layout() {
@@ -320,17 +319,14 @@ export default function Layout() {
 ---
 
 ### 4. Navigation & Linking
-
 Since routes are files, navigating is done using URLs, even though it renders native views.
 
 - **The `<Link>` Component:** You use this to move between screens. It works similarly to an `<a>` tag in HTML.
-    
 - **Type Safety:** The latest Expo handles TypeScript automatically. If you try to link to `/profile` but the file `app/profile.tsx` does not exist, your editor will flag it as an error.
     
 
-TypeScript
 
-```
+```TypeScript
 import { Link } from 'expo-router';
 
 // In your view
@@ -378,9 +374,7 @@ Located in the root (outside `app`), this file controls the "metadata" of your n
 ### Summary Checklist for the "New" Start
 
 1. **Open `app/_layout.tsx`** to see _how_ your app navigates (Stack, Tabs, or Drawer).
-    
 2. **Open `app/index.tsx`** to edit the first screen the user sees.
-    
 3. **Create a new file** in `app/` to create a new screen.
 
 # Components in ReactNative
@@ -509,7 +503,7 @@ When you write this:
 ```
 
 ```
-React automatically passes `<Text>Hello World</Text>` to the `Card` component as `props.children`.[^5][^7]
+React automatically passes `<Text>Hello World</Text>` to the `Card` component as `props.children`.
 ```
 
 
@@ -1068,6 +1062,85 @@ The `Input` component inherits all standard `TextInput` props, so you can use an
 
 # Navigation in React Native
 
+## Introduction using `useRouter`:
+### The Basics of Routing
+
+Routing is how your app handles navigating from one screen to another. In mobile development, routing relies on a **stack architecture** (think of a stack of physical cards).
+
+- **Push:** When you navigate to a new screen, you "push" a new card onto the top of the stack.
+    
+- **Pop (Back):** When you press the back button, you "pop" the top card off, revealing the screen underneath.
+    
+- **Deep Linking:** Routing also handles mapping standard URLs (like `myapp://profile/123`) to specific screens in your app.
+    
+
+---
+
+### Context: `useRouter` vs `useNavigation`
+
+To be absolutely clear: the `useRouter` hook is specific to **Expo Router** (the file-based routing system for React Native, similar to Next.js). If you are using vanilla React Navigation without Expo Router, the equivalent hook is `useNavigation`.
+
+Assuming you are using Expo Router, here is how `useRouter` works.
+
+---
+
+### `useRouter` API & Common Methods
+
+First, import and initialize the hook inside your component:
+
+JavaScript
+
+```
+import { useRouter } from 'expo-router';
+
+export default function MyScreen() {
+  const router = useRouter();
+  // ...
+}
+```
+
+Here are the essential methods you need to know:
+
+- **`router.push(href)`**
+    
+    - **What it does:** Pushes a new route onto the navigation stack.
+        
+    - **When to use it:** Standard navigation where you want the user to be able to swipe back or press the back button to return to the current screen.
+        
+    - **Example:** `router.push('/profile/123')`
+        
+- **`router.replace(href)`**
+    
+    - **What it does:** Replaces the current route in the navigation stack with a new one.
+        
+    - **When to use it:** When you _don't_ want the user to go back to the previous screen. The classic example is replacing a "Login" screen with the "Home" screen after a successful login.
+        
+    - **Example:** `router.replace('/home')`
+        
+- **`router.back()`**
+    
+    - **What it does:** Pops the current screen off the stack, navigating to the previous screen.
+        
+    - **When to use it:** Custom back buttons or closing modals. If there is no history to go back to, it does nothing.
+        
+    - **Example:** `router.back()`
+        
+- **`router.navigate(href)`**
+    
+    - **What it does:** Routes to the specified screen. If the screen is already in the navigation hierarchy, it may jump to that existing screen rather than pushing a duplicate onto the stack (depending on your layout setup).
+        
+    - **When to use it:** General navigation, especially when dealing with tabs or drawers where you want to switch contexts rather than stack screens endlessly.
+        
+    - **Example:** `router.navigate('/settings')`
+        
+- **`router.setParams(params)`**
+    
+    - **What it does:** Updates the URL parameters for the currently active route without triggering a full screen change.
+        
+    - **When to use it:** Filtering lists, updating a search query, or changing a localized state that you want reflected in the URL/deep link.
+        
+    - **Example:** `router.setParams({ sort: 'descending' })`
+
 ## Navigation in React Native
 
 React Native uses **React Navigation** library—there's no built-in navigation. There are **3 main navigation types**: Stack, Tab, and Drawer.
@@ -1123,7 +1196,7 @@ navigation.popToTop()           // Go to first screen
 
 ## 2. [[Tab Navigation in ReactNative]]
 
-Tabs at bottom of screen. Each tab is a different section.[^4][^2]
+Tabs at bottom of screen. Each tab is a different section/stack.
 
 **Install:**
 
@@ -1155,7 +1228,7 @@ Users tap tabs to switch between screens. Like Instagram or Twitter bottom navig
 
 ## 3. Drawer Navigation
 
-Slide-out menu from the side. Opens with hamburger icon or swipe.[^5][^1]
+Slide-out menu from the side. Opens with hamburger icon or swipe.
 
 **Install:**
 
@@ -1196,7 +1269,7 @@ navigation.toggleDrawer() // Toggle open/close
 
 ## Combining Navigators
 
-Real apps combine these. Common pattern: Drawer contains Tab navigator, each tab has Stack navigator.[^6][^1]
+Real apps combine these. Common pattern: Drawer contains Tab navigator, each tab has Stack navigator.
 
 **Example:**
 
@@ -1250,6 +1323,7 @@ function App() {
 
 This gives you: drawer menu, bottom tabs, and each tab has multiple screens.[^1][^6]
 
+## ![[New Navigation System in Expo React Native]]
 
 # Button in React Native
 
@@ -1413,25 +1487,14 @@ The library hasn't been updated in 5 years - last published version is 0.2.1. Th
 
 Ionicons are icon sets you can use in React Native through the `react-native-vector-icons` library. They're scalable vector icons that look sharp on any screen size.[^9][^10][^11]
 
-## Installation
-
-```bash
-npm install react-native-vector-icons
-```
-
-For iOS, run:
-
-```bash
-npx pod-install
-```
-
+## installation
 
 ## Basic Usage
 
 ```javascript
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from "@expo/vector-icons";
 
-<Icon name="home" size={30} color="#900" />
+<Ionicons name="home-outline" size={size} color={color} />
 ```
 
 
@@ -1495,7 +1558,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 - `lock-closed` - Lock/secure
 - `lock-open` - Unlocked
 
-You can browse all icons at https://ionic.io/ionicons.[^4]
+You can browse all icons at https://ionic.io/ionicons
 
 ## Common Props
 
@@ -1649,6 +1712,12 @@ The function runs after every render by default, i.e,
 The dependency array controls when it runs: 
 	empty array `[]` means it runs once on mount, specific values mean it runs when those values change.
 
+| **Scenario**          | **Syntax**                                | **When it runs**                                       |
+| --------------------- | ----------------------------------------- | ------------------------------------------------------ |
+| **No Array**          | `useEffect(() => { ... })`                | After **every** render and re-render.                  |
+| **Empty Array**       | `useEffect(() => { ... }, [])`            | Only **once**, after the initial mount.                |
+| **With Dependencies** | `useEffect(() => { ... }, [prop, state])` | On mount, and **only when** `prop` or `state` changes. |
+
 ### Example
 
 ```javascript
@@ -1711,3 +1780,302 @@ The `ThemeContext.Provider` wraps components that need access to the context, an
 
 `View` is the actual data that the passed as context.
 
+
+# AppWrite with React Native
+
+Appwrite is a complete backend-as-a-service (BaaS) that provides APIs for authentication, databases, storage, and serverless functions. When paired with React Native, it allows you to build cross-platform mobile apps rapidly without writing backend code.
+
+## 1. High-Level Architecture
+
+Before diving into code, it's important to understand how the pieces fit together. Your React Native app acts as the **Client**, making HTTP or WebSocket requests to the **Appwrite Server** (which can be hosted on Appwrite Cloud or self-hosted).
+
+```
+graph TD
+    A[React Native App] -->|REST / GraphQL| B(Appwrite Client SDK)
+    B -->|Auth API| C[User Sessions & OAuth]
+    B -->|Database API| D[JSON Documents]
+    B -->|Storage API| E[Images, Videos, Files]
+    B -->|WebSocket| F[Realtime Subscriptions]
+```
+
+## 2. Installation & Prerequisites
+
+To use Appwrite in a React Native (or Expo) environment, you need the official SDK and a URL polyfill. The polyfill is required because React Native's core Javascript engine lacks the standard browser `URL` API that Appwrite's internal networking relies on.
+
+```
+# Using npm
+npm install react-native-appwrite react-native-url-polyfill
+
+# Using Expo
+npx expo install react-native-appwrite react-native-url-polyfill
+```
+
+## 3. The Central Configuration File
+
+**Best Practice:** Never scatter Appwrite initialization across your app. Create a single `appwrite.js` (or `appwrite.ts`) file inside a `lib/` or `services/` folder. This ensures only **one instance** of the client is created.
+
+**`lib/appwrite.js`**
+```tsx
+import 'react-native-url-polyfill/auto'; // MUST be at the very top!
+import { Client, Account, Databases, Storage, ID, Query } from 'react-native-appwrite';
+
+// 1. Define your configuration constants
+export const appwriteConfig = {
+    endpoint: '[https://cloud.appwrite.io/v1](https://cloud.appwrite.io/v1)',
+    projectId: 'YOUR_PROJECT_ID',
+    platform: 'com.yourcompany.yourapp', // e.g., your Android package name
+    databaseId: 'YOUR_DATABASE_ID',
+    userCollectionId: 'YOUR_USERS_COLLECTION_ID',
+    storageId: 'YOUR_STORAGE_BUCKET_ID'
+};
+
+// 2. Initialize the Client
+const client = new Client();
+
+client
+    .setEndpoint(appwriteConfig.endpoint)
+    .setProject(appwriteConfig.projectId)
+    .setPlatform(appwriteConfig.platform);
+
+// 3. Initialize the Services
+export const account = new Account(client);
+export const databases = new Databases(client);
+export const storage = new Storage(client);
+
+// Export utilities for easy access
+export { ID, Query, client };
+```
+
+## 4. Authentication (Accounts)
+
+Appwrite handles secure password hashing, session management, and cookies/tokens automatically.
+
+### Sign Up (Register)
+
+To create a new user, you use `account.create()`. You must provide a unique ID (Appwrite provides a helper for this), email, and password.
+
+```tsx
+import { account, ID } from '../lib/appwrite';
+
+const registerUser = async (email, password, name) => {
+    try {
+        // ID.unique() generates a random 20-character string
+        const newAccount = await account.create(ID.unique(), email, password, name);
+        console.log('User registered!', newAccount);
+        
+        // Best practice: Log them in immediately after creating the account
+        await loginUser(email, password); 
+    } catch (error) {
+        console.error('Registration Failed:', error.message);
+    }
+};
+```
+
+### Sign In (Login) & Sign Out
+
+Logging in creates a secure session. In React Native, this session token is securely stored on the device automatically by the SDK.
+
+```tsx
+// Login
+const loginUser = async (email, password) => {
+    try {
+        const session = await account.createEmailPasswordSession(email, password);
+        console.log('Session created:', session);
+    } catch (error) {
+        console.error('Login Failed:', error.message);
+    }
+};
+
+// Get Current Logged-In User
+const getCurrentUser = async () => {
+    try {
+        const currentAccount = await account.get();
+        return currentAccount;
+    } catch (error) {
+        // If no session exists, this will throw an error
+        return null; 
+    }
+};
+
+// Logout
+const logoutUser = async () => {
+    try {
+        // 'current' deletes the session for the device currently making the request
+        await account.deleteSession('current'); 
+    } catch (error) {
+        console.error('Logout Failed:', error);
+    }
+};
+```
+
+## 5. Databases (CRUD Operations)
+
+Appwrite's Database structure is: **Database -> Collection -> Document**.
+
+Collections are like tables, and Documents are like rows (stored as JSON).
+
+### Creating a Document
+
+When you save data, you point it to a specific Database and Collection.
+
+```tsx
+import { databases, appwriteConfig, ID } from '../lib/appwrite';
+
+const createPost = async (title, content, authorId) => {
+    try {
+        const newPost = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            ID.unique(), // Auto-generate document ID
+            {
+                title: title,
+                content: content,
+                author: authorId,
+                createdAt: new Date().toISOString()
+            }
+        );
+        return newPost;
+    } catch (error) {
+        console.error('Failed to create post:', error);
+    }
+};
+```
+
+### Querying Documents (Filtering, Sorting, Pagination)
+
+Appwrite uses the `Query` class to filter results. You pass an array of Queries to the `listDocuments` method.
+
+```tsx
+import { databases, appwriteConfig, Query } from '../lib/appwrite';
+
+const getRecentActivePosts = async () => {
+    try {
+        const posts = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            [
+                Query.equal('status', 'active'),    // Filter: status == 'active'
+                Query.orderDesc('createdAt'),       // Sort: newest first
+                Query.limit(10),                    // Pagination: get only 10 items
+                Query.offset(0)                     // Pagination: start from beginning
+            ]
+        );
+        return posts.documents; // Returns an array of your data
+    } catch (error) {
+        console.error('Query failed:', error);
+    }
+};
+```
+
+## 6. Storage (File Uploads)
+
+Uploading files from React Native requires a slightly specific format because mobile operating systems handle files differently than web browsers.
+
+### Uploading an Image
+
+If you use a library like `expo-image-picker`, you get a URI. You must format this into an object Appwrite can understand.
+
+```tsx
+import { storage, appwriteConfig, ID } from '../lib/appwrite';
+
+// Assuming 'file' comes from expo-image-picker
+const uploadImage = async (file) => {
+    if (!file) return;
+
+    // React Native specific file formatting
+    const asset = {
+        name: file.fileName || 'image.jpg',
+        type: file.mimeType || 'image/jpeg',
+        size: file.fileSize,
+        uri: file.uri,
+    };
+
+    try {
+        const uploadedFile = await storage.createFile(
+            appwriteConfig.storageId,
+            ID.unique(),
+            asset
+        );
+        
+        // Get the viewable URL for the image
+        const fileUrl = storage.getFilePreview(
+            appwriteConfig.storageId, 
+            uploadedFile.$id,
+            2000, // width
+            2000, // height
+            'top', // gravity
+            100 // quality
+        );
+
+        return fileUrl;
+    } catch (error) {
+        console.error("Upload failed", error);
+    }
+};
+```
+
+## 7. Realtime (WebSockets)
+
+Realtime allows you to update your React Native UI instantly when data changes in your database without the user having to "pull to refresh".
+
+You use `client.subscribe()` and listen to a "Channel". Channels are specific strings that point to resources (like a whole collection, or just one document).
+
+```
+import { client, appwriteConfig } from '../lib/appwrite';
+import { useEffect } from 'react';
+
+// Inside a React Native Component
+useEffect(() => {
+    // Construct the channel string for a specific collection
+    const channel = `databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.userCollectionId}.documents`;
+
+    // Subscribe to the channel
+    const unsubscribe = client.subscribe(channel, (response) => {
+        
+        // response.events contains what happened (create, update, delete)
+        if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+            console.log('A new document was just added!', response.payload);
+            // Update your React State here to show the new data instantly
+        }
+        
+        if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
+            console.log('A document was deleted!', response.payload);
+        }
+    });
+
+    // Cleanup subscription when the component unmounts!
+    return () => {
+        unsubscribe();
+    };
+}, []);
+```
+
+## 8. State Management Architecture
+
+In a real React Native application, you shouldn't call Appwrite directly from your UI buttons. Instead, wrap Appwrite logic in a **React Context** (or Zustand/Redux).
+
+This allows you to access the `user` and `isLoading` states from anywhere in your app to protect screens (e.g., redirecting to Login if `user === null`).
+
+```
+sequenceDiagram
+    participant UI as React Native UI
+    participant Context as Global Context API
+    participant SDK as Appwrite SDK (lib/appwrite.js)
+    
+    UI->>Context: Call login(email, password)
+    Context->>SDK: account.createEmailPasswordSession()
+    SDK-->>Context: Returns Session
+    Context->>SDK: account.get() (Fetch User Data)
+    SDK-->>Context: Returns User Profile
+    Context-->>UI: State Updates -> UI Re-renders
+```
+
+### Summary Checklist for a Production App:
+
+1. [ ] Check if a user is logged in on app startup (Splash Screen).
+    
+2. [ ] Use Appwrite permissions to ensure users can only edit their own documents.
+    
+3. [ ] Handle Appwrite exceptions gracefully (e.g., showing a Toast message for `error.message` if a login fails).
+    
+4. [ ] Unsubscribe from Realtime events when screens are closed to save battery and memory.

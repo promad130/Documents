@@ -12,7 +12,7 @@ A **database** is just an organized place in a computer where related data is st
 - Most modern databases store data in tables (rows = records, columns = fields), similar to an Excel sheet but much more powerful.[^7]
 
 
-## What is a DBMS?
+## What is a DBMS?Step 5: Mapping of Binary M:N Relationship Types.
 
 - A **Database Management System (DBMS)** is software that lets you create, store, modify, and retrieve data from a database. Examples: **MySQL**, PostgreSQL, Oracle.
 - A DBMS handles storage, security, backup, concurrent access, and performance, so applications and users don’t touch raw files directly.
@@ -50,761 +50,219 @@ There are three types of MySQL Commands:
 
 This is working, changing and managing the defination of the data in the database.
 
-### CREATE DATABASE;
+### [[CREATE DATABASE;]]
 
-Syntax to create a database:
+### [[SHOW DATABASE;]]
 
-```MySQL
-CREATE DATABASE <database_name>
-```
+### [[USE;]]
 
-Examples;
-```mysql
-mysql> create database mydb;
-```
+### [[SHOW TABLES;]]
 
+### [[CREATE TABLE;]]
 
-### SHOW DATABASE;
+### [[DESC / DESCRIBE;]]
 
-lists all the available database in the severer you connected to:
+### [[ALTER TABLE Commands]]
 
-```mysql
-show databases;
-```
+### [[TRUNCATE TABLE]]
 
+### [[DROP TABLE]]
 
-### USE;
+### [[DROP DATABASE]]
 
-This command is used to use a database, i.e, we mention which database to make changes to:
-
-```mysql
-use <database_name>;
-```
-
-example:
-
-```mysql
-mysql> USE mydab;
-```
-
-
-### SHOW TABLES;
-
-Lists all the tables that are there in the current database that is being used:
-
-```mysql
-SHOW TABLES;
-```
-
-
-### CREATE TABLE;
-
-Syntax to create a table:
-
-```mysql
-create table <TableName> (column defination1, column defination2, ...); 
-```
-
-Example:
-
-```mysql
-mysql> CREATE TABLE students ( id CHARACTER (12),
-	name VARCHAR(30),
-	hostel INTEGER NOT NULL,
-	percentage DECIMAL(5,2) DEFAULT 0.0,
-	phone INT,
-	bdate DATE,
-	gender ENUM('F','M'),
-	CONSTRAINT uk UNIQUE(name)
-);
-```
-
-Here we have used [Data Types offered in MySQL](#The%20Data%20Types).
-
-
-### DESC / DESCRIBE;
-`DESC` displays information about a table's columns **without showing the actual data** stored in rows. It's like viewing the blueprint of your table.
-
-Syntax:
-
-```mysql
-DESC table_name;
--- or
-DESCRIBE table_name;
-```
-
-Example:
-
-```mysql
-DESC students;
-```
-**Output:**
-```mysql
-+------------+--------------+------+-----+---------+-------+
-| Field      | Type         | Null | Key | Default | Extra |
-+------------+--------------+------+-----+---------+-------+
-| id         | char(12)     | NO   | PRI | NULL    |       |
-| name       | varchar(30)  | YES  |     | NULL    |       |
-| hostel     | int          | NO   |     | NULL    |       |
-| percentage | decimal(5,2) | YES  |     | 0.00    |       |
-| phone      | int          | YES  | UNI | NULL    |       |
-+------------+--------------+------+-----+---------+-------+
-```
-
-
-### ALTER TABLE Commands
-
-#### 1. MODIFY – Change Column Data Type or Attributes
-
-Changes the data type or properties of an existing column **without renaming it**.
-
-```mysql
-ALTER TABLE students MODIFY percentage DECIMAL(10,2);
-```
-
-Changes `percentage` from `DECIMAL(5,2)` to `DECIMAL(10,2)`.
-
-#### 2. RENAME – Rename the Table
-
-Gives the table a new name.
-
-```mysql
-ALTER TABLE students RENAME gradstudents;
-```
-
-Renames the `students` table to `gradstudents`.
-
-#### 3. ADD COLUMN – Add a New Column
-
-Adds a new column to the table.
-
-```mysql
-ALTER TABLE students ADD COLUMN email VARCHAR(100);
-```
-
-Adds an `email` column to the `students` table.
-
-#### 4. CHANGE – Rename a Column
-
-Renames a column; you must specify the old name, new name, and full column definition.
-
-```mysql
-ALTER TABLE students CHANGE phone mobile_number INT;
-```
-
-Renames `phone` to `mobile_number` while keeping it as `INT`.
-
-#### 5. DROP COLUMN – Delete a Column
-
-Permanently removes a column and all its data.
-
-```mysql
-ALTER TABLE students DROP COLUMN bdate;
-```
-
-Deletes the `bdate` column from the table.
-
-#### 6. ADD CONSTRAINT – Add a New Constraint
-
-Adds a constraint like UNIQUE, CHECK, or FOREIGN KEY to an existing table.[^2][^3]
-
-```mysql
-ALTER TABLE students ADD CONSTRAINT email_unique UNIQUE(email);
-```
-
-Makes the `email` column unique.
-
-#### 7. DROP CONSTRAINT – Remove a Constraint
-
-Removes a named constraint from the table.
-
-```mysql
-ALTER TABLE students DROP CONSTRAINT email_unique;
-```
-
-Drops the UNIQUE constraint on `email`.
-
-
-### TRUNCATE TABLE
-
-**TRUNCATE** removes **all rows** from a table but keeps the table structure (columns, data types, constraints) intact.  It's much faster than `DELETE` because it doesn't log each row deletion—it just deallocates the entire data pages.[^1][^2][^3]
-
-**Syntax:**
-
-```sql
-TRUNCATE TABLE <table_name>;
-```
-
-**Example:**
-
-```sql
--- Remove all rows from gradstudents table
-TRUNCATE TABLE gradstudents;
-
--- Check if table still exists (structure remains)
-SELECT * FROM gradstudents;
-```
-
-**What happens:**
-
-- All data rows are deleted instantly[^1]
-- Table structure (columns, constraints, indexes) remains[^4][^3]
-- Auto-increment counters reset to starting value[^2]
-- Much faster than `DELETE FROM gradstudents;`[^2][^1]
-- **Cannot undo** (no rollback in most cases)[^1][^2]
-- Cannot use `WHERE` clause—deletes everything (unlike in [[#UPDATE Command]])
-
-**When to use:** Clearing test data, resetting tables for fresh data load, emptying large tables quickly.
-
-
-### DROP TABLE
-
-**DROP TABLE** completely **removes the table** from the database—both structure and data are gone permanently.[^6][^4]
-
-**Syntax:**
-
-```sql
-DROP TABLE <table_name>;
-```
-
-**Example:**
-
-```sql
--- Delete the entire gradstudents table
-DROP TABLE gradstudents;
-
--- Verify table is gone
-SHOW TABLES;
-```
-
-**What happens:**
-
-- Table structure deleted (columns, constraints, indexes)
-- All data deleted
-- Table no longer exists—trying to query it causes an error
-- Frees all space used by the table
-- Cannot undo without a backup
-
-**When to use:** Permanently removing obsolete tables, cleanup during database restructuring.
-
-
-### DROP DATABASE
-
-**DROP DATABASE** deletes an **entire database** including all its tables, views, stored procedures, and data.
-
-**Syntax:**
-
-```sql
-DROP DATABASE <database_name>;
-```
-
-**Example:**
-
-```sql
--- Delete the entire mydb database
-DROP DATABASE mydb;
-
--- Check remaining databases
-SHOW DATABASES;
-```
-
-**What happens:**
-
-- Entire database and everything inside it is permanently deleted[^6]
-- All tables, views, procedures, functions removed[^6]
-- Database no longer exists[^6]
-- Cannot undo without backup[^6]
-
-**When to use:** Removing test/development databases, cleaning up after project completion.[^6]
-
-
-CREATE INDEX
-CREATE VIEW
+### [[INDEX in MySQL]]
 
 
 - ## Data Manipulation Language (DML) Commands:
 
 This is Manipulation the data that is there in the tables in the active database.
 
-### INSERT INTO;
+### [[INSERT INTO;]]
 
-`INSERT INTO` is a **DML (Data Manipulation Language)** command that adds new rows (records) to a table.
+### [[UPDATE Command]]
 
-#### Basic Syntax
+### [[DELETE Command]]
 
-**Two ways to insert:**
+### [[WHERE Command]]
 
-**1. Specify column names (recommended):**
+- ## Data Query Language (DQL) Commands:
 
-```sql
-INSERT INTO table_name (column1, column2, column3) 
-VALUES (value1, value2, value3);
-```
+### [[SELECT]]
 
-**2. Omit column names (insert all columns in order):**
+### [[ORDER BY clause in SELECT]]
 
-```sql
-INSERT INTO table_name 
-VALUES (value1, value2, value3);
-```
+### [[LIMIT Clause]]
 
-- You must provide values for **all columns** in the exact order they were defined in the table.
-- **You MUST provide a value for EVERY column** - even columns with DEFAULT values or NULL constraints
-- If you don't wish to give or provide default values, then have to mention `DEFAULT` keyword.
+### [[SET Operations in MySQL]]
 
-#### Examples
+### [[NESTED QUERIES in MySQL]]
 
-**Valid insert with all columns:**
+### [[JOIN Operations in MySQL]]
 
-```sql
-INSERT INTO students VALUES ('PS99305017', 'Mohan Sharma', 13, 76.23, '9800000002', '2001-03-15', 'M');
-```
+### [[GROUP BY and HAVING Clause]]
 
-Order matches: `id, name, hostel, percentage, phone, bdate, gender`.
 
-**Valid insert with column names (order doesn't matter):**
+- ## Transition Control Language:
 
-```sql
-INSERT INTO students (id, name, hostel, percentage, phone, bdate, gender) 
-VALUES ('PS99305017', 'Sai Sundar', 11, 77.23, '9800000001', '2001-01-25', 'M');
-```
 
 
-#### Common Errors and Why They Happen
+# ![[Data types in MySQL]]
 
-##### 1. Wrong Column Order
+## Aggregate Functions in MySQL and how they work:
 
-```sql
--- WRONG ORDER
-INSERT INTO students VALUES ('Sai Sundar', 'PS99305017', 11, 77.23, '2001-01-25', '9800000001', 'M');
-```
+### 1. What Are They?
 
-**Error:** Values don't match column types—`name` (VARCHAR) is in the `id` (CHAR) position.  Always match the table's column order or specify column names explicitly.[^1]
+An aggregate function performs a calculation on a set of values (multiple rows) and returns a **single value**.
 
-##### 2. Duplicate UNIQUE Value
+#### The Core Functions:
 
-```sql
--- Violates UNIQUE constraint on phone
-INSERT INTO students (name, id, hostel, percentage, bdate, phone, gender) 
-VALUES ('Jay Singh', 'PS99305012', 11, 83.73, '2000-07-04', '9900000002', 'M');
-```
+- `COUNT()`: Returns the number of rows.
+    
+- `SUM()`: Returns the total sum of a numeric column.
+    
+- `AVG()`: Returns the average value of a numeric column.
+    
+- `MAX()`: Returns the highest value (works on numbers, text, dates).
+    
+- `MIN()`: Returns the lowest value.
+    
+- `GROUP_CONCAT()`: Concatenates values from multiple rows into a single string (MySQL specific).
+    
 
-**Error if `9900000002` already exists:** UNIQUE constraint prevents duplicate phone numbers.[^2]
+### 2. Factor 1: How `GROUP BY` Affects Them (The Bucketing System)
 
-##### 3. Empty/NULL in PRIMARY KEY
+`GROUP BY` dictates the "scope" of your aggregate function.
 
-```sql
--- Empty string in PRIMARY KEY
-INSERT INTO students VALUES ('', 'Shyam Sundar', 11, 90.23, '9800000004', '2001-01-25', 'M');
-```
+- **WITHOUT `GROUP BY`**: The entire table is treated as **one giant bucket**. You get exactly one row back.
+    
+    ```
+    -- Returns ONE total sum for the entire company
+    SELECT SUM(salary) FROM employees; 
+    ```
+    
+- **WITH `GROUP BY`**: The table is split into distinct buckets based on the column(s) you specify. The aggregate function now calculates a result **for each bucket**.
+    
+    ```
+    -- Returns ONE total sum PER department
+    SELECT department, SUM(salary) FROM employees GROUP BY department;
+    ```
+    
+- **The Golden Rule**: If you use an aggregate function alongside standard columns in your `SELECT` clause, those standard columns **must** be listed in the `GROUP BY` clause.
+    
 
-**Error:** PRIMARY KEY cannot be empty or NULL.[^2]
+### 3. Factor 2: `NULL` Values (The Invisible Data)
 
-##### 4. NULL vs Empty String in UNIQUE Column
+This is where most bugs happen. **Aggregate functions ignore `NULL` values** (with one exception).
 
-```sql
--- NULL in name (UNIQUE column)
-INSERT INTO students VALUES ('PS99305018', NULL, 11, 90.23, '9800000009', '2001-01-25', 'M');
+- `COUNT(*)`: Counts every row, **including** those with `NULL`s.
+    
+- `COUNT(column_name)`: Counts only rows where `column_name` is **NOT NULL**.
+    
+- **The `AVG()` Trap**: If you have 3 rows with salaries `[100, 200, NULL]`, `AVG(salary)` is `150` (300 / 2), NOT `100` (300 / 3). It completely ignores the row with the `NULL` value during both summation and division. If you want to treat `NULL` as `0`, you must use `COALESCE(salary, 0)`.
 
--- Empty string in name
-INSERT INTO students VALUES ('PS99305018', '', 11, 90.23, '9800000009', '2001-01-25', 'M');
-```
-
-**Both work once, but:** You can insert **multiple NULLs** (NULLs aren't considered duplicates), but only **one empty string** (empty strings are duplicates of each other).
-
-##### 5. NULL in NOT NULL Column
-
-```sql
--- Violates NOT NULL constraint on hostel
-INSERT INTO students VALUES ('PS99305020', 'Sundaram', NULL, 90.23, '9800000005', '2001-01-25', 'M');
-```
-
-**Error:** `hostel` is defined as `NOT NULL`, so it must have a value.[^2]
-
-##### 6. Missing Quotes for String/Date Types
-
-```sql
--- Missing quotes around CHAR/VARCHAR
-INSERT INTO students VALUES (PS99305020, 'Sundaram', 11, 90.23, 9800000006, '2001-01-25', 'M');
-```
-
-**Error:** `PS99305020` and `9800000006` are treated as column names, not values. Strings/dates need quotes: `'PS99305020'` and `'9800000006'`.[^2]
-
-##### 7. Exceeding Column Size
-
-```sql
--- name is VARCHAR(30), but value is 35 characters
-INSERT INTO students VALUES ('PS99305021', 'Ram Prabhu Sundaran', 11, 90.23, '9800000006', '2001-01-25', 'M');
-```
-
-**Error:** Value exceeds the defined length of `VARCHAR(30)`. MySQL truncates or rejects it depending on strict mode.[^2]
-
-##### 8. Invalid Date
-
-```sql
--- February doesn't have 30 days
-INSERT INTO students VALUES ('PS99305023', 'Ramnarayan Sundaran', 11, 90.23, '9800000006', '2001-02-30', 'M');
-```
-
-**Error:** `2001-02-30` is not a valid date—February has max 28/29 days.[^2]
-
-##### 9. Invalid ENUM Value
-
-```sql
--- gender is ENUM('F','M'), but 'K' is not allowed
-INSERT INTO students VALUES ('PS99305025', 'Narayan Sundar', 11, 90.23, '9800000007', '2001-02-16', 'K');
-```
-
-**Error:** `'K'` is not in the allowed ENUM values `('F','M')`.
-
-### Multiple Rows Insert
-
-```sql
-INSERT INTO students (id, name, hostel) 
-VALUES 
-  ('PS001', 'John', 10),
-  ('PS002', 'Jane', 12),
-  ('PS003', 'Mike', 14);
-```
-
-Inserts three rows in a single statement—more efficient than three separate INSERTs.
-
-
-
-### UPDATE Command
-
-`UPDATE` modifies **existing rows** in a table.
-
-**Syntax:**
-
-```sql
-UPDATE <table_name> 
-SET (column1 = value1, column2 = value2, ...) 
-WHERE <condition>;
-```
-
-**Always use `WHERE` to specify which rows to update.** Without `WHERE`, **all rows** in the table will be updated.[^5]
-
-#### Examples
-
-**Update a single column for specific rows:**
-
-```sql
-UPDATE students 
-SET percentage = 85.50 
-WHERE id = 'PS99305017';
-```
-
-Changes the `percentage` to `85.50` only for student with `id = 'PS99305017'`.[^5]
-
-**Update multiple columns:**
-
-```sql
-UPDATE students 
-SET percentage = 90.00, hostel = 15 
-WHERE name = 'Mohan Sharma';
-```
-
-Updates both `percentage` and `hostel` for student named `Mohan Sharma`.[^5]
-
-**Update all rows (dangerous!):**
-
-```sql
-UPDATE students 
-SET percentage = 0.0;
-```
-
-**Warning:** Sets `percentage = 0.0` for **every student** because there's no `WHERE` clause.[^5]
-
-**Update based on calculation:**
-
-```sql
-UPDATE students 
-SET percentage = percentage + 5.0 
-WHERE hostel = 11;
-```
-
-Adds 5 points to `percentage` for all students in hostel 11.[^5]
-
-
-### DELETE Command
-
-`DELETE` removes **rows** from a table.
-
-**Syntax:**
-
-```sql
-DELETE FROM table_name 
-WHERE condition;
-```
-
-**Always use `WHERE` to specify which rows to delete.** Without `WHERE`, **all rows** will be deleted (table structure remains, but data is gone).[^5]
-
-#### Examples
-
-**Delete specific rows:**
-
-```sql
-DELETE FROM students 
-WHERE id = 'PS99305017';
-```
-
-Removes the student with `id = 'PS99305017'`.[^5]
-
-**Delete multiple rows matching condition:**
-
-```sql
-DELETE FROM students 
-WHERE percentage < 50.0;
-```
-
-Deletes all students with percentage below 50.[^5]
-
-**Delete all rows (dangerous!):**
-
-```sql
-DELETE FROM students;
-```
-
-**Warning:** Deletes **every row** in the table, but the table structure still exists.[^5]
-
-**Delete based on NULL:**
-
-```sql
-DELETE FROM students 
-WHERE phone IS NULL;
-```
-
-Removes all students with no phone number.
-
-
-## Data Query Language (DQL) Commands:
-
-### SELECT
-
-Command used to retrieve data from a table.  It doesn't modify data—it just reads and displays it.
-
-#### Basic Syntax
-
-```sql
-SELECT column, another_column, … 
-FROM mytable 
-WHERE _condition_ 
-	AND/OR _another_condition_ 
-	AND/OR …
-;
+```mysql
+SELECT AVG(COALESCE(salary, 0)) AS true_average
+FROM employees;
 ```
 
 
-#### 1. Select All Rows and All Columns
+### 4. Factor 3: `WHERE` vs. `HAVING` (Order of Execution)
 
-Use `*` (asterisk) to retrieve **every column** from the table.
+Both filter data, but they interact with aggregates at entirely different stages.
 
-```sql
-SELECT * FROM students;
-```
+- **`WHERE` (Pre-Aggregation filter)**: Filters individual rows **BEFORE** the data is grouped and aggregated.
+    
+    - _Rule_: You **cannot** use aggregate functions in a `WHERE` clause.
+        
+    
+    ```
+    -- CORRECT: Filters out part-time workers before summing salaries
+    SELECT department, SUM(salary) FROM employees WHERE status = 'Full Time' GROUP BY department;
+    ```
+    
+- **`HAVING` (Post-Aggregation filter)**: Filters groups **AFTER** the data has been grouped and aggregated.
+    
+    - _Rule_: This is the ONLY place you can filter based on the result of an aggregate function.
+        
+    
+    ```
+    -- CORRECT: Only shows departments where the total sum is > 100000
+    SELECT department, SUM(salary) FROM employees GROUP BY department HAVING SUM(salary) > 100000;
+    ```
+    
 
-**What this shows:**
+### 5. Factor 4: The `DISTINCT` Keyword (Deduplication)
 
-- All columns: `id, name, hostel, percentage, phone, bdate, gender`
-- All rows in the table
+You can place `DISTINCT` inside an aggregate function to force it to only consider unique values.
 
-**Observations from your data:**
+- `COUNT(department)`: If you have 10 employees in 'Sales' and 5 in 'IT', this returns 15.
+    
+- `COUNT(DISTINCT department)`: This returns 2 (because there are only 2 unique departments).
+    
+- `SUM(DISTINCT salary)`: If three people make 50k, 50k, and 60k, the sum is 110k (it ignores the duplicate 50k). _Rarely used, but mechanically possible._
+    
 
-- Student with `id = PS99305023` has `bdate` as the default value (likely `NULL` or `'0000-00-00'`)[^3]
-- Student with `id = PS99305019` has `percentage = 0.0` (the user-defined default)[^3]
-- Student with `id = PS99305025` has blank `gender` (empty string `''` or `NULL`)[^3]
+### 6. Factor 5: `WITH ROLLUP` (Subtotals and Grand Totals)
 
-
-#### 2. Select Specific Columns
-
-List only the column names you want to see, separated by commas.
-
-**Single column:**
-
-```sql
-SELECT id FROM students;
-```
-
-Returns only the `id` column for all rows.
-
-**Multiple columns:**
-
-```sql
-SELECT id, name FROM students;
-```
-
-Returns only `id` and `name` columns in that order.
-
-#### 3. Select Distinct Rows (Remove Duplicates)
-
-Use `DISTINCT` to return only **unique values** in a column—duplicates are removed.[^2][^3]
-
-```sql
-SELECT DISTINCT name FROM students;
-```
-
-**What this does:**
-
-- If multiple students have the same name, it shows that name only **once**.[^2]
-- Without `DISTINCT`, duplicate names would appear multiple times.[^2]
-
-**Example output without DISTINCT:**
+This is a MySQL modifier for `GROUP BY` that affects the output of aggregate functions by adding extra rows for super-aggregates.
 
 ```
-name
------------
-Mohan
-Mohan
-Sai
+SELECT department, SUM(salary) 
+FROM employees 
+GROUP BY department WITH ROLLUP;
 ```
 
-**Example output with DISTINCT:**
+**Effect**: If you have 'Sales' ($100) and 'IT' ($200), the output will show three rows:
 
-```
-name
------------
-Mohan
-Sai
-```
+1. Sales | 100
+    
+2. IT | 200
+    
+3. NULL | 300 <-- The `WITH ROLLUP` added this row representing the Grand Total.
+
+## SQL CLAUSE CATEGORIES & EXECUTION ORDER
+
+### MySQL Statement Types:
+
+| Type                                   | Purpose             | Commands                               |
+| -------------------------------------- | ------------------- | -------------------------------------- |
+| **DDL** (Data Definition Language)     | Define structure    | `CREATE`, `ALTER`, `DROP`, `TRUNCATE`  |
+| **DML** (Data Manipulation Language)   | Manipulate data     | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |
+| **DCL** (Data Control Language)        | Control access      | `GRANT`, `REVOKE`                      |
+| **TCL** (Transaction Control Language) | Manage transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT`      |
+
+---
+
+## ALL SQL CLAUSES
+
+### Complete SELECT Query Structure:
 
 
-### ORDER BY clause in SELECT:
+```mySQL
 
-The `ORDER BY` clause sorts the result set in **ascending** or **descending** order.
-
-**Syntax:**
-
-```sql
-SELECT column1, column2, ...
-FROM table_name
-ORDER BY column1 [ASC|DESC], column2 [ASC|DESC];
-```
-
-- **ASC** = ascending order (default, optional)
-- **DESC** = descending order
-
-
-#### Sorting in Ascending Order
-
-By default, `ORDER BY` sorts in **ascending order**, so `ASC` is optional.
-
-```sql
--- Sort students by name (A to Z)
-SELECT * FROM students
-ORDER BY name;
-
--- Same as above (ASC is implicit)
-SELECT * FROM students
-ORDER BY name ASC;
+SELECT column1, column2, aggregate_function(column)
+FROM table1
+JOIN table2 ON condition
+WHERE row_filter_condition
+GROUP BY column
+HAVING aggregate_filter_condition
+ORDER BY column ASC|DESC
+LIMIT number;
 ```
 
-```sql
--- Sort by percentage (lowest to highest)
-SELECT id, name, percentage
-FROM students
-ORDER BY percentage;
-```
+### Execution Order (How MySQL Processes Query):
 
-
-#### Sorting in Descending Order
-
-Use `DESC` keyword for descending order.
-
-```sql
--- Sort students by percentage (highest to lowest)
-SELECT * FROM students
-ORDER BY percentage DESC;
-```
-
-```sql
--- Sort by birth date (newest to oldest)
-SELECT name, bdate
-FROM students
-ORDER BY bdate DESC;
-```
-
-
-#### Sorting by Multiple Columns
-
-You can sort by multiple columns—MySQL sorts by the first column, then breaks ties using the second column, and so on.
-
-```sql
--- Sort by hostel (ascending), then by name (ascending)
-SELECT name, hostel, percentage
-FROM students
-ORDER BY hostel, name;
-```
-
-```sql
--- Sort by hostel (ascending), then by percentage (descending)
-SELECT name, hostel, percentage
-FROM students
-ORDER BY hostel ASC, percentage DESC;
-```
-
-
-
-# Data types in mySQL
-
-MySQL groups data types into five main categories: numeric, string, date/time, spatial, and JSON.
-
-## Numeric Data Types
-
-Used for numbers, IDs, prices, counts.
-
-- **INT** – standard integer, range −2,147,483,648 to 2,147,483,647 (4 bytes). Use for IDs, counters.
-- **TINYINT** – tiny integer, range −128 to 127 (or 0 to 255 unsigned), 1 byte.[^1][^2]
-- **BIGINT** – huge integers, range up to ±9 quintillion, 8 bytes.[^1][^2]
-- **DECIMAL(p, s)** – exact fixed-point number (e.g., `DECIMAL(10,2)` for money with 2 decimal places).[^2][^1]
-- **FLOAT / DOUBLE** – approximate floating-point for scientific calculations.
-- **BOOLEAN** – implemented as `TINYINT(1)`, stores 0 (false) or 1 (true).
-
-
-## String Data Types
-
-Store text, descriptions, names.
-
-- **VARCHAR(n)** – variable-length string up to *n* characters (max 65,535). Use for names, emails.
-- **CHAR(n) or CHARACTER(n)** – fixed-length string exactly *n* characters (padded with spaces). Good for fixed codes like country codes.
-- **TEXT** – long text up to 65,535 characters. Variants: `TINYTEXT`, `MEDIUMTEXT`, `LONGTEXT`.
-- **BLOB** – binary large object for images, files. Variants: `TINYBLOB`, `MEDIUMBLOB`, `LONGBLOB`.
-- **ENUM** – column can hold one of a predefined list (e.g., `ENUM('small','medium','large')`).
-	- MySQL **ENUM values are case-insensitive by default**, so `'f'` and `'F'` are treated as the **same value**. 
-	- When you try to create an ENUM with duplicate values, MySQL throws an error in strict SQL mode.
-
-
-## Date and Time Data Types
-
-Store dates, timestamps, durations.
-
-- **DATE** – date only, format `YYYY-MM-DD`, range 1000-01-01 to 9999-12-31.[^1][^2]
-- **DATETIME** – date + time, format `YYYY-MM-DD HH:MM:SS`, range 1000-01-01 to 9999-12-31.[^1][^2]
-- **TIMESTAMP** – auto-updates to current time on row insert/update; range 1970 to 2038 (UTC).[^2][^1]
-- **TIME** – time only, format `HH:MM:SS`.[^1][^2]
-- **YEAR** – 4-digit year, 1901 to 2155.[^1]
-
-
-## JSON Data Type
-
-Stores JSON documents natively; supports efficient querying and indexing of JSON keys.[^2]
-
-## Spatial Data Types
-
-Store geographic and geometric data like points, lines, polygons (GEOMETRY, POINT, LINESTRING, POLYGON).
-
-**Example table using different data types:**
-
-```sql
-CREATE TABLE users (
-  id INT PRIMARY KEY,
-  name VARCHAR(100),
-  age TINYINT,
-  balance DECIMAL(10,2),
-  created_at TIMESTAMP,
-  is_active BOOLEAN
-);
-```
+| Step | Clause             | Purpose                    | Works On                       |
+| ---- | ------------------ | -------------------------- | ------------------------------ |
+| 1    | `FROM`             | Specify tables             | Tables                         |
+| 2    | `JOIN`             | Combine tables             | Tables                         |
+| 3    | `WHERE`            | **Filter individual rows** | **Rows (before grouping)**     |
+| 4    | `GROUP BY`         | Group rows                 | Rows                           |
+| 5    | `HAVING`           | **Filter grouped results** | **Groups (after aggregation)** |
+| 6    | `SELECT`           | Choose columns             | Result set                     |
+| 7    | `DISTINCT`         | Remove duplicates          | Result set                     |
+| 8    | `ORDER BY`         | Sort results               | Result set                     |
+| 9    | `LIMIT` / `OFFSET` | Limit rows returned        | Result set                     |
 
 
 # Operators in MySQL:
@@ -907,7 +365,19 @@ SELECT * FROM students WHERE phone IS NOT NULL;
 ```
 
 
-## AS Keyword (Aliases)
+
+# Aliases and DOT Operator
+
+## 1. WHAT ARE ALIASES?
+
+An **alias** is a **temporary name** (nickname) you give to a table or column **for the duration of a query**. It doesn't change the actual table/column name in the database.
+
+### Types of Aliases:
+1. **Table Aliases** - Shorthand names for tables
+2. **Column Aliases** - Rename columns in output
+
+---
+## 2. AS Keyword (Aliases) / COLUMN ALIASES
 
 The `AS` keyword creates temporary names (aliases) for columns or tables in query results. It makes queries more readable, especially when using calculations or functions.[^5]
 
@@ -956,125 +426,660 @@ WHERE s.hostel = 10;
 ```
 
 
-## MySQL LIMIT Clause
+## 3. TABLE ALIASES (The Confusing Part!)
 
-The `LIMIT` clause restricts the number of rows returned by a `SELECT` query. It's useful for handling large tables, pagination, and improving query performance by fetching only what you need.[^1][^7][^8][^9]
-
-## Basic Syntax
+### Syntax: `AS` is OPTIONAL for table aliases!
 
 ```sql
-SELECT column1, column2 FROM table_name LIMIT number;
+-- Method 1: Without AS (most common)
+SELECT e.name, e.salary
+FROM employees e
+WHERE e.salary > 70000;
+
+-- Method 2: With AS (also valid, but rarely used)
+SELECT e.name, e.salary
+FROM employees AS e
+WHERE e.salary > 70000;
 ```
 
-**Example:**
+**Both are identical!** Most developers skip `AS` for table aliases because it's shorter.
+
+### Example Table:
+```sql
+-- employees
++----+--------+---------+--------+
+| id | name   | dept_id | salary |
++----+--------+---------+--------+
+| 1  | Alice  | 10      | 75000  |
+| 2  | Bob    | 10      | 65000  |
+| 3  | Carol  | 20      | 80000  |
++----+--------+---------+--------+
+```
+
+### Without Alias (Verbose):
+```sql
+SELECT employees.name, employees.salary
+FROM employees
+WHERE employees.salary > 70000;
+```
+
+### With Alias (Cleaner):
+```sql
+SELECT e.name, e.salary
+FROM employees e
+WHERE e.salary > 70000;
+```
+
+**What happened?**
+- `employees e` means: "Call the employees table 'e' in this query"
+- Now you use `e.name` instead of `employees.name`
+- **The dot operator (`.`) connects the alias to the column**
+
+**Result:**
+```
++-------+--------+
+| name  | salary |
++-------+--------+
+| Alice | 75000  |
+| Carol | 80000  |
++-------+--------+
+```
+
+---
+
+## 4. COLUMN ALIASES (AS is REQUIRED or use space)
+
+For columns, you **should use** `AS` (though technically optional with space).
+
+### Syntax:
+```sql
+-- Method 1: With AS (recommended, clearest)
+SELECT name AS employee_name, salary AS annual_income
+FROM employees;
+
+-- Method 2: Without AS (space separation, less clear)
+SELECT name employee_name, salary annual_income
+FROM employees;
+
+-- Method 3: No alias (original column names)
+SELECT name, salary
+FROM employees;
+```
+
+**Result (Methods 1 & 2 - same output):**
+```
++---------------+---------------+
+| employee_name | annual_income |
++---------------+---------------+
+| Alice         | 75000         |
+| Bob           | 65000         |
+| Carol         | 80000         |
++---------------+---------------+
+```
+
+**Result (Method 3):**
+```
++-------+--------+
+| name  | salary |
++-------+--------+
+| Alice | 75000  |
+| Bob   | 65000  |
+| Carol | 80000  |
++-------+--------+
+```
+
+---
+
+## 5. TABLE ALIAS + DOT OPERATOR (How They Work Together)
+
+### The Pattern:
+```
+alias.column_name
+```
+
+### Step-by-Step Breakdown:
 
 ```sql
-SELECT name FROM students LIMIT 3;
+SELECT e.name, e.salary
+FROM employees e
+WHERE e.dept_id = 10;
 ```
 
-This returns only the first 3 student names.[^7][^1]
+**What happens:**
 
-## LIMIT with OFFSET
+1. **`FROM employees e`**
+   - MySQL reads the `employees` table
+   - Creates temporary alias `e` → points to `employees`
+   - For this query only, `e` = `employees`
 
-The `OFFSET` lets you skip rows before starting to return results.[^7][^8]
+2. **`SELECT e.name, e.salary`**
+   - `e.` tells MySQL: "Look in the table aliased as 'e'"
+   - `.name` means: "Get the 'name' column from that table"
+   - `e.name` = "Get name from employees"
 
-**Two syntax styles:**
+3. **`WHERE e.dept_id = 10`**
+   - `e.dept_id` = "Get dept_id from employees"
+   - Filter rows where dept_id equals 10
+
+**Visual Representation:**
+```
+employees table                  Alias 'e'
++----+-------+------+            ┌─────────────┐
+| id | name  | ...  |   ───────> │ e.id        │
+| 1  | Alice | ...  |            │ e.name      │
+| 2  | Bob   | ...  |            │ e.dept_id   │
++----+-------+------+            │ e.salary    │
+                                 └─────────────┘
+                                       ↓
+                               SELECT e.name, e.salary
+```
+
+---
+
+## 6. WHY USE ALIASES? (Real Examples)
+
+### A. Multiple Tables with Same Column Names
 
 ```sql
--- Style 1: LIMIT with OFFSET keyword
-SELECT * FROM students LIMIT 5 OFFSET 3;
+-- departments
++----+--------+
+| id | name   |
++----+--------+
+| 10 | IT     |
+| 20 | Sales  |
++----+--------+
 
--- Style 2: LIMIT offset, count (MySQL specific)
-SELECT * FROM students LIMIT 3, 5;
+-- employees  
++----+--------+---------+
+| id | name   | dept_id |
++----+--------+---------+
+| 1  | Alice  | 10      |
+| 2  | Bob    | 20      |
++----+--------+---------+
 ```
 
-Both skip the first 3 rows and return the next 5 rows.[^9][^8]
+#### ❌ Without Aliases (AMBIGUOUS):
+```sql
+SELECT id, name
+FROM employees
+JOIN departments ON employees.dept_id = departments.id;
+-- ERROR 1052: Column 'id' is ambiguous
+-- ERROR 1052: Column 'name' is ambiguous
+```
 
-**Important:** The offset is zero-based, so `LIMIT 0, 5` returns the first 5 rows.[^8]
+**Problem:** Both tables have `id` and `name` columns. MySQL doesn't know which one you want!
 
-## LIMIT with ORDER BY
+#### ✅ With Aliases (CLEAR):
+```sql
+SELECT 
+    e.id AS employee_id,
+    e.name AS employee_name,
+    d.id AS department_id,
+    d.name AS department_name
+FROM employees e
+JOIN departments d ON e.dept_id = d.id;
+```
 
-Combine with `ORDER BY` to get specific ranked results.[^1][^7]
+**Breakdown:**
+- `employees e` → Create alias `e` for employees
+- `departments d` → Create alias `d` for departments
+- `e.id` → Get id from employees table (via alias e)
+- `d.id` → Get id from departments table (via alias d)
+- `e.name` → Get name from employees
+- `d.name` → Get name from departments
 
-**Example - Get top 3 students by percentage:**
+**Result:**
+```
++-------------+---------------+---------------+-----------------+
+| employee_id | employee_name | department_id | department_name |
++-------------+---------------+---------------+-----------------+
+| 1           | Alice         | 10            | IT              |
+| 2           | Bob           | 20            | Sales           |
++-------------+---------------+---------------+-----------------+
+```
+
+### B. Self-Joins (Same Table Twice)
 
 ```sql
-SELECT name, percentage FROM students ORDER BY percentage DESC LIMIT 3;
+-- employees with manager_id
++----+--------+------------+--------+
+| id | name   | manager_id | salary |
++----+--------+------------+--------+
+| 1  | Alice  | NULL       | 90000  |
+| 2  | Bob    | 1          | 70000  |
+| 3  | Carol  | 1          | 75000  |
+| 4  | David  | 2          | 60000  |
++----+--------+------------+--------+
 ```
 
-**Example - Get 2nd lowest salary (pagination):**
+#### Goal: Show each employee with their manager's name
 
 ```sql
-SELECT * FROM employees ORDER BY salary ASC LIMIT 1, 1;
+SELECT 
+    e.name AS employee,
+    m.name AS manager,
+    e.salary
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.id;
 ```
 
-This skips the lowest salary (offset 1) and returns the next single row.[^1]
+**What's happening:**
+- `employees e` → First copy of table (employees)
+- `employees m` → Second copy of same table (managers)
+- `e.name` → Employee's name (from first copy)
+- `m.name` → Manager's name (from second copy)
+- `e.manager_id = m.id` → Connect employee to their manager
 
-## LIMIT with WHERE
+**Visual:**
+```
+employees (as 'e')          employees (as 'm')
++----+-------+-----+        +----+-------+
+| id | name  | mgr |   →    | id | name  |
++----+-------+-----+        +----+-------+
+| 2  | Bob   | 1   | ────→  | 1  | Alice |
+| 3  | Carol | 1   | ────→  | 1  | Alice |
+| 4  | David | 2   | ────→  | 2  | Bob   |
++----+-------+-----+        +----+-------+
 
-Filter data first, then limit results.[^9]
+e.manager_id = m.id connects them
+```
+
+**Result:**
+```
++----------+---------+--------+
+| employee | manager | salary |
++----------+---------+--------+
+| Alice    | NULL    | 90000  |
+| Bob      | Alice   | 70000  |
+| Carol    | Alice   | 75000  |
+| David    | Bob     | 60000  |
++----------+---------+--------+
+```
+
+### C. Shorter, Cleaner Code
 
 ```sql
-SELECT * FROM students WHERE hostel = 10 LIMIT 5;
+-- Without aliases (painful to type and read)
+SELECT 
+    employee_information.employee_full_name,
+    employee_information.annual_salary,
+    department_information.department_name
+FROM employee_information
+JOIN department_information 
+    ON employee_information.department_id = department_information.department_id;
+
+-- With aliases (much cleaner!)
+SELECT 
+    ei.employee_full_name,
+    ei.annual_salary,
+    di.department_name
+FROM employee_information ei
+JOIN department_information di 
+    ON ei.department_id = di.department_id;
 ```
 
-Returns the first 5 students from hostel 10.[^7][^9]
+---
 
-**With offset:**
+## 6. ALIASES IN NESTED QUERIES (Critical Understanding)
+
+### Example: Correlated Subquery
 
 ```sql
-SELECT * FROM students WHERE percentage > 90.6 LIMIT 2, 4;
+-- Find employees earning more than their department's average
+
+SELECT e1.name, e1.dept_id, e1.salary
+FROM employees e1
+WHERE e1.salary > (
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.dept_id = e1.dept_id
+);
 ```
 
-Skips 2 rows and returns the next 4 where percentage exceeds 90.6.[^9][^1]
+### Let's Dissect This:
 
-## Common Use Cases
+**Step 1: Create aliases**
+```sql
+FROM employees e1  -- Outer query: alias = e1
+FROM employees e2  -- Inner query: alias = e2
+```
 
-**Pagination** - Display results across multiple pages:
+Both reference the **same table** but need **different names** to distinguish them.
+
+**Step 2: Understand the dot operator**
+```
+e1.dept_id  →  "dept_id from the OUTER query's current row"
+e2.dept_id  →  "dept_id from the INNER query's rows"
+```
+
+**Step 3: Execution for Alice (dept_id=10, salary=75000)**
 
 ```sql
--- Page 1 (first 10 records)
-SELECT * FROM products LIMIT 10 OFFSET 0;
+-- Outer query is processing this row:
+e1 = {id: 1, name: 'Alice', dept_id: 10, salary: 75000}
 
--- Page 2 (records 11-20)
-SELECT * FROM products LIMIT 10 OFFSET 10;
-
--- Page 3 (records 21-30)
-SELECT * FROM products LIMIT 10 OFFSET 20;
+-- Inner query executes:
+SELECT AVG(e2.salary)
+FROM employees e2
+WHERE e2.dept_id = e1.dept_id
+--    ^^^^^^^^^^^   ^^^^^^^^^^^
+--    Column from    Value from outer query (10)
+--    inner table
 ```
 
-**Top N results:**
+**Inner query becomes:**
+```sql
+SELECT AVG(e2.salary)
+FROM employees e2
+WHERE e2.dept_id = 10  -- e1.dept_id was 10
+```
+
+**Filters inner table:**
+```
++----+-------+---------+--------+
+| id | name  | dept_id | salary |
++----+-------+---------+--------+
+| 1  | Alice | 10      | 75000  | ← Included
+| 2  | Bob   | 10      | 65000  | ← Included
++----+-------+---------+--------+
+```
+
+**Calculate AVG:** (75000 + 65000) / 2 = 70,000
+
+**Compare:** 75000 > 70000? **YES** → Alice included ✓
+
+---
+
+## 7. DOT OPERATOR: THE BRIDGE BETWEEN ALIAS AND COLUMN
+
+### The Dot Operator Does 3 Things:
+
+1. **Specifies which table** (when multiple tables exist)
+2. **Resolves ambiguity** (when columns have same name)
+3. **Creates correlation** (in nested queries)
+
+### Syntax Breakdown:
+
+```
+[alias].[column_name]
+   ↓         ↓
+  Which    Which
+  table    column
+```
+
+### Examples:
 
 ```sql
-SELECT * FROM sales ORDER BY amount DESC LIMIT 10;
+e.name
+↓  ↓
+│  └─ Column name
+└─ Table alias (points to employees)
+
+e1.dept_id
+↓↓  ↓↓↓↓↓↓
+││  └─ Column name
+│└─ Instance number (first reference to employees)
+└─ Base alias letter
 ```
 
-**Testing queries** - View sample data without overwhelming output:
+---
+
+## 8. COMPLETE EXAMPLE: Everything Together
 
 ```sql
-SELECT * FROM large_table LIMIT 5;
+-- employees
++----+--------+---------+--------+
+| id | name   | dept_id | salary |
++----+--------+---------+--------+
+| 1  | Alice  | 10      | 75000  |
+| 2  | Bob    | 10      | 65000  |
+| 3  | Carol  | 20      | 80000  |
+| 4  | David  | 20      | 60000  |
++----+--------+---------+--------+
+
+-- departments
++----+--------+----------+
+| id | name   | budget   |
++----+--------+----------+
+| 10 | IT     | 500000   |
+| 20 | Sales  | 300000   |
++----+--------+----------+
+
+-- Query: Find employees earning more than dept average, show dept info
+SELECT 
+    e.name AS employee_name,           -- Column alias
+    e.salary AS employee_salary,       -- Column alias
+    d.name AS department_name,         -- Column alias
+    d.budget AS department_budget,     -- Column alias
+    (SELECT AVG(e2.salary) 
+     FROM employees e2 
+     WHERE e2.dept_id = e.dept_id) AS dept_avg_salary  -- Column alias
+FROM employees e                       -- Table alias (no AS)
+INNER JOIN departments d               -- Table alias (no AS)
+    ON e.dept_id = d.id
+WHERE e.salary > (
+    SELECT AVG(e3.salary)
+    FROM employees e3
+    WHERE e3.dept_id = e.dept_id
+)
+ORDER BY d.name, e.salary DESC;
 ```
 
-### Key Points
+### Breaking Down the Aliases:
 
-- `AS` is optional but recommended for clarity[^6][^5]
-- Aliases only exist during query execution, they don't change the actual table[^4]
-- Use meaningful, concise names[^5]
-- Avoid SQL reserved words as aliases[^5]
-- Use quotes when alias contains spaces or special characters
+| Alias | Type | Refers To | Used For |
+|-------|------|-----------|----------|
+| `e` | Table | employees (outer query) | Main employee data |
+| `d` | Table | departments | Department info |
+| `e2` | Table | employees (subquery 1) | Calculate dept average for SELECT |
+| `e3` | Table | employees (subquery 2) | Calculate dept average for WHERE |
+| `employee_name` | Column | e.name | Rename output column |
+| `employee_salary` | Column | e.salary | Rename output column |
+| `department_name` | Column | d.name | Rename output column |
+| `dept_avg_salary` | Column | Subquery result | Rename calculated column |
 
+### Dot Operator Usage:
+
+```sql
+e.name           → Get 'name' from employees (alias e)
+e.salary         → Get 'salary' from employees (alias e)
+e.dept_id        → Get 'dept_id' from employees (alias e)
+d.name           → Get 'name' from departments (alias d)
+d.id             → Get 'id' from departments (alias d)
+e2.salary        → Get 'salary' from employees (alias e2, subquery)
+e2.dept_id       → Get 'dept_id' from employees (alias e2, subquery)
+e3.dept_id       → Get 'dept_id' from employees (alias e3, different subquery)
+```
+
+### Why Different Aliases (e, e2, e3)?
+
+```sql
+employees e      → Outer query, processes each employee
+employees e2     → First subquery, calculates average for SELECT
+employees e3     → Second subquery, calculates average for WHERE
+```
+
+**They're all the same table**, but:
+- Need different names to distinguish them
+- Each has its own "context" in the query
+- The dot operator connects them: `e2.dept_id = e.dept_id`
+
+**Result:**
+```
++---------------+-----------------+-----------------+-------------------+-----------------+
+| employee_name | employee_salary | department_name | department_budget | dept_avg_salary |
++---------------+-----------------+-----------------+-------------------+-----------------+
+| Carol         | 80000           | Sales           | 300000            | 70000.00        |
+| Alice         | 75000           | IT              | 500000            | 70000.00        |
++---------------+-----------------+-----------------+-------------------+-----------------+
+```
+
+---
+
+## 9. RULES & BEST PRACTICES
+
+### Table Aliases:
+
+| Rule | Example | Notes |
+|------|---------|-------|
+| `AS` is optional | `FROM employees e` | Most common style |
+| Can use `AS` | `FROM employees AS e` | Valid but verbose |
+| Must be unique | `FROM emp e, emp e` ❌ | Can't reuse in same scope |
+| Can't reference original | `WHERE employees.id = 1` ❌ | Must use `e.id` after aliasing |
+
+**Important:** Once you create an alias, you **must use it**:
+
+```sql
+-- ❌ WRONG - Once aliased as 'e', can't use 'employees'
+SELECT employees.name
+FROM employees e
+WHERE employees.salary > 70000;
+-- ERROR 1054: Unknown column 'employees.name'
+
+-- ✅ CORRECT - Use the alias
+SELECT e.name
+FROM employees e
+WHERE e.salary > 70000;
+```
+
+### Column Aliases:
+
+| Rule | Example | Notes |
+|------|---------|-------|
+| Use `AS` (recommended) | `SELECT name AS emp_name` | Clearest |
+| Space works but confusing | `SELECT name emp_name` | Avoid |
+| Quotes for spaces | `SELECT name AS "Employee Name"` | Use backticks in MySQL: \`Employee Name\` |
+| Can't use in WHERE | `WHERE emp_name > 5` ❌ | Alias not available yet |
+| Can use in ORDER BY | `ORDER BY emp_name` ✓ | Alias available here |
+
+### WHERE vs ORDER BY with Column Aliases:
+
+```sql
+-- ❌ WRONG - Column alias not available in WHERE
+SELECT salary * 12 AS annual_salary
+FROM employees
+WHERE annual_salary > 100000;
+-- ERROR 1054: Unknown column 'annual_salary'
+
+-- ✅ CORRECT - Use original expression in WHERE
+SELECT salary * 12 AS annual_salary
+FROM employees
+WHERE salary * 12 > 100000;
+
+-- ✅ ALSO CORRECT - Alias works in ORDER BY
+SELECT salary * 12 AS annual_salary
+FROM employees
+WHERE salary * 12 > 100000
+ORDER BY annual_salary DESC;  -- Alias OK here
+```
+
+**Why?** Execution order:
+```
+FROM → WHERE → SELECT (aliases created) → ORDER BY
+```
+
+---
+
+## 10. VISUAL SUMMARY
+
+### How It All Connects:
+
+```
+TABLE ALIAS (e)
+     ↓
+FROM employees e
+     ↓
+CREATE CONNECTION
+     ↓
+e.name  ←─ DOT OPERATOR connects alias to column
+  ↓
+SELECT e.name AS employee_name  ←─ COLUMN ALIAS for output
+            ↓
+       RESULT
+    employee_name
+    ─────────────
+    Alice
+    Bob
+    Carol
+```
+
+### Nested Query Visualization:
+
+```
+OUTER: employees e1
+       ↓
+       e1.name, e1.salary, e1.dept_id
+       ↓
+WHERE e1.salary > (
+       ↓
+       INNER: employees e2
+       ↓
+       AVG(e2.salary)
+       ↓
+       WHERE e2.dept_id = e1.dept_id
+             ↑↑↑↑↑↑↑↑↑   ↑↑↑↑↑↑↑↑↑
+             Inner        Outer
+             (filters)    (correlation)
+       
+       DOT OPERATOR creates the bridge!
+)
+```
+
+---
+
+## FINAL SUMMARY
+
+| Concept | Syntax | Purpose |
+|---------|--------|---------|
+| **Table Alias** | `FROM employees e` or `FROM employees AS e` | Give table a short name |
+| **Column Alias** | `SELECT name AS emp_name` | Rename output column |
+| **Dot Operator** | `e.name` | Connect alias to column |
+| **Why Alias?** | Clarity, brevity, necessity (self-joins, ambiguity) | Make queries readable |
+| **AS keyword** | Optional for tables, recommended for columns | Clarity |
+
+**Key Insight:** 
+- **Alias** = the nickname
+- **Dot operator** = how you use the nickname to access data
+- Together they make complex queries manageable!
 
 # CONSTRAINTS in MySQL:
 
 ## What are Constraints?
 
-Constraints are **rules** you apply to columns in a table to control what kind of data can be stored.  They prevent invalid or unwanted data from entering your database and keep data accurate and consistent.
+Constraints are **rules** you apply to columns in a table to control what kind of data can be stored. This is the logic that gets applied to the databases. 
+They prevent invalid or unwanted data from entering your database and keep data accurate and consistent.
 
 ## Types of Constraints
 
+Constraints enforce rules that columns in a table must follow, ensuring data integrity. There are three main categories:[^1]
+
+### Domain Integrity Constraints
+
+These set acceptable ranges and prevent operations that violate those rules.[^1]
+
+- **NOT NULL**: Ensures a column cannot contain NULL values (by default, columns allow NULL)[^1]
+- **CHECK**: Defines a specific range or condition that values must satisfy[^1]
+
+
+### Entity Integrity Constraints
+
+These ensure each record is uniquely identifiable.[^1]
+
+- **UNIQUE**: Allows only unique values in a column or group of columns, preventing duplicate records, but permits NULL values[^1]
+- **PRIMARY KEY**: Combines UNIQUE and NOT NULL—it prevents duplicates and doesn't allow NULL values. Cannot be used on LONG data type columns[^1]
+
+
+### Referential Integrity Constraints
+
+These enforce relationships between tables using foreign keys.[^1]
+
+- **FOREIGN KEY**: Designates a column (or combination) as a foreign key that references a primary or unique key in another table. The table with the foreign key is the child table; the table with the referenced key is the parent table[^1]
+
+## Domain Integrity Constraints:
+
 ### NOT NULL
 
-Forces a column to **always have a value**—it cannot be empty (NULL).[^1]
+Forces a column to **always have a value**—it cannot be empty (NULL).
 
 ```sql
 CREATE TABLE students (
@@ -1083,7 +1088,41 @@ CREATE TABLE students (
 );
 ```
 
-Here, every student **must** have an `id` and `name`; you can't insert a row without them.[^10]
+Here, every student **must** have an `id` and `name`; you can't insert a row without them.
+
+### CHECK
+
+Enforces a **condition** on column values—only values passing the condition are allowed.
+
+```sql
+CREATE TABLE students (
+  age INT CHECK (age >= 18)
+);
+```
+
+Only students aged 18 or older can be inserted.
+
+**Using named CHECK constraint:**
+
+```sql
+CREATE TABLE students (
+  age INT,
+  CONSTRAINT age_check CHECK (age >= 18)
+);
+```
+
+### DEFAULT
+Sets a **default value** if no value is provided during INSERT.
+
+```sql
+CREATE TABLE students (
+  percentage DECIMAL(5,2) DEFAULT 0.0
+);
+```
+
+If you don't specify `percentage` when inserting a row, it automatically gets `0.0`.
+
+## Entity Integrity Contraints:
 
 ### UNIQUE
 
@@ -1126,40 +1165,8 @@ CREATE TABLE students (
 );
 ```
 
-Both are identical.[^6]
+Both are identical.
 
-### DEFAULT
-
-Sets a **default value** if no value is provided during INSERT.
-
-```sql
-CREATE TABLE students (
-  percentage DECIMAL(5,2) DEFAULT 0.0
-);
-```
-
-If you don't specify `percentage` when inserting a row, it automatically gets `0.0`.
-
-### CHECK
-
-Enforces a **condition** on column values—only values passing the condition are allowed.
-
-```sql
-CREATE TABLE students (
-  age INT CHECK (age >= 18)
-);
-```
-
-Only students aged 18 or older can be inserted.
-
-**Using named CHECK constraint:**
-
-```sql
-CREATE TABLE students (
-  age INT,
-  CONSTRAINT age_check CHECK (age >= 18)
-);
-```
 
 
 ## Using CONSTRAINT Keyword
@@ -1217,36 +1224,7 @@ decimal(5,2) default 0.0, phone varchar(11), bdate date, gender enum('F','M'), p
 key(id,name) );
 ```
 
-
-## Types of Constraints
-
-Constraints enforce rules that columns in a table must follow, ensuring data integrity. There are three main categories:[^1]
-
-### Domain Integrity Constraints
-
-These set acceptable ranges and prevent operations that violate those rules.[^1]
-
-- **NOT NULL**: Ensures a column cannot contain NULL values (by default, columns allow NULL)[^1]
-- **CHECK**: Defines a specific range or condition that values must satisfy[^1]
-
-
-### Entity Integrity Constraints
-
-These ensure each record is uniquely identifiable.[^1]
-
-- **UNIQUE**: Allows only unique values in a column or group of columns, preventing duplicate records, but permits NULL values[^1]
-- **PRIMARY KEY**: Combines UNIQUE and NOT NULL—it prevents duplicates and doesn't allow NULL values. Cannot be used on LONG data type columns[^1]
-
-
-### Referential Integrity Constraints
-
-These enforce relationships between tables using foreign keys.[^1]
-
-- **FOREIGN KEY**: Designates a column (or combination) as a foreign key that references a primary or unique key in another table. The table with the foreign key is the child table; the table with the referenced key is the parent table[^1]
-
-
 # Foreign Keys in MySQL
-# Complete Guide to Foreign Keys in MySQL
 
 ## Prerequisites Review
 
@@ -1362,7 +1340,7 @@ CREATE TABLE child (
 ) ENGINE=INNODB;
 ```
 
-### **"If I manually create an index, and then I add a Foreign Key on the same column, is MySQL smart enough to link them, or will it blindly create a second, duplicate index?"**
+### "If I manually create an index, and then I add a Foreign Key on the same column, is MySQL smart enough to link them, or will it blindly create a second, duplicate index?"
 
 The short answer is: **Yes, MySQL is smart enough.** It will detect your manual index and use it, provided it meets specific criteria.
 
@@ -1990,20 +1968,22 @@ SHOW ENGINES;
 
 ## 14. Quick Reference Summary
 
-| Concept | Key Points |
-|---------|-----------|
-| **Foreign Key** | Links child table to parent table |
-| **Parent Table** | Has PRIMARY KEY being referenced |
-| **Child Table** | Has FOREIGN KEY referencing parent |
-| **INDEX** | Required for fast FK lookups (auto-created) |
-| **NOT NULL on FK** | Use when relationship is mandatory |
-| **RESTRICT** | Prevents parent deletion if children exist |
-| **CASCADE** | Automatically deletes/updates children |
-| **SET NULL** | Sets FK to NULL (requires nullable column) |
-| **InnoDB** | Only engine that enforces FK constraints |
+| Concept            | Key Points                                  |
+| ------------------ | ------------------------------------------- |
+| **Foreign Key**    | Links child table to parent table           |
+| **Parent Table**   | Has PRIMARY KEY being referenced            |
+| **Child Table**    | Has FOREIGN KEY referencing parent          |
+| **INDEX**          | Required for fast FK lookups (auto-created) |
+| **NOT NULL on FK** | Use only when relationship is mandatory     |
+| **RESTRICT**       | Prevents parent deletion if children exist  |
+| **CASCADE**        | Automatically deletes/updates children      |
+| **SET NULL**       | Sets FK to NULL (requires nullable column)  |
+| **InnoDB**         | Only engine that enforces FK constraints    |
 
 
-# Execution of EER Diagrams
+# Implemtations:
+
+## EER Diagrams
 This file covers the exact next step you need for Lab 5 and your mid-sem: **Mapping your EER diagrams into actual Relational Tables.** Drawing the diagram is only half the battle. Now you have to convert those Superclasses, Subclasses, and Union Types into a database schema. Here is the no-bullshit breakdown of the rules from Navathe Chapter 9.
 
 ### Mapping Superclasses and Subclasses (4 Options)

@@ -8,6 +8,48 @@
         "type": "tabs",
         "children": [
           {
+            "id": "5cd998620466864b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "03_stability_requirement_Version2"
+            }
+          },
+          {
+            "id": "ba5d5b8e99c8434d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "04_radix_sort_Version2"
+            }
+          },
+          {
+            "id": "f7962b612aa353a0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "02_compositional_sorting_Version2"
+            }
+          },
+          {
             "id": "36002fb460e694fa",
             "type": "leaf",
             "state": {
@@ -22,77 +64,35 @@
             }
           },
           {
-            "id": "f730e6b8cac9dbcf",
+            "id": "48e9d0a8f5b91ab8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Basic elements of writing code/Pointers and Working with Memory Allocation.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Pointers and Working with Memory Allocation"
+              "title": "HASHING"
             }
           },
           {
-            "id": "5fcfa7790bacf201",
+            "id": "aa2d66c0f25ef7f2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "C++ Programming Language"
-            }
-          },
-          {
-            "id": "c6f1e969173c9db9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/DSA Lab-5 Practice Problems.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "DSA Lab-5 Practice Problems"
-            }
-          },
-          {
-            "id": "e8717be460fa18ba",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/Lab 5.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Lab 5"
-            }
-          },
-          {
-            "id": "1fa6798a9c77fc7e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Data Types and Constants.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Data Types and Constants"
+              "title": "01_motivation_Version2"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -184,12 +184,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from C++ Programming Language"
+              "title": "Outgoing links from HASHING"
             }
           },
           {
@@ -220,20 +220,20 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Programming languages/cpp/C++ Programming Language.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
                 "followCursor": false,
                 "showSearch": true,
-                "searchQuery": ""
+                "searchQuery": "AS (A"
               },
               "icon": "lucide-list",
-              "title": "Outline of C++ Programming Language"
+              "title": "Outline of HASHING"
             }
           }
         ]
       }
     ],
     "direction": "horizontal",
-    "width": 297.5
+    "width": 505.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -249,54 +249,54 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "5fcfa7790bacf201",
+  "active": "48e9d0a8f5b91ab8",
   "lastOpenFiles": [
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/README_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 858980.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/11_complete_demo_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 680743.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/10_bucket_sort_analysis_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 672852.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/10_bucket_sort_analysis_Version1.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 696267.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/09_bucket_sort_concept_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 917190.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/08_complexity_summary_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 820512.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/07_counting_sort_stable_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 599023.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/06_counting_sort_basic_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 756850.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/05_stability_failure_trace_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 369555.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Unconfirmed 727165.crdownload",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/DSA Lab-5 Practice Problems.md",
-    "Programming languages/cpp/Linked Lists in STL.md",
-    "Programming languages/cpp/C++ Programming Language.md",
-    "Object Oriented Programming/Notes/Memory Allocation in OOPS in C++.md",
-    "Programming languages/cpp/Data Structures in C++.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Pointers and Working with Memory Allocation.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Randomized QuickSort.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/README_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/06_counting_sort_basic_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
+    "Programming languages/JavaScript/Introduction to TypeScript.md",
+    "ReactNative/Styling in ReactNative.md",
+    "Backend/Database and Structures/MySQL/JOIN Operations in MySQL.md",
+    "GameDev/vdoc.pub_fundamental-2d-game-programming-with-java.pdf",
+    "Programming languages/cpp/Queue in STL.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/DSA Lab-5 Practice Problems.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/Lab 5.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Data Types and Constants.md",
-    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/Lab 1.md",
-    "Intro to Programming using The C Programming Language/Basic elements of writing code/Data Types/Structs.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Merge Sort.md",
+    "ReactNative/Introduction to ReactNative.md",
+    "ReactNative/In Data algorithms'.md",
+    "Programming languages/Java/Introduction to Java.md",
+    "Backend/Database and Structures/MySQL/Introduction to MySQL.md",
+    "Backend/Database and Structures/MySQL/NESTED QUERIES in MySQL.md",
+    "Object Oriented Programming/Object Oriented Programming.md",
+    "ReactNative/New Navigation System in Expo React Native.md",
+    "Backend/Database and Structures/Notes(Theory)/1 Introduction Notes.md",
+    "Backend/Database and Structures/Notes(Theory)/1 Introduction.pdf",
+    "ReactNative/FlexStyling.ts",
+    "ReactNative/FlexStyling.html",
+    "ReactNative/Untitled.md",
+    "Attachments/Pasted image 20260302190423.png",
+    "Attachments/Pasted image 20260302190359.png",
+    "Attachments/Pasted image 20260302185453.png",
+    "DESC ",
+    "Attachments/Pasted image 20260302083707.png",
+    "Computer Architecture/Microprocessors and Interfacing/Resources/3_MUPI_Architecture_II.pdf",
+    "Computer Architecture/Microprocessors and Interfacing/Resources/23 Lecture3.pdf",
+    "Computer Architecture/Microprocessors and Interfacing/Resources/22 Lecture2.pdf",
+    "Computer Architecture/Microprocessors and Interfacing/Resources/21 Lecture_1.pdf",
+    "Computer Architecture/Microprocessors and Interfacing/Resources",
     "Attachments/Pasted image 20260223172012.png",
     "Attachments/Pasted image 20260223083452.png",
     "Attachments/Pasted image 20260222112338.png",
     "Attachments/Pasted image 20260216025421.png",
     "Attachments/Pasted image 20260216025249.png",
     "Attachments/Pasted image 20260215204855.png",
-    "Attachments/Pasted image 20260210000325.png",
-    "Attachments/Pasted image 20260210000258.png",
-    "Attachments/Pasted image 20260210000239.png",
-    "Attachments/Pasted image 20260210000217.png",
     "Projects/Wrath of god game/Class Structures.canvas",
     "Unity GameDev/Project Documentations/Card_Game.canvas",
     "Programming languages/Css/CSS Properties/display Property/Display.canvas",

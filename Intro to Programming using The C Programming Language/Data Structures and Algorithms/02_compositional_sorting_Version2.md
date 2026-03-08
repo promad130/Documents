@@ -1,4 +1,4 @@
-# Compositional Sorting: Building Order Step-by-Step
+
 
 ## The Concept
 

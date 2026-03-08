@@ -29,20 +29,6 @@ Person C: 15-01-1995
 
 **Key Idea**: When the range of values `k` is small compared to `n`, we can sort in **O(n + k)** time!
 
-## When Linear Sorting Works
-
-✅ **Small range of values** (integers from 1-100)
-✅ **Structured data** (dates, strings of fixed length)
-✅ **Known distribution** (uniformly distributed numbers)
-
-❌ **Arbitrary comparison** (custom objects without numeric keys)
-❌ **Infinite range** (real numbers without bounds)
-
-## The Trade-off
-
-- **Time**: O(n) instead of O(n log n) ✅
-- **Space**: Often requires O(n + k) extra memory ⚠️
-- **Restriction**: Works only on integer keys or data convertible to integers ⚠️
 
 ---
 

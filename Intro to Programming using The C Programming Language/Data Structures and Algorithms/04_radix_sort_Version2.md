@@ -14,7 +14,7 @@
 
 ## How It Works
 
-### Example: Sorting [170, 45, 75, 90, 802, 24, 2, 66]
+### Example: Sorting `[170, 45, 75, 90, 802, 24, 2, 66]`
 
 **Digit positions** (base 10):
 - d₀: ones place (least significant)

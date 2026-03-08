@@ -113,6 +113,9 @@ This sorts the vector without writing sorting logic yourself.
 
 # [[Linked Lists in STL]]
 
+# [[Stack in STL]]
+
+# [[Queue in STL]]
 
 # Pair in STL
 `pair` in C++ STL is a simple container that stores two values together as a single unit. The values can be of different data types.

@@ -40,9 +40,8 @@ When the `alignItem` works on cross axis, i.e., vertical axis.
 - **`space-around`** - Distributes items with equal space around each item (half-size space at the edges)
 - **`space-evenly`** - Distributes items with completely equal spacing everywhere, including edges
 
-
-# Colors
+## Flex
 
 ![[Pasted image 20260110021800.png]]
 
-
+Check out the file called "`FlexStyling.html`"

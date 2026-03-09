@@ -8,48 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "5cd998620466864b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "03_stability_requirement_Version2"
-            }
-          },
-          {
-            "id": "ba5d5b8e99c8434d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "04_radix_sort_Version2"
-            }
-          },
-          {
-            "id": "f7962b612aa353a0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "02_compositional_sorting_Version2"
-            }
-          },
-          {
             "id": "36002fb460e694fa",
             "type": "leaf",
             "state": {
@@ -64,35 +22,34 @@
             }
           },
           {
-            "id": "48e9d0a8f5b91ab8",
+            "id": "813b66009508c72a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Time Complexity of Max-Heap Operations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "HASHING"
+              "title": "Time Complexity of Max-Heap Operations"
             }
           },
           {
-            "id": "aa2d66c0f25ef7f2",
+            "id": "37d73615a35ca4b7",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Binary tree.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01_motivation_Version2"
+              "title": "Binary tree"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -184,12 +141,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from HASHING"
+              "title": "Outgoing links from Introduction to Data Structures And Algorithm"
             }
           },
           {
@@ -220,13 +177,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
+                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
                 "followCursor": false,
                 "showSearch": true,
-                "searchQuery": "AS (A"
+                "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of HASHING"
+              "title": "Outline of Introduction to Data Structures And Algorithm"
             }
           }
         ]
@@ -249,18 +206,29 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "48e9d0a8f5b91ab8",
+  "active": "36002fb460e694fa",
   "lastOpenFiles": [
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Time Complexity of Max-Heap Operations.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+    "Attachments/Pasted image 20260310014318.png",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/HASHING.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/README_Version2.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Binary tree.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Tree Discrete Structure.md",
+    "Logic in Computer Science/Introduction to Logic in CS.md",
+    "Logic in Computer Science/Prolog/Introduction to Prolog.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
+    "Discreate Structures/Introduction to discreate structures.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Quick Sort.md",
+    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
+    "Attachments/Pasted image 20260308232032.png",
+    "Attachments/Pasted image 20260308231957.png",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/README_Version2.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/06_counting_sort_basic_Version2.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
     "Programming languages/JavaScript/Introduction to TypeScript.md",
     "ReactNative/Styling in ReactNative.md",
     "Backend/Database and Structures/MySQL/JOIN Operations in MySQL.md",
@@ -269,18 +237,9 @@
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/DSA Lab-5 Practice Problems.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Practice Problems/Lab 5.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Merge Sort.md",
-    "ReactNative/Introduction to ReactNative.md",
-    "ReactNative/In Data algorithms'.md",
-    "Programming languages/Java/Introduction to Java.md",
-    "Backend/Database and Structures/MySQL/Introduction to MySQL.md",
-    "Backend/Database and Structures/MySQL/NESTED QUERIES in MySQL.md",
-    "Object Oriented Programming/Object Oriented Programming.md",
-    "ReactNative/New Navigation System in Expo React Native.md",
-    "Backend/Database and Structures/Notes(Theory)/1 Introduction Notes.md",
     "Backend/Database and Structures/Notes(Theory)/1 Introduction.pdf",
     "ReactNative/FlexStyling.ts",
     "ReactNative/FlexStyling.html",
-    "ReactNative/Untitled.md",
     "Attachments/Pasted image 20260302190423.png",
     "Attachments/Pasted image 20260302190359.png",
     "Attachments/Pasted image 20260302185453.png",
@@ -294,9 +253,6 @@
     "Attachments/Pasted image 20260223172012.png",
     "Attachments/Pasted image 20260223083452.png",
     "Attachments/Pasted image 20260222112338.png",
-    "Attachments/Pasted image 20260216025421.png",
-    "Attachments/Pasted image 20260216025249.png",
-    "Attachments/Pasted image 20260215204855.png",
     "Projects/Wrath of god game/Class Structures.canvas",
     "Unity GameDev/Project Documentations/Card_Game.canvas",
     "Programming languages/Css/CSS Properties/display Property/Display.canvas",

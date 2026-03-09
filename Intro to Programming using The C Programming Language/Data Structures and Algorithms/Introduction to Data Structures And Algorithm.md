@@ -2769,9 +2769,7 @@ int main() {
    - Managing sequential processing
 
 
-## Binary Search Tree
-
-# Binary Search Tree (BST)
+## Binary Search Tree (BST)
 
 A **Binary Search Tree** is a hierarchical data structure where each node has at most two children (left and right), and it maintains a specific ordering property: for every node, all values in its left subtree are smaller, and all values in its right subtree are larger.
 
@@ -2861,7 +2859,7 @@ private:
         if (node == nullptr) {
             return new Node(value);
         }
-
+		
         if (value < node->data) {
             node->left = insertHelper(node->left, value);
         } else if (value > node->data) {
@@ -4007,14 +4005,14 @@ int main() {
    - **B-Tree**: Used in databases
 
 
-## Heaos
+## Heap
 # Heap Data Structure
 
-A **Heap** is a specialized tree-based data structure that satisfies the **heap property**. It's a complete binary tree where each node follows a specific ordering relationship with its children. Heaps are commonly used to implement priority queues and for efficient sorting (heap sort).
+A **Heap** is a specialized tree-based data structure that satisfies the **heap property**. It's a complete [[Binary tree]] where each node follows a specific ordering relationship with its children. Heaps are commonly used to implement priority queues and for efficient sorting (heap sort).
 
 ## Key Characteristics
 
-- **Complete Binary Tree**: All levels filled except possibly the last, which fills left to right
+- **Complete Binary Tree**: All levels filled complety except possibly the last, which fills left to right
 - **Heap Property**: Parent-child relationship follows specific order
 - **Time Complexity**: 
   - Insert: O(log n)
@@ -4076,166 +4074,878 @@ For index i:
 
 ## Array-Based Heap Implementation
 
-```cpp name=heap_max_heap.cpp
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
+To understand how heaps work, we are now going to implement the Max-Heap:
 
+### Part 1: Class Structure and Member Variables
+
+```cpp
 class MaxHeap {
 private:
     vector<int> heap;
+```
 
-    // Get parent index
-    int parent(int i) {
-        return (i - 1) / 2;
+#### Explanation
+
+**`vector<int> heap;`**
+- This is the **core data structure** that stores our heap
+- Uses a dynamic array (vector) instead of fixed-size array
+- **Why vector?** Dynamic resizing, no need to know size in advance
+- **Elements stored as:** `[parent, left_child, right_child, ...]`
+
+#### Array-to-Tree Mapping
+
+```
+Array:  [90, 60, 80, 40, 50, 70]
+Index:   0   1   2   3   4   5
+
+Tree representation:
+        90 (index 0)
+       /  \
+      60   80 (indices 1, 2)
+     / \   /
+    40 50 70 (indices 3, 4, 5)
+```
+
+**Key relationships:**
+- Parent of index `i` → `(i-1)/2`
+- Left child of `i` → `2*i + 1`
+- Right child of `i` → `2*i + 2`
+
+---
+
+### Part 2: Helper Functions for Navigation
+
+#### Function 1: `parent()`
+
+```cpp
+int parent(int i) {
+    return (i - 1) / 2;
+}
+```
+
+**Purpose:** Find the parent index of a given node
+
+**Formula:** `parent(i) = (i - 1) / 2`
+
+**Examples:**
+```cpp
+parent(5) = (5-1)/2 = 4/2 = 2
+parent(4) = (4-1)/2 = 3/2 = 1  // Integer division!
+parent(3) = (3-1)/2 = 2/2 = 1
+parent(1) = (1-1)/2 = 0/2 = 0
+parent(0) = (0-1)/2 = -1/2 = 0  // Root has no parent
+```
+
+**Visual:**
+```
+Index:  0   1   2   3   4   5
+        90  60  80  40  50  70
+        
+parent(5) = 2:
+        90
+       /  \
+      60   80 ← parent
+     / \   /
+    40 50 70 ← index 5
+```
+
+---
+
+#### Function 2: `leftChild()`
+
+```cpp
+int leftChild(int i) {
+    return 2 * i + 1;
+}
+```
+
+**Purpose:** Find the left child index of a given node
+
+**Formula:** `leftChild(i) = 2*i + 1`
+
+**Examples:**
+```cpp
+leftChild(0) = 2*0 + 1 = 1
+leftChild(1) = 2*1 + 1 = 3
+leftChild(2) = 2*2 + 1 = 5
+```
+
+**Visual:**
+```
+Index 0 (90):
+        90
+       /
+      60 ← leftChild(0) = 1
+```
+
+---
+
+#### Function 3: `rightChild()`
+
+```cpp
+int rightChild(int i) {
+    return 2 * i + 2;
+}
+```
+
+**Purpose:** Find the right child index of a given node
+
+**Formula:** `rightChild(i) = 2*i + 2`
+
+**Examples:**
+```cpp
+rightChild(0) = 2*0 + 2 = 2
+rightChild(1) = 2*1 + 2 = 4
+rightChild(2) = 2*2 + 2 = 6
+```
+
+**Visual:**
+```
+Index 0 (90):
+        90
+         \
+         80 ← rightChild(0) = 2
+```
+
+
+### Part 3: HeapifyUp (Bubble Up)
+
+```cpp
+void heapifyUp(int index) {
+    while (index > 0 && heap[parent(index)] < heap[index]) {
+        // Swap with parent
+        swap(heap[index], heap[parent(index)]);
+        index = parent(index);
+    }
+}
+```
+
+#### Purpose
+**Move a newly inserted element UP the tree** until the max heap property is satisfied.
+
+#### Max Heap Property
+**Parent ≥ Both children**
+
+#### Line-by-Line Breakdown
+
+**Line 1:** `while (index > 0 && heap[parent(index)] < heap[index])`
+
+```cpp
+while (index > 0 && heap[parent(index)] < heap[index])
+      └─────┬─────┘  └───────────────┬───────────────┘
+            │                        │
+     Not at root            Parent < Current child
+                            (violates max heap!)
+```
+
+- **`index > 0`**: Stop when we reach root (root has no parent)
+- **`heap[parent(index)] < heap[index]`**: Parent is smaller than child → violation!
+
+**Line 2:** `swap(heap[index], heap[parent(index)]);`
+
+- Swap the child with its parent
+- Child moves up, parent moves down
+
+**Line 3:** `index = parent(index);`
+
+- **Crucial!** Update index to follow the element up
+- Continue checking from new position
+
+#### Complete Example: Insert 90
+
+```
+Initial heap:
+        80
+       /  \
+      60   70
+     / \
+    40 50
+
+Step 1: Insert 90 at end
+        80
+       /  \
+      60   70
+     / \   /
+    40 50 90  ← index = 5
+
+Step 2: HeapifyUp iteration 1
+index = 5, parent(5) = 2
+heap[5] = 90, heap[2] = 70
+90 > 70? YES → SWAP
+
+        80
+       /  \
+      60   90  ← moved up
+     / \   /
+    40 50 70
+    
+index = parent(5) = 2
+
+Step 3: HeapifyUp iteration 2
+index = 2, parent(2) = 0
+heap[2] = 90, heap[0] = 80
+90 > 80? YES → SWAP
+
+        90  ← reached top!
+       /  \
+      60   80
+     / \   /
+    40 50 70
+    
+index = parent(2) = 0
+
+Step 4: Loop check
+index = 0 → index > 0? NO → STOP
+```
+
+---
+
+### Part 4: HeapifyDown (also called MaxHeapify in CLRS)
+In CLRS:
+![[Pasted image 20260310014318.png]]
+
+```cpp
+void heapifyDown(int index) {
+    int size = heap.size();
+    int largest = index;
+    int left = leftChild(index);
+    int right = rightChild(index);
+
+    // Check if left child is larger
+    if (left < size && heap[left] > heap[largest]) {
+        largest = left;
     }
 
-    // Get left child index
-    int leftChild(int i) {
-        return 2 * i + 1;
+    // Check if right child is larger
+    if (right < size && heap[right] > heap[largest]) {
+        largest = right;
     }
 
-    // Get right child index
-    int rightChild(int i) {
-        return 2 * i + 2;
+    // If largest is not current node, swap and continue
+    if (largest != index) {
+        swap(heap[index], heap[largest]);
+        heapifyDown(largest);
+    }
+}
+```
+
+#### Purpose
+**Move an element DOWN the tree** by swapping with the larger child until heap property is satisfied.
+
+#### Line-by-Line Breakdown
+
+**Line 1:** `int size = heap.size();`
+- Cache the size to avoid repeated function calls
+- Used for bounds checking
+
+**Line 2:** `int largest = index;`
+- **Assumption:** Current node is the largest
+- Will update if we find a larger child
+
+**Lines 3-4:** Calculate child indices
+```cpp
+int left = leftChild(index);   // 2*i + 1
+int right = rightChild(index); // 2*i + 2
+```
+
+**Lines 6-8:** Check left child
+```cpp
+if (left < size && heap[left] > heap[largest]) {
+    largest = left;
+}
+```
+- **`left < size`**: Does left child exist? (bounds check)
+- **`heap[left] > heap[largest]`**: Is left child larger?
+- If both true → left child is the largest so far
+
+**Lines 10-12:** Check right child
+```cpp
+if (right < size && heap[right] > heap[largest]) {
+    largest = right;
+}
+```
+- Same logic for right child
+- **Important:** Compares with current `largest` (might be left child now)
+
+**Lines 14-17:** Swap and recurse
+```cpp
+if (largest != index) {
+    swap(heap[index], heap[largest]);
+    heapifyDown(largest);  // Recursive call!
+}
+```
+- **`largest != index`**: Found a larger child?
+- Swap current with the larger child
+- **Recursively** heapify down from that child's position
+
+#### Complete Example: Extract Max
+
+```
+Initial heap:
+        90
+       /  \
+      60   80
+     / \   /
+    40 50 70
+
+Step 1: Remove root (90), replace with last (70)
+        70  ← Now at root, violates heap property!
+       /  \
+      60   80
+     / \
+    40 50
+
+Step 2: HeapifyDown from root (index 0)
+index = 0
+left = 1, right = 2
+heap[0] = 70, heap[1] = 60, heap[2] = 80
+
+Find largest:
+largest = 0 (initially)
+heap[1] = 60 < heap[0] = 70 → no change
+heap[2] = 80 > heap[0] = 70 → largest = 2
+
+largest (2) != index (0) → SWAP
+
+        80  ← Swapped
+       /  \
+      60   70  ← Now at index 2
+     / \
+    40 50
+
+Step 3: Recursive call heapifyDown(2)
+index = 2
+left = 5, right = 6
+left >= size (5 >= 5) → no left child
+right >= size → no right child
+
+No children → STOP (heap property satisfied!)
+
+Final:
+        80
+       /  \
+      60   70
+     / \
+    40 50
+```
+
+---
+
+### Part 5: Constructors
+
+#### Default Constructor
+
+```cpp
+MaxHeap() {}
+```
+
+**Purpose:** Create an empty heap
+
+**Usage:**
+```cpp
+MaxHeap heap;  // Empty heap, no elements
+```
+
+---
+
+#### Constructor from Array (Build Heap)
+
+```cpp
+MaxHeap(const vector<int>& arr) {
+    heap = arr;
+    // Build heap (heapify)
+    for (int i = heap.size() / 2 - 1; i >= 0; i--) {
+        heapifyDown(i);
+    }
+}
+```
+
+#### Purpose
+Convert an **arbitrary array** into a valid max heap **in O(n) time**!
+
+#### Line-by-Line Breakdown
+
+**Line 1:** `heap = arr;`
+- Copy the input array as-is
+- Not a heap yet! Just raw data
+
+**Line 3:** `for (int i = heap.size() / 2 - 1; i >= 0; i--)`
+
+```cpp
+for (int i = heap.size() / 2 - 1; i >= 0; i--)
+        └────────┬────────┘
+                 │
+         Last non-leaf node
+```
+
+**Why `heap.size() / 2 - 1`?**
+
+```
+For array of size 7:
+Index:  0   1   2   3   4   5   6
+        
+Tree:       0
+           / \
+          1   2
+         /|   |\
+        3 4   5 6
+        
+Leaf nodes: 3, 4, 5, 6 (indices ≥ 7/2 = 3)
+Non-leaf nodes: 0, 1, 2 (indices < 3)
+
+Last non-leaf = 7/2 - 1 = 2
+```
+
+**Leaf nodes don't need heapifyDown** (they have no children, automatically satisfy heap property)
+
+**Line 4:** `heapifyDown(i);`
+- Process each non-leaf node from bottom to top
+- Ensures subtrees are heaps before processing parent
+
+#### Why Bottom-Up is O(n)?
+
+**Top-down (inserting one by one):**
+```
+Insert n elements → n * log(n) = O(n log n)
+```
+
+**Bottom-up (heapify):**
+```
+Most nodes are near bottom (low height)
+Only few nodes at top (high height)
+Average work per node is constant!
+Total: O(n)
+```
+Check out [[Time Complexity of Max-Heap Operations#5. Build Heap (`Build-Heap`)]] for clear explanation of why.
+
+#### Example: Build Heap from `[10, 20, 15, 30, 40]`
+
+```
+Step 0: Raw array
+        10
+       /  \
+      20   15
+     / \
+    30 40
+
+Indices to process: 1, 0 (size/2 - 1 = 5/2 - 1 = 1)
+
+Step 1: heapifyDown(1)
+Compare 20 with children 30, 40
+40 is largest → swap
+
+        10
+       /  \
+      40   15
+     / \
+    30 20
+
+Step 2: heapifyDown(0)
+Compare 10 with children 40, 15
+40 is largest → swap
+
+        40
+       /  \
+      10   15
+     / \
+    30 20
+
+Recursively heapifyDown(1):
+Compare 10 with children 30, 20
+30 is largest → swap
+
+        40
+       /  \
+      30   15
+     / \
+    10 20
+
+Done! Valid max heap.
+```
+
+---
+
+### Part 6: Insert Operation
+
+```cpp
+void insert(int value) {
+    heap.push_back(value);
+    heapifyUp(heap.size() - 1);
+    cout << "Inserted: " << value << endl;
+}
+```
+
+#### Purpose
+Add a new element while maintaining the max heap property.
+
+#### Line-by-Line Breakdown
+
+**Line 1:** `heap.push_back(value);`
+- Add element at the **end** of array
+- Maintains **complete binary tree** property
+- Temporarily violates max heap property
+
+**Line 2:** `heapifyUp(heap.size() - 1);`
+- Fix heap property by bubbling up
+- `heap.size() - 1` is the index of newly added element
+
+**Line 3:** `cout << "Inserted: " << value << endl;`
+- User feedback
+
+#### Time Complexity
+**O(log n)** - Element may bubble up entire height of tree
+
+#### Example: Insert 85
+
+```
+Before:
+        90
+       /  \
+      60   80
+     / \
+    40 50
+    
+Array: [90, 60, 80, 40, 50]
+
+Step 1: push_back(85)
+Array: [90, 60, 80, 40, 50, 85]
+
+        90
+       /  \
+      60   80
+     / \   /
+    40 50 85  ← Added here (index 5)
+
+Step 2: heapifyUp(5)
+parent(5) = 2
+85 > 80? YES → Swap
+
+        90
+       /  \
+      60   85  ← Bubbled up
+     / \   /
+    40 50 80
+
+parent(2) = 0
+85 > 90? NO → Stop
+
+Final:
+Array: [90, 60, 85, 40, 50, 80]
+```
+
+---
+
+### Part 7: Extract Max Operation
+
+```cpp
+int extractMax() {
+    if (isEmpty()) {
+        throw runtime_error("Heap is empty!");
     }
 
-    // Move element up to maintain heap property
-    void heapifyUp(int index) {
-        while (index > 0 && heap[parent(index)] < heap[index]) {
-            // Swap with parent
-            swap(heap[index], heap[parent(index)]);
-            index = parent(index);
+    int maxValue = heap[0];
+
+    // Move last element to root and heapify down
+    heap[0] = heap.back();
+    heap.pop_back();
+
+    if (!isEmpty()) {
+        heapifyDown(0);
+    }
+
+    return maxValue;
+}
+```
+
+#### Purpose
+Remove and return the **maximum element** (root) while maintaining heap property.
+
+#### Line-by-Line Breakdown
+
+**Lines 1-3:** Error handling
+```cpp
+if (isEmpty()) {
+    throw runtime_error("Heap is empty!");
+}
+```
+- Can't extract from empty heap
+- Throws exception for safety
+
+**Line 5:** `int maxValue = heap[0];`
+- Save the root value to return later
+- Root always contains maximum in max heap
+
+**Line 8:** `heap[0] = heap.back();`
+- **Key insight:** Move **last element** to root
+- Why? Maintains complete binary tree property
+- Temporarily violates max heap property
+
+**Line 9:** `heap.pop_back();`
+- Remove the last element
+- Reduces heap size by 1
+
+**Lines 11-13:** Fix heap property
+```cpp
+if (!isEmpty()) {
+    heapifyDown(0);
+}
+```
+- **Check if not empty:** Edge case when heap had only 1 element
+- HeapifyDown from root to restore heap property
+
+**Line 15:** `return maxValue;`
+- Return the saved maximum value
+
+#### Time Complexity
+**O(log n)** - HeapifyDown may traverse entire height
+
+#### Complete Example
+
+```
+Initial:
+        90
+       /  \
+      60   80
+     / \   /
+    40 50 70
+    
+Array: [90, 60, 80, 40, 50, 70]
+
+Step 1: maxValue = heap[0] = 90 (saved)
+
+Step 2: heap[0] = heap.back() = 70
+Array: [70, 60, 80, 40, 50, 70]
+
+Step 3: heap.pop_back()
+Array: [70, 60, 80, 40, 50]
+
+        70  ← Wrong! Violates heap property
+       /  \
+      60   80
+     / \
+    40 50
+
+Step 4: heapifyDown(0)
+Largest of 70, 60, 80 is 80 → Swap
+
+        80  ← Correct!
+       /  \
+      60   70
+     / \
+    40 50
+
+Step 5: return 90
+```
+
+---
+
+### Part 8: Get Max (Peek)
+
+```cpp
+int getMax() const {
+    if (isEmpty()) {
+        throw runtime_error("Heap is empty!");
+    }
+    return heap[0];
+}
+```
+
+#### Purpose
+View the maximum element **without removing** it.
+
+#### Breakdown
+
+- **`const`**: Doesn't modify the heap
+- **`heap[0]`**: Root always has maximum
+- **O(1) time**: Just array access!
+
+#### Example
+```cpp
+MaxHeap heap;
+heap.insert(50);
+heap.insert(70);
+heap.insert(60);
+
+cout << heap.getMax();  // Prints: 70 (but doesn't remove it)
+cout << heap.getMax();  // Still prints: 70
+```
+
+---
+
+### Part 9: Utility Functions
+
+#### isEmpty()
+
+```cpp
+bool isEmpty() const {
+    return heap.empty();
+}
+```
+
+**Purpose:** Check if heap has no elements
+
+**Returns:** `true` if empty, `false` otherwise
+
+---
+
+#### size()
+
+```cpp
+int size() const {
+    return heap.size();
+}
+```
+
+**Purpose:** Get number of elements in heap
+
+**Returns:** Integer count
+
+---
+
+### Part 10: Display Functions
+
+#### display() - Array View
+
+```cpp
+void display() const {
+    if (isEmpty()) {
+        cout << "Heap is empty" << endl;
+        return;
+    }
+
+    cout << "Heap array: ";
+    for (int val : heap) {
+        cout << val << " ";
+    }
+    cout << endl;
+}
+```
+
+**Purpose:** Print heap as a simple array
+
+**Output Example:**
+```
+Heap array: 90 60 80 40 50 70
+```
+
+---
+
+#### displayTree() - Tree View
+
+```cpp
+void displayTree() const {
+    if (isEmpty()) {
+        cout << "Heap is empty" << endl;
+        return;
+    }
+
+    cout << "Heap tree structure:" << endl;
+    displayTreeHelper(0, "", false);
+}
+```
+
+**Purpose:** Print heap as a tree structure (calls helper)
+
+---
+
+#### displayTreeHelper() - Recursive Tree Printer
+
+```cpp
+void displayTreeHelper(int index, string prefix, bool isLeft) const {
+    if (index >= heap.size()) {
+        return;  // Base case: index out of bounds
+    }
+
+    cout << prefix;
+    cout << (isLeft ? "├──" : "└──");
+    cout << heap[index] << endl;
+
+    if (leftChild(index) < heap.size() || rightChild(index) < heap.size()) {
+        if (leftChild(index) < heap.size()) {
+            displayTreeHelper(leftChild(index), prefix + (isLeft ? "│   " : "    "), true);
+        }
+        if (rightChild(index) < heap.size()) {
+            displayTreeHelper(rightChild(index), prefix + (isLeft ? "│   " : "    "), false);
         }
     }
+}
+```
 
-    // Move element down to maintain heap property
-    void heapifyDown(int index) {
-        int size = heap.size();
-        int largest = index;
-        int left = leftChild(index);
-        int right = rightChild(index);
+##### Purpose
+Recursively print tree with nice ASCII art formatting.
 
-        // Check if left child is larger
-        if (left < size && heap[left] > heap[largest]) {
-            largest = left;
-        }
+##### Parameters
 
-        // Check if right child is larger
-        if (right < size && heap[right] > heap[largest]) {
-            largest = right;
-        }
+- **`index`**: Current node index to print
+- **`prefix`**: String to print before node (for indentation)
+- **`isLeft`**: Is this node a left child? (affects formatting)
 
-        // If largest is not current node, swap and continue
-        if (largest != index) {
-            swap(heap[index], heap[largest]);
-            heapifyDown(largest);
-        }
+##### Line-by-Line Breakdown
+
+**Lines 1-3:** Base case
+```cpp
+if (index >= heap.size()) {
+    return;
+}
+```
+- Stop if index is out of bounds (no node exists)
+
+**Lines 5-7:** Print current node
+```cpp
+cout << prefix;
+cout << (isLeft ? "├──" : "└──");
+cout << heap[index] << endl;
+```
+- Print prefix for indentation
+- Use `├──` for left child, `└──` for right child
+- Print the node value
+
+**Lines 9-16:** Recursive calls for children
+```cpp
+if (leftChild(index) < heap.size() || rightChild(index) < heap.size()) {
+    if (leftChild(index) < heap.size()) {
+        displayTreeHelper(leftChild(index), 
+                         prefix + (isLeft ? "│   " : "    "), 
+                         true);
     }
-
-public:
-    MaxHeap() {}
-
-    // Constructor from array
-    MaxHeap(const vector<int>& arr) {
-        heap = arr;
-        // Build heap (heapify)
-        for (int i = heap.size() / 2 - 1; i >= 0; i--) {
-            heapifyDown(i);
-        }
+    if (rightChild(index) < heap.size()) {
+        displayTreeHelper(rightChild(index), 
+                         prefix + (isLeft ? "│   " : "    "), 
+                         false);
     }
+}
+```
 
-    // Insert element
-    void insert(int value) {
-        heap.push_back(value);
-        heapifyUp(heap.size() - 1);
-        cout << "Inserted: " << value << endl;
-    }
+**Prefix logic:**
+- If current is left child: add `"│   "` (vertical line continues)
+- If current is right child: add `"    "` (no vertical line)
 
-    // Remove and return maximum element
-    int extractMax() {
-        if (isEmpty()) {
-            throw runtime_error("Heap is empty!");
-        }
+##### Example Output
 
-        int maxValue = heap[0];
+```
+Heap tree structure:
+└──90
+    ├──60
+    │   ├──40
+    │   └──50
+    └──80
+        └──70
+```
 
-        // Move last element to root and heapify down
-        heap[0] = heap.back();
-        heap.pop_back();
+**Visualization:**
+```
+        90
+       /  \
+      60   80
+     / \   /
+    40 50 70
+```
 
-        if (!isEmpty()) {
-            heapifyDown(0);
-        }
+---
 
-        return maxValue;
-    }
+### Part 11: Main Function
 
-    // Get maximum element without removing
-    int getMax() const {
-        if (isEmpty()) {
-            throw runtime_error("Heap is empty!");
-        }
-        return heap[0];
-    }
-
-    // Check if heap is empty
-    bool isEmpty() const {
-        return heap.empty();
-    }
-
-    // Get size
-    int size() const {
-        return heap.size();
-    }
-
-    // Display heap as array
-    void display() const {
-        if (isEmpty()) {
-            cout << "Heap is empty" << endl;
-            return;
-        }
-
-        cout << "Heap array: ";
-        for (int val : heap) {
-            cout << val << " ";
-        }
-        cout << endl;
-    }
-
-    // Display heap as tree structure
-    void displayTree() const {
-        if (isEmpty()) {
-            cout << "Heap is empty" << endl;
-            return;
-        }
-
-        cout << "Heap tree structure:" << endl;
-        displayTreeHelper(0, "", false);
-    }
-
-private:
-    void displayTreeHelper(int index, string prefix, bool isLeft) const {
-        if (index >= heap.size()) {
-            return;
-        }
-
-        cout << prefix;
-        cout << (isLeft ? "├──" : "└──");
-        cout << heap[index] << endl;
-
-        if (leftChild(index) < heap.size() || rightChild(index) < heap.size()) {
-            if (leftChild(index) < heap.size()) {
-                displayTreeHelper(leftChild(index), prefix + (isLeft ? "│   " : "    "), true);
-            }
-            if (rightChild(index) < heap.size()) {
-                displayTreeHelper(rightChild(index), prefix + (isLeft ? "│   " : "    "), false);
-            }
-        }
-    }
-};
-
+```cpp
 int main() {
     cout << "=== Max Heap Implementation ===" << endl;
 
@@ -4271,6 +4981,89 @@ int main() {
     return 0;
 }
 ```
+
+#### Step-by-Step Execution
+
+**Create empty heap:**
+```cpp
+MaxHeap maxHeap;
+// heap = []
+```
+
+**Insert 50:**
+```cpp
+maxHeap.insert(50);
+// heap = [50]
+//   50
+```
+
+**Insert 30:**
+```cpp
+maxHeap.insert(30);
+// heap = [50, 30]
+//      50
+//     /
+//    30
+```
+
+**Insert 70:**
+```cpp
+maxHeap.insert(70);
+// After heapifyUp: [70, 30, 50]
+//      70
+//     /  \
+//    30   50
+```
+
+**After all insertions:**
+```
+heap = [80, 40, 70, 20, 30, 60, 50]
+
+      80
+     /  \
+    40   70
+   / \   / \
+  20 30 60 50
+```
+
+**Extract max (80):**
+```
+Before: [80, 40, 70, 20, 30, 60, 50]
+After:  [70, 40, 60, 20, 30, 50]
+
+      70
+     /  \
+    40   60
+   / \   /
+  20 30 50
+```
+
+**Extract max (70):**
+```
+Before: [70, 40, 60, 20, 30, 50]
+After:  [60, 40, 50, 20, 30]
+
+      60
+     /  \
+    40   50
+   / \
+  20 30
+```
+
+---
+
+### Summary of Time Complexities
+
+| Operation | Time Complexity | Why |
+|-----------|----------------|-----|
+| **insert()** | O(log n) | HeapifyUp through height |
+| **extractMax()** | O(log n) | HeapifyDown through height |
+| **getMax()** | O(1) | Direct array access |
+| **Build heap** | O(n) | Bottom-up heapification |
+| **heapifyUp()** | O(log n) | Traverse up to root |
+| **heapifyDown()** | O(log n) | Traverse down to leaf |
+
+#### Check out the proof for all the [[Time Complexity of Max-Heap Operations]]
 
 ## Min Heap Implementation
 
@@ -4548,93 +5341,1168 @@ int main() {
 
 ## Heap Sort
 
-```cpp name=heap_sort.cpp
+### What is Heap Sort?
+
+**Heap Sort** is a comparison-based sorting algorithm that uses a **binary heap** data structure. It combines the best of both worlds:
+- **Space efficiency** of insertion sort (in-place, O(1) extra space)
+- **Time efficiency** of merge sort (guaranteed O(n log n))
+
+### Core Idea
+
+1. **Build a max heap** from the unsorted array → O(n)
+2. **Repeatedly extract the maximum** (root) and place it at the end → O(n log n)
+
+**Result:** Sorted array in ascending order!
+
+---
+
+### Visual Overview
+
+```
+Unsorted array: [4, 10, 3, 5, 1]
+
+Step 1: Build Max Heap
+[4, 10, 3, 5, 1] → [10, 5, 3, 4, 1]
+
+        10
+       /  \
+      5    3
+     / \
+    4   1
+
+Step 2: Extract max repeatedly
+Extract 10 → [1, 5, 3, 4 | 10]  ← 10 at end
+Heapify    → [5, 4, 3, 1 | 10]
+
+Extract 5  → [1, 4, 3 | 5, 10]
+Heapify    → [4, 1, 3 | 5, 10]
+
+Extract 4  → [1, 3 | 4, 5, 10]
+Heapify    → [3, 1 | 4, 5, 10]
+
+Extract 3  → [1 | 3, 4, 5, 10]
+
+Final: [1, 3, 4, 5, 10] ✓ Sorted!
+```
+
+---
+
+### Pseudocode
+
+#### Complete Heap Sort Algorithm
+
+```text name=heapsort_pseudocode.txt
+HEAP-SORT(A, n)
+    // A: array to sort
+    // n: size of array
+    
+    // Step 1: Build max heap
+    BUILD-MAX-HEAP(A, n)
+    
+    // Step 2: Extract elements one by one
+    heapSize = n
+    for i = n-1 down to 1 do
+        // Move current root to end
+        swap(A[0], A[i])
+        
+        // Reduce heap size
+        heapSize = heapSize - 1
+        
+        // Heapify the root
+        MAX-HEAPIFY(A, 0, heapSize)
+    
+    return A
+
+
+BUILD-MAX-HEAP(A, n)
+    // Build heap from bottom up
+    // Start from last non-leaf node
+    
+    for i = ⌊n/2⌋ - 1 down to 0 do
+        MAX-HEAPIFY(A, i, n)
+
+
+MAX-HEAPIFY(A, i, heapSize)
+    // Maintain max heap property at node i
+    // heapSize: current size of heap (might be < array size)
+    
+    left = 2 × i + 1
+    right = 2 × i + 2
+    largest = i
+    
+    // Find largest among node and its children
+    if left < heapSize AND A[left] > A[largest] then
+        largest = left
+    
+    if right < heapSize AND A[right] > A[largest] then
+        largest = right
+    
+    // If largest is not current node, swap and recurse
+    if largest ≠ i then
+        swap(A[i], A[largest])
+        MAX-HEAPIFY(A, largest, heapSize)
+```
+
+---
+
+### Complete C++ Implementation
+
+```cpp name=heapsort_complete.cpp
 #include <iostream>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 class HeapSort {
 private:
-    void heapify(vector<int>& arr, int n, int i) {
-        int largest = i;
+    // Maintain max heap property at node i
+    // heapSize: elements to consider (not full array size during extraction)
+    void maxHeapify(vector<int>& arr, int i, int heapSize) {
         int left = 2 * i + 1;
         int right = 2 * i + 2;
-
-        if (left < n && arr[left] > arr[largest]) {
+        int largest = i;
+        
+        // Find largest among root, left child, right child
+        if (left < heapSize && arr[left] > arr[largest]) {
             largest = left;
         }
-
-        if (right < n && arr[right] > arr[largest]) {
+        
+        if (right < heapSize && arr[right] > arr[largest]) {
             largest = right;
         }
-
+        
+        // If largest is not root, swap and continue heapifying
         if (largest != i) {
             swap(arr[i], arr[largest]);
-            heapify(arr, n, largest);
+            maxHeapify(arr, largest, heapSize);
         }
     }
-
+    
+    // Build max heap from unsorted array
+    void buildMaxHeap(vector<int>& arr) {
+        int n = arr.size();
+        
+        // Start from last non-leaf node and heapify all nodes
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            maxHeapify(arr, i, n);
+        }
+    }
+    
 public:
+    // Main heap sort function
     void sort(vector<int>& arr) {
         int n = arr.size();
-
+        
         // Step 1: Build max heap
-        cout << "Step 1: Building max heap..." << endl;
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(arr, n, i);
-        }
-
-        cout << "Max heap: ";
-        display(arr);
-
+        buildMaxHeap(arr);
+        
         // Step 2: Extract elements one by one
-        cout << "\nStep 2: Extracting elements..." << endl;
         for (int i = n - 1; i > 0; i--) {
-            // Move current root to end
+            // Move current root (maximum) to end
             swap(arr[0], arr[i]);
             
-            cout << "Moved " << arr[i] << " to position " << i << ": ";
-            displayPartial(arr, i);
-
-            // Heapify reduced heap
-            heapify(arr, i, 0);
+            // Heapify the reduced heap
+            maxHeapify(arr, 0, i);
         }
     }
-
-    void display(const vector<int>& arr) {
-        for (int val : arr) {
-            cout << val << " ";
+    
+    // Display array
+    void display(const vector<int>& arr, const string& message = "") {
+        if (!message.empty()) {
+            cout << message << ": ";
         }
-        cout << endl;
-    }
-
-    void displayPartial(const vector<int>& arr, int sortedFrom) {
+        
+        cout << "[";
         for (int i = 0; i < arr.size(); i++) {
-            if (i == sortedFrom) cout << "| ";
-            cout << arr[i] << " ";
+            cout << arr[i];
+            if (i < arr.size() - 1) cout << ", ";
         }
-        cout << endl;
+        cout << "]" << endl;
     }
 };
 
 int main() {
-    cout << "=== Heap Sort ===" << endl;
-
-    vector<int> arr = {12, 11, 13, 5, 6, 7};
-
-    cout << "\nOriginal array: ";
+    cout << "=== Heap Sort Implementation ===" << endl;
+    
     HeapSort hs;
-    hs.display(arr);
-
-    cout << endl;
-    hs.sort(arr);
-
-    cout << "\nSorted array: ";
-    hs.display(arr);
-
+    
+    // Test case 1
+    cout << "\n--- Test 1: Random array ---" << endl;
+    vector<int> arr1 = {4, 10, 3, 5, 1};
+    hs.display(arr1, "Original");
+    hs.sort(arr1);
+    hs.display(arr1, "Sorted");
+    
+    // Test case 2
+    cout << "\n--- Test 2: Already sorted ---" << endl;
+    vector<int> arr2 = {1, 2, 3, 4, 5};
+    hs.display(arr2, "Original");
+    hs.sort(arr2);
+    hs.display(arr2, "Sorted");
+    
+    // Test case 3
+    cout << "\n--- Test 3: Reverse sorted ---" << endl;
+    vector<int> arr3 = {9, 7, 5, 3, 1};
+    hs.display(arr3, "Original");
+    hs.sort(arr3);
+    hs.display(arr3, "Sorted");
+    
+    // Test case 4
+    cout << "\n--- Test 4: Duplicates ---" << endl;
+    vector<int> arr4 = {5, 2, 8, 2, 9, 1, 5};
+    hs.display(arr4, "Original");
+    hs.sort(arr4);
+    hs.display(arr4, "Sorted");
+    
     return 0;
 }
 ```
+
+**Output:**
+```
+=== Heap Sort Implementation ===
+
+--- Test 1: Random array ---
+Original: [4, 10, 3, 5, 1]
+Sorted: [1, 3, 4, 5, 10]
+
+--- Test 2: Already sorted ---
+Original: [1, 2, 3, 4, 5]
+Sorted: [1, 2, 3, 4, 5]
+
+--- Test 3: Reverse sorted ---
+Original: [9, 7, 5, 3, 1]
+Sorted: [1, 3, 5, 7, 9]
+
+--- Test 4: Duplicates ---
+Original: [5, 2, 8, 2, 9, 1, 5]
+Sorted: [1, 2, 2, 5, 5, 8, 9]
+```
+
+---
+
+### Detailed Step-by-Step Visualization
+
+Let's trace heap sort on `[4, 10, 3, 5, 1]` with **every single step**.
+
+#### Phase 1: Build Max Heap
+
+**Initial array:**
+```
+[4, 10, 3, 5, 1]
+ 0  1  2  3  4
+
+Tree representation:
+        4
+       / \
+      10  3
+     / \
+    5   1
+```
+
+**Step 1.1: Find last non-leaf node**
+```
+n = 5
+Last non-leaf = n/2 - 1 = 5/2 - 1 = 2 - 1 = 1
+
+Process indices: 1 → 0
+```
+
+**Step 1.2: Heapify index 1 (value 10)**
+```
+Current node: 10
+Left child (index 3): 5
+Right child (index 4): 1
+
+Compare:
+10 > 5? YES
+10 > 1? YES
+
+largest = 1 (no change needed)
+
+Array: [4, 10, 3, 5, 1]  (unchanged)
+```
+
+**Step 1.3: Heapify index 0 (value 4)**
+```
+Current node: 4
+Left child (index 1): 10
+Right child (index 2): 3
+
+Compare:
+10 > 4? YES → largest = 1
+3 > 10? NO
+
+largest = 1 (left child)
+Swap: arr[0] ↔ arr[1]
+
+Array: [10, 4, 3, 5, 1]
+
+Tree after swap:
+        10
+       / \
+      4   3
+     / \
+    5   1
+
+Now recursively heapify index 1:
+Current node: 4
+Left child (index 3): 5
+Right child (index 4): 1
+
+Compare:
+5 > 4? YES → largest = 3
+1 > 5? NO
+
+largest = 3 (left child)
+Swap: arr[1] ↔ arr[3]
+
+Array: [10, 5, 3, 4, 1]
+
+Tree after swap:
+        10
+       / \
+      5   3
+     / \
+    4   1
+```
+
+**Max heap built! ✓**
+
+---
+
+#### Phase 2: Extract Maximum (Sorting)
+
+Now we repeatedly:
+1. Swap root with last element
+2. Reduce heap size
+3. Heapify root
+
+**Iteration 1:**
+```
+Current heap: [10, 5, 3, 4, 1]
+              └─heap size = 5─┘
+
+Step 1: Swap root with last
+[10, 5, 3, 4, 1] → [1, 5, 3, 4 | 10]
+                             ↑
+                    10 is now in final position!
+
+Step 2: Reduce heap size to 4
+Active heap: [1, 5, 3, 4]
+
+Step 3: Heapify root (index 0)
+
+Tree:
+        1
+       / \
+      5   3
+     /
+    4
+
+Current node: 1
+Left (1): 5
+Right (2): 3
+
+Compare:
+5 > 1? YES → largest = 1
+3 > 5? NO
+
+Swap: arr[0] ↔ arr[1]
+[5, 1, 3, 4 | 10]
+
+Recursively heapify index 1:
+Current node: 1
+Left (3): 4
+Right (4): out of bounds (heap size = 4)
+
+Compare:
+4 > 1? YES → largest = 3
+
+Swap: arr[1] ↔ arr[3]
+[5, 4, 3, 1 | 10]
+
+Tree:
+        5
+       / \
+      4   3
+     /
+    1
+
+Heap restored! ✓
+```
+
+**Iteration 2:**
+```
+Current heap: [5, 4, 3, 1 | 10]
+              └─size = 4──┘
+
+Swap root with last:
+[1, 4, 3 | 5, 10]
+          ↑
+     5 in final position!
+
+Heapify root (heap size = 3):
+Tree:
+        1
+       / \
+      4   3
+
+Compare 1, 4, 3:
+largest = 4
+
+Swap: arr[0] ↔ arr[1]
+[4, 1, 3 | 5, 10]
+
+Recursively heapify index 1:
+Node: 1 (no children in heap size 3)
+Done.
+
+Result: [4, 1, 3 | 5, 10]
+```
+
+**Iteration 3:**
+```
+Current heap: [4, 1, 3 | 5, 10]
+              └─size = 3─┘
+
+Swap root with last:
+[3, 1 | 4, 5, 10]
+       ↑
+    4 in final position!
+
+Heapify root (heap size = 2):
+Tree:
+        3
+       /
+      1
+
+Compare 3, 1:
+3 > 1 → largest = 0 (no change)
+
+Result: [3, 1 | 4, 5, 10]
+```
+
+**Iteration 4:**
+```
+Current heap: [3, 1 | 4, 5, 10]
+              └size=2┘
+
+Swap root with last:
+[1 | 3, 4, 5, 10]
+  ↑
+3 in final position!
+
+Heap size = 1 (only one element, no heapify needed)
+
+Result: [1 | 3, 4, 5, 10]
+```
+
+**Loop ends (i = 0)**
+
+**Final sorted array: [1, 3, 4, 5, 10] ✓**
+
+---
+
+### Detailed Visualization with Tree Structures
+
+```cpp name=heapsort_visualization.cpp
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+class HeapSortVisualized {
+private:
+    int stepCount = 0;
+    
+    void displayArray(const vector<int>& arr, int sortedFrom) {
+        cout << "Array: [";
+        for (int i = 0; i < arr.size(); i++) {
+            if (i == sortedFrom && sortedFrom < arr.size()) {
+                cout << "| ";
+            }
+            cout << arr[i];
+            if (i < arr.size() - 1) cout << ", ";
+        }
+        cout << "]" << endl;
+        
+        if (sortedFrom < arr.size()) {
+            cout << "       ";
+            for (int i = 0; i < sortedFrom; i++) {
+                cout << "   ";
+            }
+            cout << "↑ heap  | sorted →" << endl;
+        }
+    }
+    
+    void displayTree(const vector<int>& arr, int heapSize, int index = 0, string prefix = "", bool isLeft = true) {
+        if (index >= heapSize) return;
+        
+        cout << prefix;
+        cout << (isLeft ? "├──" : "└──");
+        cout << arr[index];
+        
+        if (index >= heapSize) {
+            cout << " (outside heap)";
+        }
+        cout << endl;
+        
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+        
+        if (left < heapSize) {
+            displayTree(arr, heapSize, left, prefix + (isLeft ? "│   " : "    "), true);
+        }
+        if (right < heapSize) {
+            displayTree(arr, heapSize, right, prefix + (isLeft ? "│   " : "    "), false);
+        }
+    }
+    
+    void maxHeapify(vector<int>& arr, int i, int heapSize, bool verbose) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int largest = i;
+        
+        if (verbose) {
+            cout << "  Heapifying node " << i << " (value: " << arr[i] << ")" << endl;
+        }
+        
+        if (left < heapSize && arr[left] > arr[largest]) {
+            largest = left;
+        }
+        
+        if (right < heapSize && arr[right] > arr[largest]) {
+            largest = right;
+        }
+        
+        if (largest != i) {
+            if (verbose) {
+                cout << "    Swapping " << arr[i] << " ↔ " << arr[largest] 
+                     << " (indices " << i << " ↔ " << largest << ")" << endl;
+            }
+            
+            swap(arr[i], arr[largest]);
+            maxHeapify(arr, largest, heapSize, verbose);
+        } else {
+            if (verbose) {
+                cout << "    No swap needed (heap property satisfied)" << endl;
+            }
+        }
+    }
+    
+    void buildMaxHeap(vector<int>& arr, bool verbose) {
+        int n = arr.size();
+        
+        if (verbose) {
+            cout << "\n╔═══════════════════════════════════════╗" << endl;
+            cout << "║  PHASE 1: BUILD MAX HEAP              ║" << endl;
+            cout << "╚═══════════════════════════════════════╝" << endl;
+            cout << "\nStarting from last non-leaf node: " << (n/2 - 1) << endl;
+        }
+        
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            if (verbose) {
+                cout << "\n--- Processing index " << i << " ---" << endl;
+            }
+            maxHeapify(arr, i, n, verbose);
+            
+            if (verbose) {
+                displayArray(arr, n);
+            }
+        }
+        
+        if (verbose) {
+            cout << "\n✓ Max heap built successfully!" << endl;
+            cout << "\nFinal heap structure:" << endl;
+            displayTree(arr, n);
+        }
+    }
+    
+public:
+    void sort(vector<int>& arr, bool verbose = true) {
+        int n = arr.size();
+        
+        if (verbose) {
+            cout << "\n════════════════════════════════════════" << endl;
+            cout << "        HEAP SORT VISUALIZATION" << endl;
+            cout << "═══════════════��════════════════════════" << endl;
+            cout << "\nOriginal array: ";
+            displayArray(arr, n);
+        }
+        
+        // Phase 1: Build max heap
+        buildMaxHeap(arr, verbose);
+        
+        // Phase 2: Extract elements
+        if (verbose) {
+            cout << "\n╔═══════════════════════════════════════╗" << endl;
+            cout << "║  PHASE 2: EXTRACT AND SORT            ║" << endl;
+            cout << "╚═══════════════════════════════════════╝" << endl;
+        }
+        
+        for (int i = n - 1; i > 0; i--) {
+            if (verbose) {
+                cout << "\n--- Iteration " << (n - i) << " ---" << endl;
+                cout << "Current max: " << arr[0] << endl;
+                cout << "Swapping arr[0] ↔ arr[" << i << "]: " 
+                     << arr[0] << " ↔ " << arr[i] << endl;
+            }
+            
+            swap(arr[0], arr[i]);
+            
+            if (verbose) {
+                displayArray(arr, i);
+                cout << "\nHeap structure (size = " << i << "):" << endl;
+                displayTree(arr, i);
+                cout << "\nRestoring heap property..." << endl;
+            }
+            
+            maxHeapify(arr, 0, i, verbose);
+            
+            if (verbose) {
+                cout << "\nAfter heapify:" << endl;
+                displayArray(arr, i);
+                displayTree(arr, i);
+            }
+        }
+        
+        if (verbose) {
+            cout << "\n╔═══════════════════════════════════════╗" << endl;
+            cout << "║  SORTING COMPLETE ✓                   ║" << endl;
+            cout << "╚═══════════════════════════════════════╝" << endl;
+            cout << "\nFinal sorted array: ";
+            displayArray(arr, n);
+        }
+    }
+};
+
+int main() {
+    HeapSortVisualized hsv;
+    
+    vector<int> arr = {4, 10, 3, 5, 1};
+    hsv.sort(arr, true);
+    
+    return 0;
+}
+```
+
+**Output (Partial):**
+```
+════════════════════════════════════════
+        HEAP SORT VISUALIZATION
+════════════════════════════════════════
+
+Original array: Array: [4, 10, 3, 5, 1]
+       ↑ heap  | sorted →
+
+╔═══════════════════════════════════════╗
+║  PHASE 1: BUILD MAX HEAP              ║
+╚═══════════════════════════════════════╝
+
+Starting from last non-leaf node: 1
+
+--- Processing index 1 ---
+  Heapifying node 1 (value: 10)
+    No swap needed (heap property satisfied)
+Array: [4, 10, 3, 5, 1]
+       ↑ heap  | sorted →
+
+--- Processing index 0 ---
+  Heapifying node 0 (value: 4)
+    Swapping 4 ↔ 10 (indices 0 ↔ 1)
+  Heapifying node 1 (value: 4)
+    Swapping 4 ↔ 5 (indices 1 ↔ 3)
+  Heapifying node 3 (value: 4)
+    No swap needed (heap property satisfied)
+Array: [10, 5, 3, 4, 1]
+       ↑ heap  | sorted →
+
+✓ Max heap built successfully!
+
+Final heap structure:
+└──10
+    ├──5
+    │   ├──4
+    │   └──1
+    └──3
+
+╔═══════════════════════════════════════╗
+║  PHASE 2: EXTRACT AND SORT            ║
+╚═══════════════════════════════════════╝
+
+--- Iteration 1 ---
+Current max: 10
+Swapping arr[0] ↔ arr[4]: 10 ↔ 1
+Array: [1, 5, 3, 4, | 10]
+       ↑ heap  | sorted →
+
+Heap structure (size = 4):
+└──1
+    ├──5
+    │   └──4
+    └──3
+
+Restoring heap property...
+  Heapifying node 0 (value: 1)
+    Swapping 1 ↔ 5 (indices 0 ↔ 1)
+  Heapifying node 1 (value: 1)
+    Swapping 1 ↔ 4 (indices 1 ↔ 3)
+  Heapifying node 3 (value: 1)
+    No swap needed (heap property satisfied)
+
+After heapify:
+Array: [5, 4, 3, 1, | 10]
+       ↑ heap  | sorted →
+└──5
+    ├──4
+    │   └──1
+    └──3
+
+[... continues for all iterations ...]
+
+╔═══════════════════════════════════════╗
+║  SORTING COMPLETE ✓                   ║
+╚═══════════════════════════════════════╝
+
+Final sorted array: Array: [1, 3, 4, 5, 10]
+```
+
+---
+
+### Time Complexity Analysis
+
+#### Phase 1: Build Max Heap
+
+```
+BUILD-MAX-HEAP: O(n)
+
+Proof:
+- Process n/2 nodes (non-leaf nodes)
+- Height h nodes: at most n/2^(h+1)
+- Work per node at height h: O(h)
+
+Total work:
+= Σ (n/2^(h+1)) × h  for h = 0 to log(n)
+= n × Σ h/2^(h+1)
+= n × 2  (geometric series)
+= O(n)
+```
+
+#### Phase 2: Extract Maximum
+
+```
+for i = n-1 down to 1:  ← n-1 iterations
+    swap(arr[0], arr[i])  ← O(1)
+    maxHeapify(arr, 0, i) ← O(log i)
+
+Total: Σ log(i) for i = 1 to n-1
+     = log(1) + log(2) + ... + log(n-1)
+     = log(1 × 2 × 3 × ... × (n-1))
+     = log((n-1)!)
+     ≈ log(n^n)  (Stirling's approximation)
+     = n log(n)
+     = O(n log n)
+```
+
+#### Overall Time Complexity
+
+```
+Total = Build Heap + Extract Maximum
+      = O(n) + O(n log n)
+      = O(n log n)
+
+Best case:    O(n log n)
+Average case: O(n log n)
+Worst case:   O(n log n)
+```
+
+**Heap sort has guaranteed O(n log n) in all cases!**
+
+---
+
+### Space Complexity
+
+#### In-Place Sorting
+
+```
+Space used:
+- Input array: O(n)
+- Recursion stack for heapify: O(log n)
+- Few variables: O(1)
+
+Auxiliary space: O(log n)  ← Due to recursion
+```
+
+#### Iterative Version (O(1) space)
+
+```cpp name=heapsort_iterative.cpp
+void maxHeapifyIterative(vector<int>& arr, int i, int heapSize) {
+    while (true) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int largest = i;
+        
+        if (left < heapSize && arr[left] > arr[largest]) {
+            largest = left;
+        }
+        
+        if (right < heapSize && arr[right] > arr[largest]) {
+            largest = right;
+        }
+        
+        if (largest == i) {
+            break;  // Heap property satisfied
+        }
+        
+        swap(arr[i], arr[largest]);
+        i = largest;  // Continue from child
+    }
+}
+```
+
+**With iterative heapify: O(1) auxiliary space!**
+
+---
+
+### Comparison with Other Sorting Algorithms
+
+| Algorithm | Best | Average | Worst | Space | Stable | In-place |
+|-----------|------|---------|-------|-------|--------|----------|
+| **Heap Sort** | O(n log n) | O(n log n) | O(n log n) | O(1)* | No | Yes |
+| **Quick Sort** | O(n log n) | O(n log n) | O(n²) | O(log n) | No | Yes |
+| **Merge Sort** | O(n log n) | O(n log n) | O(n log n) | O(n) | Yes | No |
+| **Insertion Sort** | O(n) | O(n²) | O(n²) | O(1) | Yes | Yes |
+| **Bubble Sort** | O(n) | O(n²) | O(n²) | O(1) | Yes | Yes |
+
+*O(log n) with recursion, O(1) with iteration
+
+---
+
+### Advantages & Disadvantages
+
+#### ✅ Advantages
+
+1. **Guaranteed O(n log n)**: No worst-case degradation (unlike quick sort)
+2. **In-place**: O(1) extra space (with iterative heapify)
+3. **No recursion needed**: Can be fully iterative
+4. **Simple implementation**: Straightforward logic
+5. **Good for priority queues**: Natural fit
+
+#### ❌ Disadvantages
+
+1. **Not stable**: Equal elements may be reordered
+2. **Not cache-friendly**: Random memory access pattern
+3. **Slower than quick sort in practice**: Higher constant factors
+4. **Not adaptive**: Doesn't benefit from partially sorted data
+
+---
+
+### Stability Issue Example
+
+```cpp name=stability_example.cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Student {
+    string name;
+    int score;
+    
+    Student(string n, int s) : name(n), score(s) {}
+};
+
+void heapSortStudents(vector<Student>& students) {
+    // Build max heap by score
+    int n = students.size();
+    
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        // Heapify (simplified, not shown)
+    }
+    
+    // Extract
+    for (int i = n - 1; i > 0; i--) {
+        swap(students[0], students[i]);
+        // Heapify root (not shown)
+    }
+}
+
+int main() {
+    vector<Student> students = {
+        Student("Alice", 85),
+        Student("Bob", 85),    // Same score as Alice
+        Student("Charlie", 90)
+    };
+    
+    cout << "Original order:" << endl;
+    for (auto& s : students) {
+        cout << s.name << ": " << s.score << endl;
+    }
+    
+    heapSortStudents(students);
+    
+    cout << "\nAfter heap sort:" << endl;
+    for (auto& s : students) {
+        cout << s.name << ": " << s.score << endl;
+    }
+    
+    // Alice and Bob might be swapped!
+    // Heap sort is NOT stable
+    
+    return 0;
+}
+```
+
+**Output (may vary):**
+```
+Original order:
+Alice: 85
+Bob: 85
+Charlie: 90
+
+After heap sort:
+Bob: 85      ← Order changed!
+Alice: 85
+Charlie: 90
+```
+
+---
+
+### Practical Performance Comparison
+
+```cpp name=performance_comparison.cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <chrono>
+#include <random>
+using namespace std;
+
+void heapSort(vector<int>& arr) {
+    // Implementation from earlier
+    // ...
+}
+
+void measurePerformance() {
+    const int SIZE = 100000;
+    vector<int> data(SIZE);
+    
+    // Generate random data
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(1, 1000000);
+    
+    for (int& x : data) {
+        x = dis(gen);
+    }
+    
+    // Test heap sort
+    vector<int> arr1 = data;
+    auto start1 = chrono::high_resolution_clock::now();
+    heapSort(arr1);
+    auto end1 = chrono::high_resolution_clock::now();
+    auto time1 = chrono::duration_cast<chrono::milliseconds>(end1 - start1).count();
+    
+    // Test std::sort (intro sort: quick + heap + insertion)
+    vector<int> arr2 = data;
+    auto start2 = chrono::high_resolution_clock::now();
+    sort(arr2.begin(), arr2.end());
+    auto end2 = chrono::high_resolution_clock::now();
+    auto time2 = chrono::duration_cast<chrono::milliseconds>(end2 - start2).count();
+    
+    cout << "Sorting " << SIZE << " random integers:" << endl;
+    cout << "Heap Sort:  " << time1 << " ms" << endl;
+    cout << "std::sort:  " << time2 << " ms" << endl;
+    cout << "Ratio:      " << (double)time1 / time2 << "x" << endl;
+}
+
+int main() {
+    measurePerformance();
+    return 0;
+}
+```
+
+**Typical Output:**
+```
+Sorting 100000 random integers:
+Heap Sort:  45 ms
+std::sort:  28 ms
+Ratio:      1.6x
+
+(std::sort is typically faster due to better cache locality)
+```
+
+---
+
+### When to Use Heap Sort
+
+#### Use Heap Sort When:
+
+1. **Guaranteed O(n log n) required**: No worst-case degradation acceptable
+2. **Limited memory**: Need in-place sorting
+3. **Embedded systems**: Predictable performance needed
+4. **Already have heap structure**: Data naturally in heap
+5. **Finding k largest/smallest**: Partial sorting
+
+#### Don't Use When:
+
+1. **Stability required**: Use merge sort instead
+2. **Performance critical**: Use quick sort or intro sort
+3. **Small arrays**: Use insertion sort
+4. **Nearly sorted data**: Use adaptive algorithms
+
+---
+
+### Advanced: Heap Sort Optimizations
+
+#### 1. Bottom-Up Heapify
+
+```cpp
+void bottomUpHeapify(vector<int>& arr, int i, int heapSize) {
+    int child = 2 * i + 1;
+    
+    // Find leaf position
+    while (child < heapSize) {
+        // Choose larger child
+        if (child + 1 < heapSize && arr[child + 1] > arr[child]) {
+            child++;
+        }
+        child = 2 * child + 1;
+    }
+    
+    // Bubble up from leaf
+    int parent = (child - 1) / 2;
+    while (parent >= i && arr[parent] < arr[i]) {
+        swap(arr[parent], arr[i]);
+        parent = (parent - 1) / 2;
+    }
+}
+```
+
+#### 2. Ternary Heap (3 children per node)
+
+```cpp
+// Better cache performance in some cases
+int leftChild(int i) { return 3 * i + 1; }
+int middleChild(int i) { return 3 * i + 2; }
+int rightChild(int i) { return 3 * i + 3; }
+```
+
+---
+
+### Complete Working Example with All Features
+
+```cpp name=heapsort_final.cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
+using namespace std;
+
+class HeapSortComplete {
+private:
+    long long comparisons = 0;
+    long long swaps = 0;
+    
+    void maxHeapify(vector<int>& arr, int i, int heapSize) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int largest = i;
+        
+        if (left < heapSize) {
+            comparisons++;
+            if (arr[left] > arr[largest]) {
+                largest = left;
+            }
+        }
+        
+        if (right < heapSize) {
+            comparisons++;
+            if (arr[right] > arr[largest]) {
+                largest = right;
+            }
+        }
+        
+        if (largest != i) {
+            swaps++;
+            swap(arr[i], arr[largest]);
+            maxHeapify(arr, largest, heapSize);
+        }
+    }
+    
+    void buildMaxHeap(vector<int>& arr) {
+        int n = arr.size();
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            maxHeapify(arr, i, n);
+        }
+    }
+    
+public:
+    void sort(vector<int>& arr) {
+        comparisons = 0;
+        swaps = 0;
+        
+        int n = arr.size();
+        
+        buildMaxHeap(arr);
+        
+        for (int i = n - 1; i > 0; i--) {
+            swaps++;
+            swap(arr[0], arr[i]);
+            maxHeapify(arr, 0, i);
+        }
+    }
+    
+    void printStats() {
+        cout << "Comparisons: " << comparisons << endl;
+        cout << "Swaps: " << swaps << endl;
+    }
+    
+    bool isSorted(const vector<int>& arr) {
+        for (int i = 1; i < arr.size(); i++) {
+            if (arr[i] < arr[i-1]) return false;
+        }
+        return true;
+    }
+};
+
+int main() {
+    HeapSortComplete hs;
+    
+    // Test with different data patterns
+    cout << "=== Test 1: Random Data ===" << endl;
+    vector<int> arr1 = {64, 34, 25, 12, 22, 11, 90};
+    cout << "Before: "; for (int x : arr1) cout << x << " "; cout << endl;
+    hs.sort(arr1);
+    cout << "After:  "; for (int x : arr1) cout << x << " "; cout << endl;
+    hs.printStats();
+    cout << "Sorted correctly: " << (hs.isSorted(arr1) ? "YES ✓" : "NO ✗") << endl;
+    
+    cout << "\n=== Test 2: Already Sorted ===" << endl;
+    vector<int> arr2 = {1, 2, 3, 4, 5, 6, 7};
+    hs.sort(arr2);
+    hs.printStats();
+    
+    cout << "\n=== Test 3: Reverse Sorted ===" << endl;
+    vector<int> arr3 = {7, 6, 5, 4, 3, 2, 1};
+    hs.sort(arr3);
+    hs.printStats();
+    
+    return 0;
+}
+```
+
+---
+
+### Key Takeaways
+
+1. **Two phases**: Build heap O(n), then extract O(n log n)
+2. **Guaranteed performance**: O(n log n) in all cases
+3. **In-place**: O(1) auxiliary space (iterative version)
+4. **Not stable**: Equal elements may be reordered
+5. **Simple**: Straightforward implementation
+6. **Practical**: Used in systems where predictability matters
 
 ## Priority Queue Using Heap
 

@@ -10,18 +10,16 @@ We use mathematical symbols to describe the "order of growth" of an algorithm's 
 Think of $O(g(n))$ as a "worst-case" guarantee. If an algorithm is $O(n^2)$, it means the running time will grow **no faster** than a quadratic function. It provides an asymptotic upper bound.
 
 - **Formal Definition:** $f(n) = O(g(n))$ if there exist positive constants $c$ and $n_0$ such that $0 \le f(n) \le cg(n)$ for all $n \ge n_0$.
-    
 
 #### **Big-Omega Notation ($\Omega$): The Lower Bound**
 
 This provides an asymptotic **lower bound**. If an algorithm is $\Omega(n)$, it means it will take **at least** linear time. It’s the "best-case" floor.
 
 - **Formal Definition:** $f(n) = \Omega(g(n))$ if there exist positive constants $c$ and $n_0$ such that $0 \le cg(n) \le f(n)$ for all $n \ge n_0$.
-    
 
 #### **Theta Notation ($\Theta$): The Tight Bound**
 
-This is the most precise. If an algorithm is $\Theta(n \log n)$, it means it grows exactly at that rate (bounded above and below). In this course, we strive for $\Theta$ bounds because they describe the algorithm's behavior most accurately.
+This is the most precise. If an algorithm is $\Theta(n \log n)$, it means it grows exactly at that rate (bounded above and below). We strive for $\Theta$ bounds because they describe the algorithm's behavior most accurately.
 
 ---
 
@@ -523,6 +521,9 @@ To fix this, we make a stronger inductive hypothesis by subtracting a lower-orde
 
 By choosing $d \ge 1$, the inequality holds. We then pick a $c$ large enough to satisfy the base cases of the recurrence. This proves that $T(n) = O(n^2)$. A similar proof can be used for the lower bound $\Omega(n^2)$ to establish $T(n) = \Theta(n^2)$.
 
+# Time Complexity in Recursions:
+![[Pasted image 20260308231957.png]]
+![[Pasted image 20260308232032.png]]
 
 # Master Theorem
 

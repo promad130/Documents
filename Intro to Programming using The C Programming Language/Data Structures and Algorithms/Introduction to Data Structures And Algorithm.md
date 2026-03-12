@@ -8322,7 +8322,7 @@ Instead of each array index holding just one value, each index holds a **Linked 
 
 ---
 
-### 12. **Object-Oriented Programming (OOP) Techniques**
+### 12. [[Object Oriented Programming]]
    - **Definition:** Organizing code using objects, classes, and principles like encapsulation, inheritance, and polymorphism.
    - **Use Case:** Building modular, reusable, and maintainable code.
    - **Example:**

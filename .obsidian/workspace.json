@@ -28,9 +28,9 @@
               "type": "pdf",
               "state": {
                 "file": "Books/Game Engine Architecture.pdf",
-                "page": 47,
+                "page": 48,
                 "left": 12,
-                "top": 164,
+                "top": 698,
                 "zoom": 1.3
               },
               "icon": "lucide-file-text",
@@ -52,47 +52,19 @@
             }
           },
           {
-            "id": "6f3292ac78e64b87",
+            "id": "ca5618325d8bcbfb",
             "type": "leaf",
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
-                "page": 67,
+                "file": "Backend/Database and Structures/Notes(Theory)/6 Relational Algebra.pdf",
+                "page": 40,
                 "left": -15,
-                "top": 544,
+                "top": 124,
                 "zoom": 1.0177083333333334
               },
               "icon": "lucide-file-text",
-              "title": "2 ER_model"
-            }
-          },
-          {
-            "id": "ca5618325d8bcbfb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Introduction to Data Structures And Algorithm"
-            }
-          },
-          {
-            "id": "715aa967c95da58e",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Time Complexity"
+              "title": "6 Relational Algebra"
             }
           },
           {
@@ -110,7 +82,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -202,12 +174,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+                "file": "Backend/Database and Structures/Introduction to Databases and Structures.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Introduction to Data Structures And Algorithm"
+              "title": "Outgoing links from Introduction to Databases and Structures"
             }
           },
           {
@@ -238,13 +210,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+                "file": "Backend/Database and Structures/Introduction to Databases and Structures.md",
                 "followCursor": false,
                 "showSearch": true,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Introduction to Data Structures And Algorithm"
+              "title": "Outline of Introduction to Databases and Structures"
             }
           }
         ]
@@ -270,16 +242,29 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "ca5618325d8bcbfb",
+  "active": "f947712f95090cd6",
   "lastOpenFiles": [
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Quick Sort.md",
-    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Time Complexity of Max-Heap Operations.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
-    "Backend/Database and Structures/Introduction to Databases and Structures.md",
-    "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
-    "Backend/Database and Structures/Notes(Theory)/Relational Algebra.md",
     "Books/Game Engine Architecture.pdf",
+    "Backend/Database and Structures/Introduction to Databases and Structures.md",
+    "Backend/Database and Structures/Notes(Theory)/6 Relational Algebra.pdf",
+    "Attachments/Pasted image 20260313020756.png",
+    "Attachments/Pasted image 20260313020635.png",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Introduction to Data Structures And Algorithm.md",
+    "Backend/Database and Structures/Notes(Theory)/4 3A EER_model.pdf",
+    "Backend/Database and Structures/Ok, but can it be said that Category is just like a total participation overlapping Generalization?.md",
+    "Attachments/Pasted image 20260313012212.png",
+    "Attachments/Pasted image 20260313011949.png",
+    "Backend/Database and Structures/So, is Generalization always have to be total participation and can never be partial participation?.md",
+    "Attachments/Pasted image 20260313011426.png",
+    "Attachments/Pasted image 20260313010515.png",
+    "Attachments/Pasted image 20260313005817.png",
+    "Attachments/Pasted image 20260313005740.png",
+    "Backend/Database and Structures/Notes(Theory)/2 ER_model.pdf",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Time Complexity of Max-Heap Operations.md",
+    "Intro to Programming using The C Programming Language/Introduction/Time Complexity.md",
+    "Object Oriented Programming/Object Oriented Programming.md",
+    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/Quick Sort.md",
+    "Backend/Database and Structures/Notes(Theory)/Relational Algebra.md",
     "Books/Game Engine Architecture.md",
     "Backend/Database and Structures/Notes(Theory)/EER Model.md",
     "Backend/Database and Structures/Notes(Theory)/3 3 Integrity constraints and groupby having clause.pdf",
@@ -299,24 +284,11 @@
     "Logic in Computer Science/Prolog/Introduction to Prolog.md",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/01_motivation_Version2.md",
     "Discreate Structures/Introduction to discreate structures.md",
-    "Attachments/Pasted image 20260308232032.png",
-    "Attachments/Pasted image 20260308231957.png",
     "Intro to Programming using The C Programming Language/Data Structures and Algorithms/03_stability_requirement_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/04_radix_sort_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/06_counting_sort_basic_Version2.md",
-    "Intro to Programming using The C Programming Language/Data Structures and Algorithms/02_compositional_sorting_Version2.md",
     "GameDev/vdoc.pub_fundamental-2d-game-programming-with-java.pdf",
     "Backend/Database and Structures/Notes(Theory)/1 Introduction.pdf",
     "ReactNative/FlexStyling.ts",
     "ReactNative/FlexStyling.html",
-    "Attachments/Pasted image 20260302190423.png",
-    "Attachments/Pasted image 20260302190359.png",
-    "Attachments/Pasted image 20260302185453.png",
-    "DESC ",
-    "Attachments/Pasted image 20260302083707.png",
-    "Computer Architecture/Microprocessors and Interfacing/Resources/3_MUPI_Architecture_II.pdf",
-    "Attachments/Pasted image 20260223172012.png",
-    "Attachments/Pasted image 20260223083452.png",
     "Projects/Wrath of god game/Class Structures.canvas",
     "Unity GameDev/Project Documentations/Card_Game.canvas",
     "Programming languages/Css/CSS Properties/display Property/Display.canvas",

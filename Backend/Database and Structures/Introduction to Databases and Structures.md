@@ -2602,6 +2602,8 @@ A **subclass** IS-A specialized version of a **superclass**.
 
 **Direction:** Top → Down (from general to specific)
 
+![[Pasted image 20260313005740.png]]
+
 ### Process
 1. Start with a general superclass
 2. Identify distinguishing characteristics
@@ -2788,7 +2790,7 @@ INSERT INTO CHECKING VALUES ('ACC001', 500.00, 0.25);
 
 ---
 
-## 4. Generalization (Bottom-Up) {#generalization}
+## 4. Generalization (Bottom-Up) 
 
 ### Definition
 
@@ -2802,6 +2804,8 @@ INSERT INTO CHECKING VALUES ('ACC001', 500.00, 0.25);
 2. Extract common attributes
 3. Create a superclass with these common attributes
 4. Make original entities subclasses
+
+![[Pasted image 20260313005817.png]]
 
 ### Example 1: Vehicle Generalization
 
@@ -2966,11 +2970,11 @@ INSERT INTO STUDENT VALUES (@person_id, 'Computer Science PhD', 3.95, '2020-09-0
 
 ---
 
-## 5. Constraints in EER {#constraints}
+## Constraints in EER 
 
 EER models use **three types of constraints** to define the rules governing superclass/subclass relationships.
 
-### 5.1 Disjointness Constraint
+### Disjointness Constraint
 
 **Question:** Can an entity belong to **multiple subclasses** at the same time?
 
@@ -2996,7 +3000,7 @@ An entity can be a member of **at most ONE** subclass.
 
 **MySQL Enforcement:**
 
-```sql
+```mysql
 -- Method 1: Use CHECK constraint (MySQL 8.0+)
 CREATE TABLE EMPLOYEE (
     ssn VARCHAR(11) PRIMARY KEY,
@@ -3051,7 +3055,7 @@ An entity can belong to **multiple subclasses** simultaneously.
 
 **MySQL Implementation:**
 
-```sql
+```mysql
 CREATE TABLE PERSON (
     person_id INT PRIMARY KEY,
     name VARCHAR(100)
@@ -3087,6 +3091,13 @@ INSERT INTO EMPLOYEE VALUES (101, 'E12345', '2015-08-15');
 INSERT INTO ALUMNUS VALUES (101, 2010, 'PhD Computer Science');
 -- Same person (101) exists in both EMPLOYEE and ALUMNUS subclasses
 ```
+
+#### But then what would be difference between Overlapping Specialization and Generalization EER?
+NO. Overlapping is a **constraint type**, not a direction indicator.
+
+**The direction (specialization vs generalization) is about the DESIGN PROCESS, not the constraint.**
+
+The overlapping constraint describes **membership rules**, not the **design process**. Whether you designed it top-down (specialization) or bottom-up (generalization), you can end up with the same overlapping constraint. The final EER diagram and SQL implementation are identical regardless of which approach you used.
 
 ### 5.2 Completeness Constraint (Participation)
 
@@ -3225,6 +3236,11 @@ CREATE TABLE ENGINEER (
 INSERT INTO EMPLOYEE VALUES ('111-22-3333', 'Mike Johnson', 40000);
 -- No corresponding entry in MANAGER or ENGINEER tables
 ```
+
+![[Pasted image 20260313010515.png]]
+![[Pasted image 20260313011426.png]]
+
+### [[So, is Generalization always have to be total participation and can never be partial participation?]]
 
 ### 5.3 Membership Constraint (Defining Predicates)
 
@@ -3453,7 +3469,7 @@ INSERT INTO COURSE VALUES ('CS103', 'Web Development', 'Online');
 
 ---
 
-## 6. Attribute Inheritance {#inheritance}
+## 6. Attribute Inheritance
 
 ### Definition
 
@@ -3542,7 +3558,7 @@ JOIN DEPARTMENT d ON e.dept_id = d.dept_id;
 
 ---
 
-## 7. Multiple Inheritance and Lattices {#multiple-inheritance}
+## 7. Multiple Inheritance and Lattices
 
 ### Hierarchy vs Lattice
 
@@ -3701,6 +3717,8 @@ CREATE TABLE RESEARCH_ASSISTANT (
 -- Must exist in PERSON, EMPLOYEE, STUDENT, and GRAD_STUDENT
 ```
 
+![[Pasted image 20260313011949.png]]
+
 ---
 
 ## 8. Union Types (Categories) 
@@ -3728,6 +3746,8 @@ A **Category (Union Type)** is a subclass that represents a **subset of the UNIO
              │   OWNER    │
              └────────────┘
 ```
+
+![[Pasted image 20260313012212.png]]
 
 ### Example 1: Vehicle Owner
 
@@ -3967,9 +3987,11 @@ INSERT INTO REGISTERED_USER (username, email, customer_id, vendor_id)
 VALUES ('janesmith', 'jane@email.com', 2, 2);
 ```
 
+### [[Ok, but can it be said that Category is just like a total participation overlapping Generalization?]]
+
 ---
 
-## 9. EER to Relational Mapping {#mapping}
+## 9. EER to Relational Mapping
 
 ### Strategy 1: Single Table (Table per Hierarchy)
 
@@ -4143,8 +4165,7 @@ Is there a superclass with many shared attributes?
 
 ---
 
-## 10. Complete Examples {#examples}
-
+## 10. Complete Examples 
 ### Example 1: University Database with EER
 
 **Requirements:**
@@ -4907,9 +4928,9 @@ INSERT INTO DEPOSITOR VALUES
 **Query:** Find all sailors with rating greater than 8
 
 **Relational Algebra:**
-```
-σ_rating > 8(SAILORS)
-```
+
+$$σ_{rating > 8}(SAILORS)$$
+
 
 **Result:**
 ```
@@ -4933,9 +4954,7 @@ SELECT * FROM SAILORS WHERE rating > 8;
 **Query:** Find sailors with rating > 7 AND age < 40
 
 **Relational Algebra:**
-```
-σ_rating > 7 ∧ age < 40(SAILORS)
-```
+$$σ_{rating > 7 \; ∧ \;age < 40}(SAILORS)$$
 
 **MySQL:**
 ```sql
@@ -4949,21 +4968,21 @@ SELECT * FROM SAILORS WHERE rating > 7 AND age < 40;
 ├─────┼─────────┼────────┼──────┤
 │ 32  │ Andy    │ 8      │ 25.5 │
 │ 58  │ Rusty   │ 10     │ 35.0 │
-│ 71  │ Zorba   �� 10     │ 16.0 │
+│ 71  │ Zorba   │ 10     │ 16.0 │
 │ 74  │ Horatio │ 9      │ 35.0 │
 └─────┴─────────┴────────┴──────┘
 ```
 
 #### Comparison Operators in Selection
 
-| Operator | Symbol | Example |
-|----------|--------|---------|
-| **Equal** | `=` | σ_rating = 10(SAILORS) |
-| **Not Equal** | `≠` | σ_rating ≠ 10(SAILORS) |
-| **Greater** | `>` | σ_age > 30(SAILORS) |
-| **Less** | `<` | σ_age < 30(SAILORS) |
-| **Greater/Equal** | `≥` | σ_rating ≥ 8(SAILORS) |
-| **Less/Equal** | `≤` | σ_rating ≤ 5(SAILORS) |
+| Operator          | Symbol | Example                |
+| ----------------- | ------ | ---------------------- |
+| **Equal**         | `=`    | σ_rating = 10(SAILORS) |
+| **Not Equal**     | `≠`    | σ_rating ≠ 10(SAILORS) |
+| **Greater**       | `>`    | σ_age > 30(SAILORS)    |
+| **Less**          | `<`    | σ_age < 30(SAILORS)    |
+| **Greater/Equal** | `≥`    | σ_rating ≥ 8(SAILORS)  |
+| **Less/Equal**    | `≤`    | σ_rating ≤ 5(SAILORS)  |
 
 #### Logical Operators
 
@@ -4984,9 +5003,8 @@ SELECT * FROM SAILORS WHERE rating > 7 AND age < 40;
 **Equivalent:** SQL `SELECT` clause
 
 **Syntax:**
-```
-π_attribute1, attribute2, ...(Relation)
-```
+
+$$π_{attribute1,\;attribute2,\;...\;}(Relation)$$
 
 **Properties:**
 - Returns a subset of columns
@@ -4999,9 +5017,9 @@ SELECT * FROM SAILORS WHERE rating > 7 AND age < 40;
 **Query:** Get all sailor names
 
 **Relational Algebra:**
-```
-π_sname(SAILORS)
-```
+
+$$π_{sname}(SAILORS)$$
+
 
 **Result:**
 ```
@@ -5101,11 +5119,16 @@ WHERE rating > 8;
 **Equivalent:** SQL `AS` keyword
 
 **Syntax:**
-```
-ρ_NewName(Relation)                    -- Rename relation
-ρ_NewName(A1, A2, ...)(Relation)       -- Rename relation and attributes
-ρ_(A1, A2, ...)(Relation)              -- Rename only attributes
-```
+
+$$ρ_{NewName}(Relation)$$
+	-- Rename relation
+
+$$ρ_{NewName\;(A1, A2, ...)}(Relation)$$       
+	-- Rename relation and attributes
+
+$$ρ_{(A1, A2, ...)}(Relation)$$
+	-- Rename only attributes
+
 
 **Why use Rename?**
 1. **Self-joins:** Join a table to itself
@@ -5117,9 +5140,9 @@ WHERE rating > 8;
 **Query:** Rename SAILORS to S
 
 **Relational Algebra:**
-```
-ρ_S(SAILORS)
-```
+
+$$ρ_S(SAILORS)$$
+
 
 **MySQL:**
 ```sql
@@ -5131,9 +5154,9 @@ SELECT * FROM SAILORS AS S;
 **Query:** Rename SAILORS to S with columns (id, name, r, a)
 
 **Relational Algebra:**
-```
-ρ_S(id, name, r, a)(SAILORS)
-```
+
+$$ρ_{S\;(id, name, r, a)}(SAILORS)$$
+
 
 **MySQL:**
 ```sql
@@ -5151,12 +5174,18 @@ FROM SAILORS;
 
 **Relational Algebra:**
 ```
-π_S1.sname, S2.sname(
-    σ_S1.rating = S2.rating ∧ S1.sid < S2.sid(
-        ρ_S1(SAILORS) × ρ_S2(SAILORS)
+π_{S1.sname, S2.sname}(
+    σ_{S1.rating = S2.rating ∧ S1.sid < S2.sid}(
+        ρ_{S1}(SAILORS) × ρ_{S2}(SAILORS)
     )
 )
 ```
+
+$$π_{S1.sname, S2.sname}(
+    σ_{S1.rating = S2.rating ∧ S1.sid < S2.sid}(
+        ρ_{S1}(SAILORS) × ρ_{S2}(SAILORS)
+    )
+)$$
 
 **MySQL:**
 ```sql
@@ -5182,7 +5211,7 @@ WHERE S1.rating = S2.rating
 
 ---
 
-## 4. Set Operations {#set-operations}
+## 4. Set Operations
 
 **Set operations** work on **two relations** that are **union-compatible**.
 
@@ -5211,14 +5240,14 @@ S(id INT, age INT)  ✗ Not compatible (VARCHAR ≠ INT)
 
 ### 4.1 Union (∪)
 
-**Symbol:** ∪
+**Symbol:** $∪$
 
 **Purpose:** Combine rows from two relations. Returns rows that appear in **either** relation.
 
 **Properties:**
 - Automatically removes duplicates
-- Commutative: R ∪ S = S ∪ R
-- Associative: (R ∪ S) ∪ T = R ∪ (S ∪ T)
+- Commutative: $R ∪ S = S ∪ R$
+- Associative: $(R ∪ S) ∪ T = R ∪ (S ∪ T)$
 
 **Syntax:**
 ```
@@ -5283,9 +5312,8 @@ SELECT * FROM SAILORS_GROUP2;
 **Query:** Find all customer names who are either depositors or borrowers
 
 **Relational Algebra:**
-```
-π_customer_name(DEPOSITOR) ∪ π_customer_name(BORROWER)
-```
+
+$$π_{customer_name}(DEPOSITOR) ∪ π_{customer_name}(BORROWER)$$
 
 **MySQL:**
 ```sql
@@ -5368,9 +5396,9 @@ WHERE (sid, sname, rating) IN (SELECT sid, sname, rating FROM SAILORS_GROUP2);
 **Query:** Find customers who are both depositors and borrowers
 
 **Relational Algebra:**
-```
-π_customer_name(DEPOSITOR) ∩ π_customer_name(BORROWER)
-```
+
+$$π_{customer_name}(DEPOSITOR) ∩ π_{customer_name}(BORROWER)$$
+
 
 **MySQL:**
 ```sql
@@ -5498,7 +5526,7 @@ WHERE customer_name NOT IN (SELECT customer_name FROM BORROWER);
 
 ---
 
-## 5. Binary Operations {#binary-operations}
+## 5. Binary Operations 
 
 ### 5.1 Cartesian Product (×)
 
@@ -5590,27 +5618,23 @@ SELECT * FROM SAILORS CROSS JOIN BOATS;
 
 ---
 
-## 6. Join Operations {#join-operations}
+## 6. Join Operations
 
 **Join** = Cartesian Product + Selection
 
 Joins connect related tables based on common attributes.
 
-### 6.1 Theta Join (⋈_θ)
+### 6.1 Theta Join ($⋈_θ$)
 
-**Symbol:** ⋈_θ (bowtie with theta)
+**Symbol:** $⋈_{θ}$ (bowtie with theta)
 
-**Purpose:** Cartesian product followed by selection with condition θ.
+**Purpose:** Cartesian product followed by selection with condition $θ$.
 
 **Formula:**
-```
-R ⋈_θ S = σ_θ(R × S)
-```
+$$R ⋈_θ S = σ_θ(R × S)$$
 
 **Syntax:**
-```
-R ⋈_condition S
-```
+$$R ⋈_{condition} S$$
 
 #### Example: Theta Join
 
@@ -5642,9 +5666,7 @@ WHERE age > bid;
 **Most common type of join.**
 
 **Syntax:**
-```
-R ⋈_R.A = S.B S
-```
+$$R ⋈_{R.A = S.B} S$$
 
 #### Example 1: Join Sailors and Reserves
 
@@ -5817,9 +5839,11 @@ NATURAL JOIN LOAN L;
 
 **Purpose:** Preserve rows that don't have matching rows in the other relation by filling with **NULL** values.
 
-#### Left Outer Join (⟕)
+![[Pasted image 20260313020635.png]]
 
-**Symbol:** ⟕
+#### Left Outer Join ($⟕$)
+
+**Symbol:** $⟕$
 
 **Purpose:** Keep **all rows from left relation**, match with right where possible, fill with NULL otherwise.
 
@@ -5850,9 +5874,9 @@ FROM SAILORS S
 LEFT OUTER JOIN RESERVES R ON S.sid = R.sid;
 ```
 
-#### Right Outer Join (⟖)
+#### Right Outer Join ($⟖$)
 
-**Symbol:** ⟖
+**Symbol:** $⟖$
 
 **Purpose:** Keep **all rows from right relation**, match with left where possible.
 
@@ -5863,7 +5887,7 @@ FROM RESERVES R
 RIGHT OUTER JOIN SAILORS S ON R.sid = S.sid;
 ```
 
-#### Full Outer Join (⟗)
+#### Full Outer Join ($⟗$)
 
 **Symbol:** ⟗
 
@@ -5885,9 +5909,11 @@ FROM SAILORS S
 RIGHT OUTER JOIN RESERVES R ON S.sid = R.sid;
 ```
 
+![[Pasted image 20260313020756.png]]
+
 ---
 
-## 7. Division Operation (÷) {#division}
+## 7. Division Operation (÷) 
 
 **Symbol:** ÷
 
@@ -6161,7 +6187,7 @@ HAVING COUNT(DISTINCT A.branch_name) = (
 
 ---
 
-## 8. Extended Operations {#extended-operations}
+## 8. Extended Operations
 
 ### 8.1 Assignment (←)
 
@@ -7140,3 +7166,1756 @@ WHERE B.bid NOT IN (SELECT bid FROM RESERVES);
 
 ---
 
+# Complete Guide to Views, Assertions, and Bitmap Indexing in DBMS
+
+## Table of Contents
+1. [Views](#views)
+2. [Assertions](#assertions)
+3. [Bitmap Indexing](#bitmap-indexing)
+4. [Materialized Views](#materialized-views)
+5. [Complete Examples](#examples)
+
+---
+
+## 1. Views
+
+### What is a View?
+
+A **view** is a **virtual table** based on the result of a SQL query. It doesn't store data physically; instead, it stores the query definition.
+
+**Key Characteristics:**
+- **Virtual relation** - exists logically, not physically
+- **Derived data** - computed from base tables when queried
+- **Dynamic** - automatically reflects changes in underlying tables
+- **Security layer** - hides sensitive data
+- **Simplification** - provides simplified interface to complex queries
+
+### Why Use Views?
+
+| Purpose | Example |
+|---------|---------|
+| **Security** | Hide salary information from certain users |
+| **Simplification** | Present complex joins as simple tables |
+| **Data Independence** | Change underlying schema without affecting applications |
+| **Customization** | Different users see different data representations |
+| **Reusability** | Encapsulate frequently used queries |
+
+---
+
+### Creating Views
+
+**Syntax:**
+```sql
+CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+```
+
+### Sample Database Schema
+
+```sql
+-- Base Tables
+CREATE TABLE EMPLOYEE (
+    emp_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2),
+    dept_id INT,
+    manager_id INT,
+    hire_date DATE
+);
+
+CREATE TABLE DEPARTMENT (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50),
+    location VARCHAR(100)
+);
+
+CREATE TABLE CUSTOMER (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    city VARCHAR(50),
+    credit_score INT
+);
+
+CREATE TABLE LOAN (
+    loan_number VARCHAR(20) PRIMARY KEY,
+    branch_name VARCHAR(50),
+    amount DECIMAL(12,2),
+    loan_type VARCHAR(20)
+);
+
+CREATE TABLE BORROWER (
+    customer_id INT,
+    loan_number VARCHAR(20),
+    PRIMARY KEY (customer_id, loan_number),
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
+    FOREIGN KEY (loan_number) REFERENCES LOAN(loan_number)
+);
+
+CREATE TABLE ACCOUNT (
+    account_number VARCHAR(20) PRIMARY KEY,
+    branch_name VARCHAR(50),
+    balance DECIMAL(12,2)
+);
+
+CREATE TABLE DEPOSITOR (
+    customer_id INT,
+    account_number VARCHAR(20),
+    PRIMARY KEY (customer_id, account_number),
+    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
+    FOREIGN KEY (account_number) REFERENCES ACCOUNT(account_number)
+);
+
+-- Sample Data
+INSERT INTO EMPLOYEE VALUES
+    (101, 'John Smith', 75000, 1, NULL, '2020-01-15'),
+    (102, 'Jane Doe', 65000, 1, 101, '2020-03-20'),
+    (103, 'Bob Wilson', 85000, 2, NULL, '2019-06-10'),
+    (104, 'Alice Brown', 55000, 2, 103, '2021-02-01'),
+    (105, 'Charlie Davis', 95000, 1, 101, '2018-11-05');
+
+INSERT INTO DEPARTMENT VALUES
+    (1, 'Engineering', 'Building A'),
+    (2, 'Sales', 'Building B'),
+    (3, 'HR', 'Building C');
+
+INSERT INTO CUSTOMER VALUES
+    (201, 'Michael Johnson', 'New York', 720),
+    (202, 'Sarah Williams', 'Boston', 680),
+    (203, 'David Miller', 'Chicago', 750);
+
+INSERT INTO LOAN VALUES
+    ('L-101', 'Downtown', 50000, 'Personal'),
+    ('L-102', 'Uptown', 100000, 'Business'),
+    ('L-103', 'Downtown', 75000, 'Home');
+
+INSERT INTO BORROWER VALUES
+    (201, 'L-101'),
+    (202, 'L-102'),
+    (203, 'L-103');
+
+INSERT INTO ACCOUNT VALUES
+    ('A-101', 'Downtown', 5000),
+    ('A-102', 'Uptown', 8000),
+    ('A-103', 'Downtown', 1200);
+
+INSERT INTO DEPOSITOR VALUES
+    (201, 'A-101'),
+    (202, 'A-102'),
+    (203, 'A-103');
+```
+
+---
+
+### Example 1: Simple View (Hide Sensitive Data)
+
+**Requirement:** Show employee information without salary details
+
+```sql
+-- Create view without salary
+CREATE VIEW EMPLOYEE_PUBLIC AS
+SELECT emp_id, name, dept_id, hire_date
+FROM EMPLOYEE;
+
+-- Query the view
+SELECT * FROM EMPLOYEE_PUBLIC;
+```
+
+**Result:**
+```
+┌────────┬───────────────┬─────────┬────────────┐
+│ emp_id │ name          │ dept_id │ hire_date  │
+├────────┼───────────────┼─────────┼────────────┤
+│ 101    │ John Smith    │ 1       │ 2020-01-15 │
+│ 102    │ Jane Doe      │ 1       │ 2020-03-20 │
+│ 103    │ Bob Wilson    │ 2       │ 2019-06-10 │
+│ 104    │ Alice Brown   │ 2       │ 2021-02-01 │
+│ 105    │ Charlie Davis │ 1       │ 2018-11-05 │
+└────────┴───────────────┴─────────┴────────────┘
+```
+
+**Benefit:** Users querying this view cannot see salary information.
+
+---
+
+### Example 2: View with JOIN (Simplification)
+
+**Requirement:** Simplify employee-department query
+
+```sql
+-- Create view joining tables
+CREATE VIEW EMPLOYEE_DEPT_INFO AS
+SELECT 
+    e.emp_id,
+    e.name AS employee_name,
+    e.salary,
+    d.dept_name,
+    d.location
+FROM EMPLOYEE e
+JOIN DEPARTMENT d ON e.dept_id = d.dept_id;
+
+-- Query the view
+SELECT * FROM EMPLOYEE_DEPT_INFO WHERE dept_name = 'Engineering';
+```
+
+**Result:**
+```
+┌────────┬───────────────┬─────────┬─────────────┬───────────┐
+│ emp_id │ employee_name │ salary  │ dept_name   │ location  │
+├────────┼───────────────┼─────────┼─────────────┼───────────┤
+│ 101    │ John Smith    │ 75000   │ Engineering │ Building A│
+│ 102    │ Jane Doe      │ 65000   │ Engineering │ Building A│
+│ 105    │ Charlie Davis │ 95000   │ Engineering │ Building A│
+└────────┴───────────────┴─────────┴─────────────┴───────────┘
+```
+
+**Benefit:** Users don't need to know the JOIN syntax; they query a simple view.
+
+---
+
+### Example 3: View with Aggregation
+
+**Requirement:** Show department-wise average salary
+
+```sql
+-- Create aggregate view
+CREATE VIEW DEPT_SALARY_STATS AS
+SELECT 
+    d.dept_name,
+    COUNT(e.emp_id) AS num_employees,
+    AVG(e.salary) AS avg_salary,
+    MIN(e.salary) AS min_salary,
+    MAX(e.salary) AS max_salary
+FROM DEPARTMENT d
+LEFT JOIN EMPLOYEE e ON d.dept_id = e.dept_id
+GROUP BY d.dept_id, d.dept_name;
+
+-- Query the view
+SELECT * FROM DEPT_SALARY_STATS ORDER BY avg_salary DESC;
+```
+
+**Result:**
+```
+┌─────────────┬───────────────┬────────────┬────────────┬────────────┐
+│ dept_name   │ num_employees │ avg_salary │ min_salary │ max_salary │
+├─────────────┼───────────────┼────────────┼────────────┼────────────┤
+│ Engineering │ 3             │ 78333.33   │ 65000      │ 95000      │
+│ Sales       │ 2             │ 70000.00   │ 55000      │ 85000      │
+│ HR          │ 0             │ NULL       │ NULL       │ NULL       │
+└─────────────┴───────────────┴────────────┴────────────┴────────────┘
+```
+
+---
+
+### Example 4: View with Computed Columns
+
+**Requirement:** Show employee tenure
+
+```sql
+-- Create view with calculated column
+CREATE VIEW EMPLOYEE_TENURE AS
+SELECT 
+    emp_id,
+    name,
+    hire_date,
+    TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) AS years_of_service,
+    salary,
+    CASE 
+        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) >= 5 THEN 'Senior'
+        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) >= 2 THEN 'Mid-Level'
+        ELSE 'Junior'
+    END AS seniority_level
+FROM EMPLOYEE;
+
+-- Query the view
+SELECT * FROM EMPLOYEE_TENURE ORDER BY years_of_service DESC;
+```
+
+**Result:**
+```
+┌────────┬───────────────┬────────────┬──────────────────┬────────┬─────────────────┐
+│ emp_id │ name          │ hire_date  │ years_of_service │ salary │ seniority_level │
+├────────┼───────────────┼────────────┼──────────────────┼────────┼─────────────────┤
+│ 105    │ Charlie Davis │ 2018-11-05 │ 7                │ 95000  │ Senior          │
+│ 103    │ Bob Wilson    │ 2019-06-10 │ 6                │ 85000  │ Senior          │
+│ 101    │ John Smith    │ 2020-01-15 │ 6                │ 75000  │ Senior          │
+│ 102    │ Jane Doe      │ 2020-03-20 │ 5                │ 65000  │ Senior          │
+│ 104    │ Alice Brown   │ 2021-02-01 │ 4                │ 55000  │ Mid-Level       │
+└────────┴───────────────┴────────────┴──────────────────┴────────┴─────────────────┘
+```
+
+---
+
+### Example 5: Parameterized View (Using WHERE)
+
+**Requirement:** View for high-performing customers
+
+```sql
+-- Create view with condition
+CREATE VIEW HIGH_CREDIT_CUSTOMERS AS
+SELECT 
+    customer_id,
+    customer_name,
+    city,
+    credit_score
+FROM CUSTOMER
+WHERE credit_score >= 700;
+
+-- Query the view
+SELECT * FROM HIGH_CREDIT_CUSTOMERS;
+```
+
+**Result:**
+```
+┌─────────────┬─────────────────┬─────────┬──────────────┐
+│ customer_id │ customer_name   │ city    │ credit_score │
+├─────────────┼─────────────────┼─────────┼──────────────┤
+│ 201         │ Michael Johnson │ New York│ 720          │
+│ 203         │ David Miller    │ Chicago │ 750          │
+└─────────────┴─────────────────┴─────────┴──────────────┘
+```
+
+---
+
+### View Operations
+
+#### 1. Querying Views
+
+Views can be queried like regular tables:
+
+```sql
+-- Simple SELECT
+SELECT * FROM EMPLOYEE_PUBLIC;
+
+-- With WHERE clause
+SELECT * FROM EMPLOYEE_PUBLIC WHERE dept_id = 1;
+
+-- With JOIN (view joining with table)
+SELECT 
+    ep.name,
+    d.dept_name
+FROM EMPLOYEE_PUBLIC ep
+JOIN DEPARTMENT d ON ep.dept_id = d.dept_id;
+
+-- Nested view query
+SELECT dept_name, avg_salary
+FROM DEPT_SALARY_STATS
+WHERE avg_salary > 70000;
+```
+
+---
+
+#### 2. Updating Views
+
+**View updates** are allowed under certain conditions but have restrictions.
+
+##### Updatable View Requirements:
+
+A view is **updatable** if:
+1. ✓ Defined on a **single base table**
+2. ✓ Contains **no aggregates** (SUM, AVG, COUNT, etc.)
+3. ✓ Contains **no GROUP BY** or **HAVING**
+4. ✓ Contains **no DISTINCT**
+5. ✓ Contains **no subqueries** in SELECT clause
+6. ✓ Contains **no UNION** operations
+
+##### Example: Updatable View
+
+```sql
+-- Create updatable view
+CREATE VIEW ENGINEERING_EMPLOYEES AS
+SELECT emp_id, name, salary, dept_id
+FROM EMPLOYEE
+WHERE dept_id = 1;
+
+-- UPDATE through view (✓ Allowed)
+UPDATE ENGINEERING_EMPLOYEES
+SET salary = salary * 1.10
+WHERE emp_id = 102;
+
+-- Verify update
+SELECT * FROM EMPLOYEE WHERE emp_id = 102;
+```
+
+**Result:** Jane Doe's salary updated to 71,500 (65,000 * 1.10)
+
+##### Example: INSERT through View
+
+```sql
+-- INSERT through view (✓ Allowed)
+INSERT INTO ENGINEERING_EMPLOYEES (emp_id, name, salary, dept_id)
+VALUES (106, 'Tom Anderson', 70000, 1);
+
+-- Verify insertion
+SELECT * FROM EMPLOYEE WHERE emp_id = 106;
+```
+
+**Result:** New employee added to EMPLOYEE table
+
+##### Example: DELETE through View
+
+```sql
+-- DELETE through view (✓ Allowed)
+DELETE FROM ENGINEERING_EMPLOYEES
+WHERE emp_id = 106;
+
+-- Verify deletion
+SELECT * FROM EMPLOYEE WHERE emp_id = 106;
+```
+
+**Result:** Employee removed from EMPLOYEE table
+
+---
+
+##### Example: Non-Updatable View (Aggregate)
+
+```sql
+-- This view is NOT updatable (has aggregation)
+CREATE VIEW DEPT_AVG_SALARY AS
+SELECT dept_id, AVG(salary) AS avg_salary
+FROM EMPLOYEE
+GROUP BY dept_id;
+
+-- Try to UPDATE (❌ Will FAIL)
+UPDATE DEPT_AVG_SALARY
+SET avg_salary = 80000
+WHERE dept_id = 1;
+```
+
+**Error:** Cannot update aggregate view
+
+**Why?** How would the system translate "set average to 80000" into updates on individual employee salaries?
+
+---
+
+##### Example: View with NULL Challenge
+
+```sql
+-- View missing some columns
+CREATE VIEW EMPLOYEE_BASIC AS
+SELECT emp_id, name, dept_id
+FROM EMPLOYEE;
+
+-- Try to INSERT (⚠️ Problem: missing salary)
+INSERT INTO EMPLOYEE_BASIC (emp_id, name, dept_id)
+VALUES (107, 'Lisa Green', 2);
+
+-- What happens in base table?
+SELECT * FROM EMPLOYEE WHERE emp_id = 107;
+```
+
+**Result:**
+```
+┌────────┬────────────┬─────────┬─────────┬────────────┬───────────┐
+│ emp_id │ name       │ salary  │ dept_id │ manager_id │ hire_date │
+├────────┼────────────┼─────────┼─────────┼────────────┼───────────┤
+│ 107    │ Lisa Green │ NULL    │ 2       │ NULL       │ NULL      │
+└────────┴────────────┴─────────┴─────────┴────────────┴───────────┘
+```
+
+**Issue:** Missing columns get NULL values, which may violate constraints.
+
+---
+
+##### WITH CHECK OPTION
+
+Prevents updates/inserts that would make rows disappear from the view.
+
+```sql
+-- Create view with check option
+CREATE VIEW ENGINEERING_EMPLOYEES_SAFE AS
+SELECT emp_id, name, salary, dept_id
+FROM EMPLOYEE
+WHERE dept_id = 1
+WITH CHECK OPTION;
+
+-- Try to change dept_id (❌ Will FAIL)
+UPDATE ENGINEERING_EMPLOYEES_SAFE
+SET dept_id = 2
+WHERE emp_id = 102;
+```
+
+**Error:** CHECK OPTION violated
+
+**Reason:** Changing dept_id to 2 would remove the row from the view (which shows only dept_id = 1), so it's blocked.
+
+---
+
+#### 3. Dropping Views
+
+```sql
+-- Drop a view
+DROP VIEW IF EXISTS EMPLOYEE_PUBLIC;
+
+-- Drop multiple views
+DROP VIEW IF EXISTS EMPLOYEE_PUBLIC, DEPT_SALARY_STATS;
+```
+
+---
+
+#### 4. Altering Views
+
+MySQL doesn't have `ALTER VIEW`, so you must `CREATE OR REPLACE`:
+
+```sql
+-- Replace existing view
+CREATE OR REPLACE VIEW EMPLOYEE_PUBLIC AS
+SELECT emp_id, name, dept_id, hire_date, salary  -- Added salary
+FROM EMPLOYEE;
+```
+
+---
+
+### View Performance Considerations
+
+#### How Views Work Internally
+
+**When you query a view:**
+
+```sql
+SELECT * FROM EMPLOYEE_DEPT_INFO WHERE dept_name = 'Engineering';
+```
+
+**MySQL internally rewrites it as:**
+
+```sql
+SELECT 
+    e.emp_id,
+    e.name AS employee_name,
+    e.salary,
+    d.dept_name,
+    d.location
+FROM EMPLOYEE e
+JOIN DEPARTMENT d ON e.dept_id = d.dept_id
+WHERE d.dept_name = 'Engineering';  -- Condition pushed down
+```
+
+**Key Points:**
+- View definition is **substituted** into the query
+- No intermediate result stored (unless materialized)
+- Conditions are **pushed down** to base tables for efficiency
+
+---
+
+### View Materialization
+
+Some complex views benefit from **materialization** (storing results).
+
+**Standard View (Virtual):**
+```sql
+CREATE VIEW COMPLEX_REPORT AS
+SELECT ...
+FROM table1 t1
+JOIN table2 t2 ON ...
+JOIN table3 t3 ON ...
+WHERE ...;
+```
+
+**Problem:** Query runs every time you access the view (slow for complex queries)
+
+**Solution:** Materialized View (covered later in this guide)
+
+---
+
+### Practical View Examples
+
+#### Example 6: Customer Loan Summary
+
+```sql
+-- Create comprehensive customer view
+CREATE VIEW CUSTOMER_LOAN_SUMMARY AS
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    c.city,
+    c.credit_score,
+    COUNT(l.loan_number) AS num_loans,
+    COALESCE(SUM(l.amount), 0) AS total_loan_amount
+FROM CUSTOMER c
+LEFT JOIN BORROWER b ON c.customer_id = b.customer_id
+LEFT JOIN LOAN l ON b.loan_number = l.loan_number
+GROUP BY c.customer_id, c.customer_name, c.city, c.credit_score;
+
+-- Query the view
+SELECT * FROM CUSTOMER_LOAN_SUMMARY
+WHERE total_loan_amount > 50000;
+```
+
+**Result:**
+```
+┌─────────────┬──────────��──────┬─────────┬──────────────┬───────────┬───────────────────┐
+│ customer_id │ customer_name   │ city    │ credit_score │ num_loans │ total_loan_amount │
+├─────────────┼─────────────────┼─────────┼──────────────┼───────────┼───────────────────┤
+│ 202         │ Sarah Williams  │ Boston  │ 680          │ 1         │ 100000            │
+│ 203         │ David Miller    │ Chicago │ 750          │ 1         │ 75000             │
+└─────────────┴─────────────────┴─────────┴──────────────┴───────────┴───────────────────┘
+```
+
+---
+
+#### Example 7: View on View (Nested Views)
+
+```sql
+-- First-level view
+CREATE VIEW HIGH_SALARY_EMPLOYEES AS
+SELECT emp_id, name, salary, dept_id
+FROM EMPLOYEE
+WHERE salary > 70000;
+
+-- Second-level view (based on first view)
+CREATE VIEW HIGH_SALARY_ENGINEERING AS
+SELECT hse.emp_id, hse.name, hse.salary, d.dept_name
+FROM HIGH_SALARY_EMPLOYEES hse
+JOIN DEPARTMENT d ON hse.dept_id = d.dept_id
+WHERE d.dept_name = 'Engineering';
+
+-- Query nested view
+SELECT * FROM HIGH_SALARY_ENGINEERING;
+```
+
+**Result:**
+```
+┌────────┬──────────���────┬────────┬─────────────┐
+│ emp_id │ name          │ salary │ dept_name   │
+├────────┼───────────────┼────────┼─────────────┤
+│ 101    │ John Smith    │ 75000  │ Engineering │
+│ 105    │ Charlie Davis │ 95000  │ Engineering │
+└────────┴───────────────┴────────┴─────────────┘
+```
+
+---
+
+### View Metadata
+
+Check existing views:
+
+```sql
+-- Show all views in database
+SHOW FULL TABLES WHERE Table_type = 'VIEW';
+
+-- Show view definition
+SHOW CREATE VIEW EMPLOYEE_PUBLIC;
+
+-- Query information schema
+SELECT 
+    TABLE_NAME,
+    VIEW_DEFINITION
+FROM INFORMATION_SCHEMA.VIEWS
+WHERE TABLE_SCHEMA = 'your_database_name';
+```
+
+---
+
+## 2. Assertions {#assertions}
+
+### What is an Assertion?
+
+An **assertion** is a **database constraint** that expresses a condition the database must **always** satisfy.
+
+**Key Characteristics:**
+- **Predicate** - a boolean expression
+- **Global constraint** - can span multiple tables
+- **Always enforced** - checked on every relevant update
+- **Declarative** - you specify WHAT, not HOW
+
+### Syntax
+
+**Standard SQL:**
+```sql
+CREATE ASSERTION assertion_name
+CHECK (predicate);
+
+DROP ASSERTION assertion_name;
+```
+
+**⚠️ IMPORTANT:** MySQL **does NOT support assertions** natively. However, we can achieve similar functionality using:
+1. **CHECK constraints** (MySQL 8.0.16+)
+2. **Triggers**
+3. **Stored procedures**
+
+---
+
+### Why Use Assertions?
+
+| Purpose | Example |
+|---------|---------|
+| **Business Rules** | Total branch loans < total branch deposits |
+| **Data Integrity** | Every loan must have a qualified borrower |
+| **Complex Constraints** | Manager salary > all subordinates |
+| **Cross-Table Rules** | Inventory sum = sales sum + stock |
+
+---
+
+### Assertion Logic Pattern: NOT EXISTS
+
+**Common Pattern:** "There should NOT exist any violation"
+
+```sql
+CREATE ASSERTION assertion_name
+CHECK (NOT EXISTS (
+    SELECT *
+    FROM tables
+    WHERE violation_condition
+));
+```
+
+**Translation:** "Assert that no rows exist where the violation occurs"
+
+---
+
+### Example 1: Branch Loan Limit
+
+**Business Rule:** The sum of all loan amounts at a branch must be less than the sum of all account balances at that branch.
+
+**Logical Statement:**
+```
+For every branch:
+  SUM(loan.amount) < SUM(account.balance)
+```
+
+**Assertion (Standard SQL):**
+```sql
+CREATE ASSERTION BRANCH_LOAN_LIMIT
+CHECK (NOT EXISTS (
+    SELECT branch_name
+    FROM (
+        SELECT branch_name, SUM(amount) AS total_loans
+        FROM LOAN
+        GROUP BY branch_name
+    ) AS loan_totals
+    JOIN (
+        SELECT branch_name, SUM(balance) AS total_deposits
+        FROM ACCOUNT
+        GROUP BY branch_name
+    ) AS deposit_totals USING (branch_name)
+    WHERE total_loans >= total_deposits
+));
+```
+
+**MySQL Implementation (Using Trigger):**
+
+```sql
+DELIMITER $$
+
+-- Trigger for INSERT on LOAN
+CREATE TRIGGER check_branch_loan_limit_insert
+BEFORE INSERT ON LOAN
+FOR EACH ROW
+BEGIN
+    DECLARE total_loans DECIMAL(12,2);
+    DECLARE total_deposits DECIMAL(12,2);
+    
+    -- Calculate total loans for the branch (including new loan)
+    SELECT COALESCE(SUM(amount), 0) + NEW.amount INTO total_loans
+    FROM LOAN
+    WHERE branch_name = NEW.branch_name;
+    
+    -- Calculate total deposits for the branch
+    SELECT COALESCE(SUM(balance), 0) INTO total_deposits
+    FROM ACCOUNT
+    WHERE branch_name = NEW.branch_name;
+    
+    -- Check assertion
+    IF total_loans >= total_deposits THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Branch loan limit exceeded: total loans must be less than total deposits';
+    END IF;
+END$$
+
+-- Trigger for UPDATE on LOAN
+CREATE TRIGGER check_branch_loan_limit_update
+BEFORE UPDATE ON LOAN
+FOR EACH ROW
+BEGIN
+    DECLARE total_loans DECIMAL(12,2);
+    DECLARE total_deposits DECIMAL(12,2);
+    
+    SELECT COALESCE(SUM(amount), 0) - OLD.amount + NEW.amount INTO total_loans
+    FROM LOAN
+    WHERE branch_name = NEW.branch_name;
+    
+    SELECT COALESCE(SUM(balance), 0) INTO total_deposits
+    FROM ACCOUNT
+    WHERE branch_name = NEW.branch_name;
+    
+    IF total_loans >= total_deposits THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Branch loan limit exceeded';
+    END IF;
+END$$
+
+-- Trigger for UPDATE on ACCOUNT (deposits decrease)
+CREATE TRIGGER check_branch_loan_limit_account_update
+BEFORE UPDATE ON ACCOUNT
+FOR EACH ROW
+BEGIN
+    DECLARE total_loans DECIMAL(12,2);
+    DECLARE total_deposits DECIMAL(12,2);
+    
+    SELECT COALESCE(SUM(amount), 0) INTO total_loans
+    FROM LOAN
+    WHERE branch_name = NEW.branch_name;
+    
+    SELECT COALESCE(SUM(balance), 0) - OLD.balance + NEW.balance INTO total_deposits
+    FROM ACCOUNT
+    WHERE branch_name = NEW.branch_name;
+    
+    IF total_loans >= total_deposits THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot reduce deposits: would violate branch loan limit';
+    END IF;
+END$$
+
+DELIMITER ;
+```
+
+**Test the Assertion:**
+
+```sql
+-- Current state
+SELECT 
+    branch_name,
+    (SELECT SUM(amount) FROM LOAN WHERE branch_name = 'Downtown') AS total_loans,
+    (SELECT SUM(balance) FROM ACCOUNT WHERE branch_name = 'Downtown') AS total_deposits;
+```
+
+**Result:**
+```
+┌─────────────┬─────────────┬────────────────┐
+│ branch_name │ total_loans │ total_deposits │
+├─────────────┼─────────────┼────────────────┤
+│ Downtown    │ 125000      │ 6200           │
+└─────────────┴─────────────┴────────────────┘
+```
+
+**Try to violate:**
+```sql
+-- This should FAIL (125000 >= 6200 already!)
+INSERT INTO LOAN VALUES ('L-104', 'Downtown', 10000, 'Personal');
+```
+
+**Error:** Branch loan limit exceeded
+
+---
+
+### Example 2: Minimum Borrower Balance
+
+**Business Rule:** Every loan must have at least one borrower with an account balance of at least $1000.
+
+**Logical Statement:**
+```
+For every loan:
+  EXISTS at least one borrower with balance >= 1000
+```
+
+**Assertion (Standard SQL):**
+```sql
+CREATE ASSERTION MIN_BORROWER_BALANCE
+CHECK (NOT EXISTS (
+    SELECT loan_number
+    FROM LOAN L
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM BORROWER B
+        JOIN DEPOSITOR D ON B.customer_id = D.customer_id
+        JOIN ACCOUNT A ON D.account_number = A.account_number
+        WHERE B.loan_number = L.loan_number
+          AND A.balance >= 1000
+    )
+));
+```
+
+**Translation:** "There should NOT exist any loan for which there does NOT exist a borrower with balance >= 1000"
+
+**MySQL Implementation (Using Trigger):**
+
+```sql
+DELIMITER $$
+
+-- Trigger for INSERT on LOAN
+CREATE TRIGGER check_min_borrower_balance_loan
+AFTER INSERT ON LOAN
+FOR EACH ROW
+BEGIN
+    DECLARE qualified_borrowers INT;
+    
+    -- Count borrowers with sufficient balance
+    SELECT COUNT(*) INTO qualified_borrowers
+    FROM BORROWER B
+    JOIN DEPOSITOR D ON B.customer_id = D.customer_id
+    JOIN ACCOUNT A ON D.account_number = A.account_number
+    WHERE B.loan_number = NEW.loan_number
+      AND A.balance >= 1000;
+    
+    IF qualified_borrowers = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Loan must have at least one borrower with account balance >= 1000';
+    END IF;
+END$$
+
+-- Trigger for INSERT on BORROWER
+CREATE TRIGGER check_min_borrower_balance_borrower
+AFTER INSERT ON BORROWER
+FOR EACH ROW
+BEGIN
+    DECLARE qualified_borrowers INT;
+    
+    SELECT COUNT(*) INTO qualified_borrowers
+    FROM BORROWER B
+    JOIN DEPOSITOR D ON B.customer_id = D.customer_id
+    JOIN ACCOUNT A ON D.account_number = A.account_number
+    WHERE B.loan_number = NEW.loan_number
+      AND A.balance >= 1000;
+    
+    IF qualified_borrowers = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Loan must have at least one borrower with account balance >= 1000';
+    END IF;
+END$$
+
+-- Trigger for UPDATE/DELETE on ACCOUNT (balance changes)
+CREATE TRIGGER check_min_borrower_balance_account
+BEFORE UPDATE ON ACCOUNT
+FOR EACH ROW
+BEGIN
+    -- Check if this account is associated with any loan borrowers
+    IF EXISTS (
+        SELECT 1
+        FROM DEPOSITOR D
+        JOIN BORROWER B ON D.customer_id = B.customer_id
+        WHERE D.account_number = NEW.account_number
+          AND OLD.balance >= 1000
+          AND NEW.balance < 1000
+    ) THEN
+        -- Check if removing this qualified borrower would violate the constraint
+        DECLARE affected_loans CURSOR FOR
+            SELECT DISTINCT B.loan_number
+            FROM DEPOSITOR D
+            JOIN BORROWER B ON D.customer_id = B.customer_id
+            WHERE D.account_number = NEW.account_number;
+        
+        -- Would need to check each affected loan
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot reduce balance below 1000: would violate loan borrower requirement';
+    END IF;
+END$$
+
+DELIMITER ;
+```
+
+**Test:**
+
+```sql
+-- Add a loan
+INSERT INTO LOAN VALUES ('L-105', 'Downtown', 20000, 'Personal');
+
+-- Try to add borrower with insufficient balance
+INSERT INTO BORROWER VALUES (202, 'L-105');  -- Sarah has balance 8000 (>= 1000) ✓
+
+-- But if we try with a customer with < 1000 balance and no other borrowers
+-- It would fail ❌
+```
+
+---
+
+### Example 3: Manager Salary Constraint
+
+**Business Rule:** An employee's salary cannot exceed their manager's salary.
+
+**Logical Statement:**
+```
+For every employee with a manager:
+  employee.salary <= manager.salary
+```
+
+**Assertion (Standard SQL):**
+```sql
+CREATE ASSERTION MANAGER_SALARY_CONSTRAINT
+CHECK (NOT EXISTS (
+    SELECT *
+    FROM EMPLOYEE E
+    JOIN EMPLOYEE M ON E.manager_id = M.emp_id
+    WHERE E.salary > M.salary
+));
+```
+
+**MySQL Implementation (Using Trigger):**
+
+```sql
+DELIMITER $$
+
+-- Trigger for INSERT on EMPLOYEE
+CREATE TRIGGER check_manager_salary_insert
+BEFORE INSERT ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+    DECLARE manager_salary DECIMAL(10,2);
+    
+    IF NEW.manager_id IS NOT NULL THEN
+        SELECT salary INTO manager_salary
+        FROM EMPLOYEE
+        WHERE emp_id = NEW.manager_id;
+        
+        IF NEW.salary > manager_salary THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Employee salary cannot exceed manager salary';
+        END IF;
+    END IF;
+END$$
+
+-- Trigger for UPDATE on EMPLOYEE (salary increase)
+CREATE TRIGGER check_manager_salary_update
+BEFORE UPDATE ON EMPLOYEE
+FOR EACH ROW
+BEGIN
+    DECLARE manager_salary DECIMAL(10,2);
+    
+    -- Check if employee's new salary exceeds their manager's
+    IF NEW.manager_id IS NOT NULL THEN
+        SELECT salary INTO manager_salary
+        FROM EMPLOYEE
+        WHERE emp_id = NEW.manager_id;
+        
+        IF NEW.salary > manager_salary THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Employee salary cannot exceed manager salary';
+        END IF;
+    END IF;
+    
+    -- Check if this employee is a manager and new salary < subordinate salary
+    IF EXISTS (
+        SELECT 1
+        FROM EMPLOYEE
+        WHERE manager_id = NEW.emp_id
+          AND salary > NEW.salary
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Manager salary cannot be less than subordinate salary';
+    END IF;
+END$$
+
+DELIMITER ;
+```
+
+**Test:**
+
+```sql
+-- Current: John (manager, 75000), Jane (subordinate, 65000)
+
+-- Try to give Jane higher salary than John (❌ Should FAIL)
+UPDATE EMPLOYEE SET salary = 80000 WHERE emp_id = 102;
+
+-- Error: Employee salary cannot exceed manager salary
+
+-- Try to reduce John's salary below Jane's (❌ Should FAIL)
+UPDATE EMPLOYEE SET salary = 60000 WHERE emp_id = 101;
+
+-- Error: Manager salary cannot be less than subordinate salary
+```
+
+---
+
+### Example 4: Referential Integrity (Alternative to FK)
+
+**Business Rule:** Every borrower must reference an existing customer.
+
+**Assertion (Standard SQL):**
+```sql
+CREATE ASSERTION BORROWER_CUSTOMER_INTEGRITY
+CHECK (NOT EXISTS (
+    SELECT *
+    FROM BORROWER B
+    WHERE B.customer_id NOT IN (SELECT customer_id FROM CUSTOMER)
+));
+```
+
+**Note:** This is already handled by FOREIGN KEY constraints, but shows assertion capability.
+
+---
+
+### Example 5: Account Balance Non-Negative
+
+**Business Rule:** No account can have negative balance.
+
+**CHECK Constraint (MySQL 8.0.16+):**
+```sql
+ALTER TABLE ACCOUNT
+ADD CONSTRAINT chk_balance_positive
+CHECK (balance >= 0);
+```
+
+**Test:**
+```sql
+-- This should FAIL
+UPDATE ACCOUNT SET balance = -100 WHERE account_number = 'A-101';
+
+-- Error: Check constraint violated
+```
+
+---
+
+### Assertion Performance Considerations
+
+**Problem:** Assertions are checked on **every relevant update**
+
+**Example:** Branch loan limit assertion requires:
+- Query all loans for branch
+- Query all accounts for branch
+- Compute sums
+- Compare
+
+**Performance Impact:**
+- ⚠️ Slow updates if many rows affected
+- ⚠️ Complex predicates = expensive checks
+- ⚠️ Can cause bottlenecks in high-transaction systems
+
+**Best Practices:**
+1. ✓ Use assertions for **critical business rules** only
+2. ✓ Prefer **simpler constraints** (CHECK, FK) when possible
+3. ✓ Consider **periodic validation** instead of real-time
+4. ✓ Optimize assertion predicates with indexes
+5. ✓ Document performance impact
+
+---
+
+### Alternative: Periodic Validation
+
+Instead of enforcing on every transaction:
+
+```sql
+-- Validation stored procedure (run periodically)
+DELIMITER $$
+
+CREATE PROCEDURE VALIDATE_BRANCH_LOAN_LIMITS()
+BEGIN
+    SELECT 
+        branch_name,
+        total_loans,
+        total_deposits,
+        'VIOLATION' AS status
+    FROM (
+        SELECT 
+            L.branch_name,
+            COALESCE(SUM(L.amount), 0) AS total_loans,
+            COALESCE(SUM(A.balance), 0) AS total_deposits
+        FROM LOAN L
+        LEFT JOIN ACCOUNT A ON L.branch_name = A.branch_name
+        GROUP BY L.branch_name
+    ) AS branch_totals
+    WHERE total_loans >= total_deposits;
+END$$
+
+DELIMITER ;
+
+-- Run validation
+CALL VALIDATE_BRANCH_LOAN_LIMITS();
+```
+
+---
+
+## 3. Bitmap Indexing {#bitmap-indexing}
+
+### What is Bitmap Indexing?
+
+A **bitmap index** is a specialized indexing technique using **bit arrays (bitmaps)** to represent data.
+
+**Key Characteristics:**
+- **Compact** - uses bits (0 or 1) instead of traditional pointers
+- **Efficient** - excellent for low-cardinality columns (few distinct values)
+- **Fast queries** - uses bitwise operations (AND, OR, NOT)
+- **Space-saving** - especially for sparse data
+
+---
+
+### When to Use Bitmap Indexes?
+
+| Use Case | Example |
+|----------|---------|
+| **Low cardinality** | Gender (M/F), Status (Active/Inactive) |
+| **Read-heavy workloads** | Data warehouses, reporting |
+| **Multiple column queries** | WHERE gender='F' AND status='Active' |
+| **Large tables** | Millions of rows with few distinct values |
+
+**❌ Not suitable for:**
+- High-cardinality columns (email, SSN, etc.)
+- Frequent updates (expensive to maintain)
+- OLTP systems (better suited for OLAP)
+
+---
+
+### Bitmap Index Structure
+
+**Example Table:**
+```sql
+CREATE TABLE EMPLOYEE_STATUS (
+    emp_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    gender CHAR(1),
+    status VARCHAR(20),
+    department VARCHAR(50)
+);
+
+INSERT INTO EMPLOYEE_STATUS VALUES
+    (1, 'Alice', 'F', 'Active', 'Sales'),
+    (2, 'Bob', 'M', 'Active', 'IT'),
+    (3, 'Carol', 'F', 'Inactive', 'HR'),
+    (4, 'David', 'M', 'Active', 'Sales'),
+    (5, 'Emma', 'F', 'Active', 'IT'),
+    (6, 'Frank', 'M', 'Inactive', 'Sales'),
+    (7, 'Grace', 'F', 'Active', 'HR'),
+    (8, 'Henry', 'M', 'Active', 'IT');
+```
+
+---
+
+### Bitmap Index for Gender Column
+
+**Distinct values:** M, F
+
+**Bitmap Representation:**
+
+| ROWID | Name  | Gender | Bitmap 'M' | Bitmap 'F' |
+|-------|-------|--------|------------|------------|
+| 1     | Alice | F      | 0          | 1          |
+| 2     | Bob   | M      | 1          | 0          |
+| 3     | Carol | F      | 0          | 1          |
+| 4     | David | M      | 1          | 0          |
+| 5     | Emma  | F      | 0          | 1          |
+| 6     | Frank | M      | 1          | 0          |
+| 7     | Grace | F      | 0          | 1          |
+| 8     | Henry | M      | 1          | 0          |
+
+**Bitmap for 'M':** `01010101` (binary)
+**Bitmap for 'F':** `10101010` (binary)
+
+---
+
+### Bitmap Index Storage
+
+**Typical structure:**
+
+| Column Value | Starting ROWID | Ending ROWID | Bitmap     |
+|--------------|----------------|--------------|------------|
+| M            | 1              | 8            | 01010101   |
+| F            | 1              | 8            | 10101010   |
+
+---
+
+### Querying with Bitmap Indexes
+
+#### Query 1: Simple Equality
+
+**Query:** Find all female employees
+
+**SQL:**
+```sql
+SELECT * FROM EMPLOYEE_STATUS WHERE gender = 'F';
+```
+
+**Bitmap Operation:**
+```
+Bitmap for 'F': 10101010
+ROWIDs with bit=1: 1, 3, 5, 7
+```
+
+**Result:** Retrieve rows 1, 3, 5, 7
+
+---
+
+#### Query 2: Multiple Conditions with AND
+
+**Query:** Find female employees who are active
+
+**SQL:**
+```sql
+SELECT * FROM EMPLOYEE_STATUS 
+WHERE gender = 'F' AND status = 'Active';
+```
+
+**Bitmap Representation:**
+
+**Gender Bitmaps:**
+- 'M': `01010101`
+- 'F': `10101010`
+
+**Status Bitmaps:**
+- 'Active': `11011011`
+- 'Inactive': `00100100`
+
+**Bitwise AND Operation:**
+```
+Bitmap for 'F':      10101010
+Bitmap for 'Active': 11011011
+                     --------
+Result (AND):        10001010
+```
+
+**ROWIDs with bit=1:** 1, 5, 7
+
+**Result:** Alice, Emma, Grace
+
+---
+
+#### Query 3: OR Operation
+
+**Query:** Find employees who are female OR in Sales
+
+**SQL:**
+```sql
+SELECT * FROM EMPLOYEE_STATUS 
+WHERE gender = 'F' OR department = 'Sales';
+```
+
+**Bitmaps:**
+
+**Gender 'F':** `10101010`
+**Department 'Sales':** `10010100`
+
+**Bitwise OR:**
+```
+Gender 'F':    10101010
+Dept 'Sales':  10010100
+               --------
+Result (OR):   10111110
+```
+
+**ROWIDs:** 1, 2, 4, 5, 6, 7
+
+---
+
+#### Query 4: NOT Operation
+
+**Query:** Find employees who are NOT in IT
+
+**SQL:**
+```sql
+SELECT * FROM EMPLOYEE_STATUS 
+WHERE department != 'IT';
+```
+
+**Bitmaps:**
+
+**Department 'IT':** `01001001`
+
+**Bitwise NOT:**
+```
+Dept 'IT':   01001001
+             --------
+NOT IT:      10110110
+```
+
+**ROWIDs:** 1, 3, 4, 6, 7
+
+---
+
+#### Query 5: Complex Combination
+
+**Query:** Find active male employees NOT in HR
+
+**SQL:**
+```sql
+SELECT * FROM EMPLOYEE_STATUS 
+WHERE gender = 'M' AND status = 'Active' AND department != 'HR';
+```
+
+**Bitmaps:**
+- Gender 'M': `01010101`
+- Status 'Active': `11011011`
+- Department 'HR': `00100010`
+
+**Operations:**
+```
+Step 1: M AND Active
+01010101
+11011011
+--------
+01010001
+
+Step 2: Result AND (NOT HR)
+NOT HR:  11011101
+Result:  01010001
+         --------
+Final:   01010001
+```
+
+**ROWIDs:** 2, 8 (Bob, Henry)
+
+---
+
+### Bitmap Index Creation (MySQL Simulation)
+
+**Note:** MySQL doesn't support native bitmap indexes, but we can simulate the concept.
+
+```sql
+-- Create bitmap table for gender
+CREATE TABLE BITMAP_GENDER (
+    gender_value CHAR(1),
+    bitmap_data BINARY(1000)  -- Supports up to 8000 rows (1000 bytes * 8 bits)
+);
+
+-- Manually populate bitmap (conceptual example)
+-- In practice, this would be done by specialized database systems
+```
+
+**Oracle Example (has native bitmap indexes):**
+```sql
+-- Oracle syntax
+CREATE BITMAP INDEX idx_gender ON EMPLOYEE_STATUS(gender);
+CREATE BITMAP INDEX idx_status ON EMPLOYEE_STATUS(status);
+CREATE BITMAP INDEX idx_department ON EMPLOYEE_STATUS(department);
+```
+
+---
+
+### Advantages of Bitmap Indexes
+
+| Advantage | Explanation |
+|-----------|-------------|
+| **Space efficient** | Bits use minimal storage vs traditional B-tree |
+| **Fast queries** | Bitwise operations are extremely fast |
+| **Multiple conditions** | AND/OR/NOT operations trivial with bitmaps |
+| **Good for DW** | Perfect for read-heavy analytical queries |
+| **Compression** | Bitmaps compress well (run-length encoding) |
+
+---
+
+### Disadvantages of Bitmap Indexes
+
+| Disadvantage | Explanation |
+|--------------|-------------|
+| **Update overhead** | Updating bitmap requires recomputing bits |
+| **Lock contention** | Updates lock entire bitmap (not row-level) |
+| **Not for OLTP** | Frequent updates make them impractical |
+| **High cardinality** | Inefficient for unique/near-unique values |
+| **Space waste** | Large bitmaps if cardinality is high |
+
+---
+
+### Bitmap vs B-tree Index
+
+| Aspect | B-tree Index | Bitmap Index |
+|--------|--------------|--------------|
+| **Cardinality** | High (unique values) | Low (few values) |
+| **Workload** | OLTP (read/write) | OLAP (read-heavy) |
+| **Multiple conditions** | Slower (merge indexes) | Fast (bitwise ops) |
+| **Updates** | Fast (row-level) | Slow (bitmap rebuild) |
+| **Space** | More space | Less space |
+| **Example** | Email, SSN | Gender, Status |
+
+---
+
+### Bitmap Compression (Run-Length Encoding)
+
+**Sparse bitmap:**
+```
+00000000 00000000 11111111 00000000
+```
+
+**Compressed (RLE):**
+```
+[0: 16 times] [1: 8 times] [0: 8 times]
+```
+
+**Benefit:** Saves significant space for sparse data
+
+---
+
+### Practical Example: Data Warehouse Query
+
+**Scenario:** Sales data warehouse
+
+```sql
+CREATE TABLE SALES (
+    sale_id INT,
+    product_category VARCHAR(50),
+    customer_gender CHAR(1),
+    sale_region VARCHAR(50),
+    sale_status VARCHAR(20),
+    amount DECIMAL(10,2)
+);
+```
+
+**Query:** Find total sales for active female customers in Electronics in West region
+
+**SQL:**
+```sql
+SELECT SUM(amount)
+FROM SALES
+WHERE customer_gender = 'F'
+  AND product_category = 'Electronics'
+  AND sale_region = 'West'
+  AND sale_status = 'Active';
+```
+
+**With Bitmap Indexes:**
+1. Get bitmap for Gender='F'
+2. Get bitmap for Category='Electronics'
+3. Get bitmap for Region='West'
+4. Get bitmap for Status='Active'
+5. AND all bitmaps
+6. Retrieve matching rows
+7. Sum amounts
+
+**Performance:** Extremely fast (bitwise operations on compressed bitmaps)
+
+---
+
+## 4. Materialized Views {#materialized-views}
+
+### What is a Materialized View?
+
+A **materialized view** is a view whose results are **physically stored** (like a table).
+
+**Difference from Regular View:**
+
+| Regular View | Materialized View |
+|--------------|-------------------|
+| Virtual (no storage) | Physical (stored) |
+| Computed on query | Pre-computed |
+| Always current | Needs refresh |
+| Slower (recomputes) | Faster (precomputed) |
+
+---
+
+### MySQL Simulation of Materialized View
+
+MySQL doesn't have native materialized views, but we can simulate:
+
+```sql
+-- Create table to store materialized view
+CREATE TABLE DEPT_SALARY_STATS_MV (
+    dept_name VARCHAR(50),
+    num_employees INT,
+    avg_salary DECIMAL(10,2),
+    total_salary DECIMAL(12,2),
+    last_refreshed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Populate materialized view
+INSERT INTO DEPT_SALARY_STATS_MV (dept_name, num_employees, avg_salary, total_salary)
+SELECT 
+    d.dept_name,
+    COUNT(e.emp_id),
+    AVG(e.salary),
+    SUM(e.salary)
+FROM DEPARTMENT d
+LEFT JOIN EMPLOYEE e ON d.dept_id = e.dept_id
+GROUP BY d.dept_id, d.dept_name;
+
+-- Refresh materialized view (manual)
+TRUNCATE TABLE DEPT_SALARY_STATS_MV;
+INSERT INTO DEPT_SALARY_STATS_MV (dept_name, num_employees, avg_salary, total_salary)
+SELECT 
+    d.dept_name,
+    COUNT(e.emp_id),
+    AVG(e.salary),
+    SUM(e.salary)
+FROM DEPARTMENT d
+LEFT JOIN EMPLOYEE e ON d.dept_id = e.dept_id
+GROUP BY d.dept_id, d.dept_name;
+```
+
+---
+
+### Automatic Refresh with Event Scheduler
+
+```sql
+-- Enable event scheduler
+SET GLOBAL event_scheduler = ON;
+
+-- Create refresh event
+DELIMITER $$
+
+CREATE EVENT refresh_dept_salary_stats
+ON SCHEDULE EVERY 1 HOUR
+DO
+BEGIN
+    TRUNCATE TABLE DEPT_SALARY_STATS_MV;
+    INSERT INTO DEPT_SALARY_STATS_MV (dept_name, num_employees, avg_salary, total_salary)
+    SELECT 
+        d.dept_name,
+        COUNT(e.emp_id),
+        AVG(e.salary),
+        SUM(e.salary)
+    FROM DEPARTMENT d
+    LEFT JOIN EMPLOYEE e ON d.dept_id = e.dept_id
+    GROUP BY d.dept_id, d.dept_name;
+END$$
+
+DELIMITER ;
+```
+
+---
+
+## 5. Complete Examples {#examples}
+
+### Example: Complete Database with Views and Assertions
+
+```sql
+-- ========================================
+-- Complete University Database Example
+-- ========================================
+
+-- Base Tables
+CREATE TABLE STUDENT (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    gpa DECIMAL(3,2),
+    credits_completed INT
+);
+
+CREATE TABLE COURSE (
+    course_id VARCHAR(10) PRIMARY KEY,
+    course_name VARCHAR(100),
+    credits INT,
+    max_enrollment INT
+);
+
+CREATE TABLE ENROLLMENT (
+    student_id INT,
+    course_id VARCHAR(10),
+    semester VARCHAR(20),
+    grade CHAR(1),
+    PRIMARY KEY (student_id, course_id, semester),
+    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id),
+    FOREIGN KEY (course_id) REFERENCES COURSE(course_id)
+);
+
+-- Sample Data
+INSERT INTO STUDENT VALUES
+    (1001, 'Alice Johnson', 'alice@univ.edu', 3.8, 90),
+    (1002, 'Bob Smith', 'bob@univ.edu', 3.5, 75),
+    (1003, 'Carol White', 'carol@univ.edu', 3.9, 105);
+
+INSERT INTO COURSE VALUES
+    ('CS101', 'Intro to CS', 3, 50),
+    ('CS201', 'Data Structures', 4, 40),
+    ('MATH101', 'Calculus', 4, 60);
+
+INSERT INTO ENROLLMENT VALUES
+    (1001, 'CS101', 'Fall 2025', 'A'),
+    (1001, 'MATH101', 'Fall 2025', 'B'),
+    (1002, 'CS101', 'Fall 2025', 'A'),
+    (1003, 'CS201', 'Fall 2025', 'A');
+
+-- ========================================
+-- VIEWS
+-- ========================================
+
+-- View 1: Honor Students (GPA >= 3.5)
+CREATE VIEW HONOR_STUDENTS AS
+SELECT student_id, name, email, gpa
+FROM STUDENT
+WHERE gpa >= 3.5;
+
+-- View 2: Course Enrollment Summary
+CREATE VIEW COURSE_ENROLLMENT_SUMMARY AS
+SELECT 
+    c.course_id,
+    c.course_name,
+    c.max_enrollment,
+    COUNT(e.student_id) AS current_enrollment,
+    c.max_enrollment - COUNT(e.student_id) AS available_seats
+FROM COURSE c
+LEFT JOIN ENROLLMENT e ON c.course_id = e.course_id
+GROUP BY c.course_id, c.course_name, c.max_enrollment;
+
+-- View 3: Student Transcript
+CREATE VIEW STUDENT_TRANSCRIPT AS
+SELECT 
+    s.student_id,
+    s.name,
+    s.email,
+    e.course_id,
+    c.course_name,
+    e.semester,
+    e.grade,
+    c.credits
+FROM STUDENT s
+JOIN ENROLLMENT e ON s.student_id = e.student_id
+JOIN COURSE c ON e.course_id = c.course_id;
+
+-- ========================================
+-- ASSERTIONS (via Triggers)
+-- ========================================
+
+-- Assertion 1: Course cannot exceed max enrollment
+DELIMITER $$
+
+CREATE TRIGGER check_max_enrollment
+BEFORE INSERT ON ENROLLMENT
+FOR EACH ROW
+BEGIN
+    DECLARE current_count INT;
+    DECLARE max_count INT;
+    
+    SELECT COUNT(*) INTO current_count
+    FROM ENROLLMENT
+    WHERE course_id = NEW.course_id;
+    
+    SELECT max_enrollment INTO max_count
+    FROM COURSE
+    WHERE course_id = NEW.course_id;
+    
+    IF current_count >= max_count THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Course enrollment limit reached';
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Assertion 2: GPA must be between 0.0 and 4.0
+ALTER TABLE STUDENT
+ADD CONSTRAINT chk_gpa_range
+CHECK (gpa >= 0.0 AND gpa <= 4.0);
+
+-- Query Examples
+SELECT * FROM HONOR_STUDENTS;
+SELECT * FROM COURSE_ENROLLMENT_SUMMARY;
+SELECT * FROM STUDENT_TRANSCRIPT WHERE student_id = 1001;
+```
+
+---
+
+## Summary Comparison Table
+
+| Feature | Views | Assertions | Bitmap Indexes |
+|---------|-------|------------|----------------|
+| **Purpose** | Virtual tables | Enforce constraints | Fast querying |
+| **Storage** | None (virtual) | None (logic) | Bitmaps stored |
+| **Performance** | Depends on query | Overhead on updates | Fast reads |
+| **MySQL Support** | ✓ Native | ⚠️ Via triggers | ✗ Not native |
+| **Use Case** | Simplify, secure | Business rules | Low-cardinality queries |
+| **Best For** | OLTP/OLAP | Critical rules | OLAP/Data warehouses |
+
+---
+
+## Best Practices
+
+### Views
+1. ✓ Use for security (hide sensitive columns)
+2. ✓ Use for simplification (complex joins)
+3. ✓ Document view dependencies
+4. ✓ Use WITH CHECK OPTION for updatable views
+5. ⚠️ Avoid deep nesting (performance)
+
+### Assertions
+1. ✓ Use for critical business rules
+2. ✓ Optimize predicates (add indexes)
+3. ✓ Consider periodic validation for non-critical rules
+4. ⚠️ Be aware of performance overhead
+5. ✓ Document all assertion logic
+
+### Bitmap Indexes
+1. ✓ Use for low-cardinality columns
+2. ✓ Use in read-heavy workloads (OLAP)
+3. ✗ Avoid in OLTP systems
+4. ✓ Combine with compression
+5. ✓ Monitor update performance
+
+---
+
+**End of Complete Guide**

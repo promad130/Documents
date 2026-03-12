@@ -161,10 +161,10 @@ Count of 'a': 1
 
 ### Limitations of Direct Address Tables
 
-❌ **Huge memory waste** if keys are sparse (e.g., keys: 1, 1000000)
-❌ **Can't handle negative numbers** directly
-❌ **Can't handle non-integer keys** (strings, floats)
-❌ **Universe size must be small** (can't create array of size 10^9)
+**Huge memory waste** if keys are sparse (e.g., keys: 1, 1000000)
+**Can't handle negative numbers** directly
+**Can't handle non-integer keys** (strings, floats)
+**Universe size must be small** (can't create array of size 10^9)
 
 **Example of Problem:**
 
@@ -174,7 +174,6 @@ int hash[1000000000];  // ❌ 4GB of memory for 2 values!
 ```
 
 ---
-
 ## 2. Hash Tables
 
 A **Hash Table** solves the limitations of direct addressing by using a **hash function** to map keys to a smaller range of indices.
@@ -436,6 +435,7 @@ Index 9: empty
 Let **α (alpha) = n/m** be the **load factor**, where:
 - **n** = number of keys
 - **m** = table size
+For example, if you have 50 elements inserted into a hash table that only has 10 slots, your load factor is `50 / 10 = 5`. This means, on average, every chain (or linked list) at each slot is 5 elements long!
 
 | Operation | Average Case | Worst Case |
 |-----------|--------------|------------|
@@ -446,6 +446,26 @@ Let **α (alpha) = n/m** be the **load factor**, where:
 **Explanation:**
 - **Average case**: If hash function distributes uniformly, each chain has length ≈ α
 - **Worst case**: All keys hash to same index, chain length = n
+
+#### KEEP IN MIND!
+
+**$\alpha$ only tells you the _average_ chain length, not the _actual_ chain length.** In your example:
+
+- Total elements = 50
+    
+- Total slots = 100
+    
+- $\alpha = 50 / 100 = 0.5$
+    
+
+Statistically, $\alpha$ looks amazing. But reality is exactly as you described:
+
+- Slot 42: **50 elements**
+    
+- The other 99 slots: **0 elements**
+    
+
+If you try to find an element in Slot 42, you have to walk a linked list of 50 items. The time complexity degrades entirely to **$O(N)$** (where $N$ is the number of elements in that specific chain), completely destroying the $O(1)$ speed we wanted.
 
 ---
 
@@ -586,7 +606,7 @@ Average chain length: 2.85714
 
 ---
 
-## 6. Expected Search Time
+### 6. Expected Search Time
 
 The **expected search time** in a hash table with chaining is:
 
@@ -596,12 +616,12 @@ T(n) = O(1 + α)
 where α = n/m
 ```
 
-### Breakdown
+#### Breakdown
 
 1. **O(1)**: Time to compute hash function and go to index
 2. **O(α)**: Time to search through the chain (average length α)
 
-### Proof by Example
+#### Proof by Example
 
 Suppose:
 - Table size m = 10
@@ -616,7 +636,7 @@ If keys are uniformly distributed:
   
 Total: O(1 + 2) = O(3) = **O(1)** when α is constant!
 
-### When is α Constant?
+#### When is α Constant?
 
 If we maintain **α ≤ constant** (like 0.75 in C++ `unordered_map`), then:
 - Search time = O(1 + constant) = **O(1)**
@@ -625,7 +645,7 @@ This is why hash tables achieve **amortized O(1)** operations!
 
 ---
 
-## 7. Hash Function Design
+### 7. Hash Function Design
 
 A good hash function should:
 1. **Compute quickly** (O(1))
@@ -633,7 +653,7 @@ A good hash function should:
 3. **Use all table slots**
 4. **Minimize clustering**
 
-### Division Method
+#### Division Method
 
 ```cpp
 int h(int key, int m) {
@@ -658,7 +678,7 @@ int h(int key, int m) {
 
 ---
 
-## 8. Multiplication Method
+#### 8. Multiplication Method
 
 The **multiplication method** is more sophisticated and works better for non-integer keys:
 
@@ -667,18 +687,19 @@ h(k) = ⌊m × (k × A mod 1)⌋
 
 where:
 - A is a constant, 0 < A < 1
+- m is the table size, the number of slots alloted
 - k × A mod 1 extracts fractional part
 - Knuth suggests A ≈ (√5 - 1)/2 ≈ 0.618...
 ```
 
-### How It Works
+##### How It Works
 
 1. Multiply key by constant A
 2. Extract fractional part
 3. Multiply by table size m
 4. Take floor
 
-### Implementation
+##### Implementation
 
 ```cpp name=multiplication_method.cpp
 #include <iostream>
@@ -735,26 +756,26 @@ h(2048) = 37
 h(4096) = 75
 ```
 
-### Advantages of Multiplication Method
+#### Advantages of Multiplication Method
 
-✅ **Value of m not critical** (can be power of 2)
-✅ **Works well for various key distributions**
-✅ **No requirement for m to be prime**
+**Value of m not critical** (can be power of 2)
+**Works well for various key distributions**
+**No requirement for m to be prime**
 
-### Division vs Multiplication
+#### Division vs Multiplication
 
-| Method | Speed | m Requirement | Distribution |
-|--------|-------|---------------|--------------|
-| **Division** | Faster | Prime, not near 2^k | Good if m chosen well |
-| **Multiplication** | Slower | Any value | Consistently good |
+| Method             | Speed  | m Requirement       | Distribution          |
+| ------------------ | ------ | ------------------- | --------------------- |
+| **Division**       | Faster | Prime, not near 2^k | Good if m chosen well |
+| **Multiplication** | Slower | Any value           | Consistently good     |
 
 ---
 
-## 9. Open Addressing
+### 9. Open Addressing
 
 Unlike chaining, **Open Addressing** stores all elements **directly in the hash table** (no chains/lists). When collision occurs, we **probe** for the next available slot.
 
-### Probe Sequence
+#### Probe Sequence
 
 ```
 h(k, i) = (h'(k) + f(i)) mod m
@@ -765,7 +786,7 @@ where:
 - i is the probe number
 ```
 
-### Visual: Collision Resolution
+#### Visual: Collision Resolution
 
 ```
 Initial hash: h(k) = 5
@@ -784,7 +805,7 @@ Insert 25 (also hashes to 5):
 
 ---
 
-## 10. Linear Probing
+### 10. Linear Probing
 
 **Linear Probing** checks slots sequentially until an empty one is found:
 
@@ -794,7 +815,7 @@ h(k, i) = (h'(k) + i) mod m
 where i = 0, 1, 2, 3, ...
 ```
 
-### Example Sequence
+#### Example Sequence
 
 For key k with h'(k) = 5 in table of size 10:
 
@@ -806,7 +827,7 @@ Probe 3: h(k, 3) = (5 + 3) % 10 = 8
 ...
 ```
 
-### Implementation
+#### Implementation
 
 ```cpp name=linear_probing.cpp
 #include <iostream>
@@ -844,7 +865,7 @@ public:
             i++;
             index = (originalIndex + i) % size;  // Linear probing
             
-            if (index == originalIndex) {
+            if (index == originalIndex) { // i.e., i = originalIndex, i.e., it circled one whole round of all the values in the table
                 cout << "  Table full after probing!" << endl;
                 return false;
             }
@@ -1163,7 +1184,6 @@ If h(k₁) = h(k₂) = 5, then:
 - Same sequence causes clustering
 ```
 
----
 
 ## 12. Double Hashing
 

@@ -2769,7 +2769,7 @@ int main() {
    - Managing sequential processing
 
 
-## Binary Search Tree (BST)
+# Binary Search Tree (BST)
 
 A **Binary Search Tree** is a hierarchical data structure where each node has at most two children (left and right), and it maintains a specific ordering property: for every node, all values in its left subtree are smaller, and all values in its right subtree are larger.
 
@@ -2836,335 +2836,1027 @@ struct Node {
 
 ## Complete BST Implementation
 
-```cpp name=bst_complete.cpp
-#include <iostream>
-#include <queue>
-#include <algorithm>
-using namespace std;
+# Complete Breakdown of Binary Search Tree (BST) Implementation
 
+Let me explain every single part of this BST implementation in detail.
+
+---
+
+## Part 1: Node Structure (The Building Block)
+
+```cpp
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) : data(value), left(nullptr), right(nullptr) {}
+};
+```
+
+### Explanation
+
+**`struct Node`**
+- This is the **fundamental building block** of the BST
+- Each node represents **one element** in the tree
+
+**`int data;`**
+- Stores the **actual value** of the node
+- Could be any data type (int, string, custom object)
+
+**`Node* left;`**
+- Pointer to the **left child** node
+- Points to nodes with **smaller values** (BST property)
+- `nullptr` if no left child exists
+
+**`Node* right;`**
+- Pointer to the **right child** node
+- Points to nodes with **larger values** (BST property)
+- `nullptr` if no right child exists
+
+**Constructor: `Node(int value) : data(value), left(nullptr), right(nullptr) {}`**
+- **Initializer list** syntax for efficiency
+- Sets `data` to the provided value
+- Initializes both pointers to `nullptr` (no children initially)
+
+### Visual Representation
+
+```
+Single Node:
+    ┌─────────┐
+    │  data   │ ← Stores value (e.g., 50)
+    ├─────────┤
+    │  left   │ ─→ nullptr or pointer to left child
+    ├─────────┤
+    │  right  │ ─→ nullptr or pointer to right child
+    └─────────┘
+
+Example node with value 50:
+Node(50):
+    data = 50
+    left = nullptr
+    right = nullptr
+```
+
+---
+
+## Part 2: Class Structure and Root
+
+```cpp
 class BST {
 private:
-    struct Node {
-        int data;
-        Node* left;
-        Node* right;
-
-        Node(int value) : data(value), left(nullptr), right(nullptr) {}
-    };
-
     Node* root;
+```
 
-    // Helper: Insert recursively
-    Node* insertHelper(Node* node, int value) {
-        if (node == nullptr) {
-            return new Node(value);
-        }
-		
-        if (value < node->data) {
-            node->left = insertHelper(node->left, value);
-        } else if (value > node->data) {
-            node->right = insertHelper(node->right, value);
-        }
-        // If equal, don't insert (no duplicates)
+### Explanation
 
+**`private:`**
+- Members here are **hidden** from outside access
+- Only class methods can access them
+
+**`Node* root;`**
+- **The entry point** to the entire tree
+- Points to the topmost node
+- `nullptr` when tree is empty
+
+### Why Private?
+
+```cpp
+// ❌ BAD - If root was public:
+BST tree;
+tree.root = nullptr;  // User could break the tree!
+
+// ✓ GOOD - Root is private:
+BST tree;
+tree.insert(50);  // Only controlled access through methods
+```
+
+---
+
+## Part 3: Insert Helper (Recursive Insertion)
+
+```cpp
+Node* insertHelper(Node* node, int value) {
+    if (node == nullptr) {
+        return new Node(value);
+    }
+    
+    if (value < node->data) {
+        node->left = insertHelper(node->left, value);
+    } else if (value > node->data) {
+        node->right = insertHelper(node->right, value);
+    }
+    // If equal, don't insert (no duplicates)
+
+    return node;
+}
+```
+
+### Line-by-Line Breakdown
+
+**Line 1: `Node* insertHelper(Node* node, int value)`**
+
+**Parameters:**
+- `Node* node`: Current node we're examining
+- `int value`: Value to insert
+
+**Returns:** Pointer to the (possibly new) node at this position
+
+**Line 2-4: Base Case**
+```cpp
+if (node == nullptr) {
+    return new Node(value);
+}
+```
+
+- **When?** We've reached a `nullptr` (empty spot)
+- **Action:** Create a **new node** with the value
+- **Return:** Pointer to the newly created node
+- **This new node becomes the child** of the parent who called this function
+
+**Line 6-8: Go Left**
+```cpp
+if (value < node->data) {
+    node->left = insertHelper(node->left, value);
+}
+```
+
+- **Condition:** Value to insert is **smaller** than current node
+- **BST Property:** Smaller values go to the **left**
+- **Action:** Recursively insert in the **left subtree**
+- **Update:** Set `node->left` to the result (might be new node or unchanged)
+
+**Line 9-11: Go Right**
+```cpp
+else if (value > node->data) {
+    node->right = insertHelper(node->right, value);
+}
+```
+
+- **Condition:** Value to insert is **larger** than current node
+- **BST Property:** Larger values go to the **right**
+- **Action:** Recursively insert in the **right subtree**
+
+**Line 12: Duplicate Handling**
+```cpp
+// If equal, don't insert (no duplicates)
+```
+
+- If `value == node->data`, we do **nothing**
+- This BST doesn't allow duplicates
+
+**Line 14: Return Current Node**
+```cpp
+return node;
+```
+
+- Return the current node (unchanged)
+- This **rebuilds the tree** as recursion unwinds
+
+### Complete Example: Insert 25 into Tree
+
+```
+Initial tree:
+        50
+       /  \
+      30   70
+     /
+    20
+
+Insert 25:
+
+Step 1: insertHelper(root=50, 25)
+  25 < 50? YES → Go left
+  node->left = insertHelper(node->left=30, 25)
+
+Step 2: insertHelper(node=30, 25)
+  25 < 30? YES → Go left
+  node->left = insertHelper(node->left=20, 25)
+
+Step 3: insertHelper(node=20, 25)
+  25 < 20? NO
+  25 > 20? YES → Go right
+  node->right = insertHelper(node->right=nullptr, 25)
+
+Step 4: insertHelper(node=nullptr, 25)
+  node == nullptr? YES → BASE CASE
+  return new Node(25)  ← New node created!
+
+Unwinding recursion:
+Step 3 returns: 20->right = new Node(25)
+Step 2 returns: 30 (unchanged, but 30->left now has 25)
+Step 1 returns: 50 (unchanged)
+
+Final tree:
+        50
+       /  \
+      30   70
+     /
+    20
+      \
+      25  ← New node!
+```
+
+### Why Return Node?
+
+```cpp
+node->left = insertHelper(node->left, value);
+           └─────────┬─────────┘
+                     │
+          Returns pointer to child
+```
+
+The return value allows us to **update the child pointer**, whether it's:
+- A newly created node (at base case)
+- The same node (unchanged)
+
+---
+
+## Part 4: Search Helper (Finding a Value)
+
+```cpp
+bool searchHelper(Node* node, int value) const {
+    if (node == nullptr) {
+        return false;
+    }
+
+    if (value == node->data) {
+        return true;
+    } else if (value < node->data) {
+        return searchHelper(node->left, value);
+    } else {
+        return searchHelper(node->right, value);
+    }
+}
+```
+
+### Line-by-Line Breakdown
+
+**Line 1: Function Signature**
+```cpp
+bool searchHelper(Node* node, int value) const
+                                          └──┬──┘
+                                             │
+                              Doesn't modify the tree
+```
+
+- **`const`**: Promises not to modify the tree
+- **Returns `bool`**: `true` if found, `false` otherwise
+
+**Lines 2-4: Base Case - Not Found**
+```cpp
+if (node == nullptr) {
+    return false;
+}
+```
+
+- Reached the end without finding the value
+- Value doesn't exist in the tree
+
+**Lines 6-8: Found It!**
+```cpp
+if (value == node->data) {
+    return true;
+}
+```
+
+- Current node contains the target value
+- Search successful!
+
+**Lines 9-11: Search Left**
+```cpp
+else if (value < node->data) {
+    return searchHelper(node->left, value);
+}
+```
+
+- Target is smaller → Must be in left subtree
+- Recursively search left
+
+**Lines 12-14: Search Right**
+```cpp
+else {
+    return searchHelper(node->right, value);
+}
+```
+
+- Target is larger → Must be in right subtree
+- Recursively search right
+
+### Example: Search for 40
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \
+    20 40
+
+Search(40):
+
+Step 1: searchHelper(50, 40)
+  40 == 50? NO
+  40 < 50? YES → Search left
+  return searchHelper(30, 40)
+
+Step 2: searchHelper(30, 40)
+  40 == 30? NO
+  40 < 30? NO
+  40 > 30? YES → Search right
+  return searchHelper(40, 40)
+
+Step 3: searchHelper(40, 40)
+  40 == 40? YES! → FOUND
+  return true
+
+Result: true ✓
+```
+
+### Time Complexity
+
+```
+Best case:    O(1)   - Root is target
+Average case: O(log n) - Balanced tree
+Worst case:   O(n)   - Skewed tree (like linked list)
+```
+
+---
+
+## Part 5: Find Minimum (Leftmost Node)
+
+```cpp
+Node* findMin(Node* node) const {
+    while (node->left != nullptr) {
+        node = node->left;
+    }
+    return node;
+}
+```
+
+### Explanation
+
+**Why leftmost = minimum?**
+
+Because of BST property: **left child < parent**
+
+So keep going left until you can't go anymore!
+
+**Line 2: While Loop**
+```cpp
+while (node->left != nullptr) {
+    node = node->left;
+}
+```
+
+- Keep moving to the left child
+- Stop when left child is `nullptr`
+
+**Line 5: Return**
+```cpp
+return node;
+```
+
+- Current node is the leftmost (minimum)
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+   /
+  10  ← This is the minimum!
+
+findMin(root=50):
+  50->left != nullptr? YES
+    node = 30
+  30->left != nullptr? YES
+    node = 20
+  20->left != nullptr? YES
+    node = 10
+  10->left != nullptr? NO
+    Stop!
+  return 10 ✓
+```
+
+### Iterative vs Recursive
+
+**Iterative (used here):**
+```cpp
+Node* findMin(Node* node) const {
+    while (node->left != nullptr) {
+        node = node->left;
+    }
+    return node;
+}
+```
+
+**Recursive alternative:**
+```cpp
+Node* findMin(Node* node) const {
+    if (node->left == nullptr) {
         return node;
     }
+    return findMin(node->left);
+}
+```
 
-    // Helper: Search recursively
-    bool searchHelper(Node* node, int value) const {
-        if (node == nullptr) {
-            return false;
-        }
+Both work! Iterative is slightly more efficient (no recursion overhead).
 
-        if (value == node->data) {
-            return true;
-        } else if (value < node->data) {
-            return searchHelper(node->left, value);
-        } else {
-            return searchHelper(node->right, value);
-        }
+---
+
+## Part 6: Delete Helper (The Most Complex!)
+
+```cpp
+Node* deleteHelper(Node* node, int value) {
+    if (node == nullptr) {
+        return nullptr;
     }
 
-    // Helper: Find minimum value node
-    Node* findMin(Node* node) const {
-        while (node->left != nullptr) {
-            node = node->left;
-        }
-        return node;
-    }
+    if (value < node->data) {
+        node->left = deleteHelper(node->left, value);
+    } else if (value > node->data) {
+        node->right = deleteHelper(node->right, value);
+    } else {
+        // Node found - three cases
 
-    // Helper: Delete recursively
-    Node* deleteHelper(Node* node, int value) {
-        if (node == nullptr) {
+        // Case 1: Leaf node (no children)
+        if (node->left == nullptr && node->right == nullptr) {
+            delete node;
             return nullptr;
         }
 
-        if (value < node->data) {
-            node->left = deleteHelper(node->left, value);
-        } else if (value > node->data) {
-            node->right = deleteHelper(node->right, value);
-        } else {
-            // Node found - three cases
-
-            // Case 1: Leaf node (no children)
-            if (node->left == nullptr && node->right == nullptr) {
-                delete node;
-                return nullptr;
-            }
-
-            // Case 2: One child
-            if (node->left == nullptr) {
-                Node* temp = node->right;
-                delete node;
-                return temp;
-            }
-            if (node->right == nullptr) {
-                Node* temp = node->left;
-                delete node;
-                return temp;
-            }
-
-            // Case 3: Two children
-            // Find inorder successor (smallest in right subtree)
-            Node* successor = findMin(node->right);
-            node->data = successor->data;
-            node->right = deleteHelper(node->right, successor->data);
-        }
-
-        return node;
-    }
-
-    // Helper: Inorder traversal (Left, Root, Right)
-    void inorderHelper(Node* node) const {
-        if (node != nullptr) {
-            inorderHelper(node->left);
-            cout << node->data << " ";
-            inorderHelper(node->right);
-        }
-    }
-
-    // Helper: Preorder traversal (Root, Left, Right)
-    void preorderHelper(Node* node) const {
-        if (node != nullptr) {
-            cout << node->data << " ";
-            preorderHelper(node->left);
-            preorderHelper(node->right);
-        }
-    }
-
-    // Helper: Postorder traversal (Left, Right, Root)
-    void postorderHelper(Node* node) const {
-        if (node != nullptr) {
-            postorderHelper(node->left);
-            postorderHelper(node->right);
-            cout << node->data << " ";
-        }
-    }
-
-    // Helper: Get height
-    int heightHelper(Node* node) const {
-        if (node == nullptr) {
-            return -1;  // Height of empty tree is -1
-        }
-        return 1 + max(heightHelper(node->left), heightHelper(node->right));
-    }
-
-    // Helper: Count nodes
-    int countNodesHelper(Node* node) const {
-        if (node == nullptr) {
-            return 0;
-        }
-        return 1 + countNodesHelper(node->left) + countNodesHelper(node->right);
-    }
-
-    // Helper: Clear tree
-    void clearHelper(Node* node) {
-        if (node != nullptr) {
-            clearHelper(node->left);
-            clearHelper(node->right);
+        // Case 2: One child
+        if (node->left == nullptr) {
+            Node* temp = node->right;
             delete node;
+            return temp;
         }
+        if (node->right == nullptr) {
+            Node* temp = node->left;
+            delete node;
+            return temp;
+        }
+
+        // Case 3: Two children
+        // Find inorder successor (smallest in right subtree)
+        Node* successor = findMin(node->right);
+        node->data = successor->data;
+        node->right = deleteHelper(node->right, successor->data);
     }
 
-public:
-    // Constructor
-    BST() : root(nullptr) {}
+    return node;
+}
+```
 
-    // Destructor
+### The Three Cases of Deletion
+
+#### Case 1: Leaf Node (No Children)
+
+```cpp
+if (node->left == nullptr && node->right == nullptr) {
+    delete node;
+    return nullptr;
+}
+```
+
+**Visual:**
+```
+Before:
+    30
+   /
+  20  ← Delete this leaf
+
+After:
+    30
+   /
+ (null)
+
+Action: Simply delete the node and return nullptr
+```
+
+#### Case 2a: Only Right Child
+
+```cpp
+if (node->left == nullptr) {
+    Node* temp = node->right;
+    delete node;
+    return temp;
+}
+```
+
+**Visual:**
+```
+Before:
+    30
+      \
+      40  ← Delete 30 (has only right child)
+        \
+        50
+
+After:
+    40  ← Right child takes 30's place
+      \
+      50
+
+Action: Delete node, return its right child to replace it
+```
+
+#### Case 2b: Only Left Child
+
+```cpp
+if (node->right == nullptr) {
+    Node* temp = node->left;
+    delete node;
+    return temp;
+}
+```
+
+**Visual:**
+```
+Before:
+      30
+     /    ← Delete 30 (has only left child)
+    20
+   /
+  10
+
+After:
+    20  ← Left child takes 30's place
+   /
+  10
+
+Action: Delete node, return its left child to replace it
+```
+
+#### Case 3: Two Children (Most Complex!)
+
+```cpp
+// Find inorder successor (smallest in right subtree)
+Node* successor = findMin(node->right);
+node->data = successor->data;
+node->right = deleteHelper(node->right, successor->data);
+```
+
+**Strategy:** Replace node's value with its **inorder successor**, then delete the successor.
+
+**Inorder successor:** The **smallest value in the right subtree** (leftmost node in right subtree).
+
+**Visual:**
+```
+Before:
+        50  ← Delete this (has two children)
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+
+Step 1: Find inorder successor
+  - Go to right subtree (70)
+  - Find minimum in that subtree (60)
+  - Successor = 60
+
+Step 2: Replace 50's data with 60's data
+        60  ← Data copied from successor
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+          ↑
+      Original 60 (now duplicate)
+
+Step 3: Delete the successor (60) from right subtree
+  - Call deleteHelper(70, 60)
+  - 60 is a leaf, so it's deleted easily
+
+Final:
+        60  ← Takes 50's place
+       /  \
+      30   70
+     / \     \
+    20 40    80
+```
+
+**Why inorder successor?**
+
+The inorder successor is guaranteed to:
+1. Be **larger** than everything in the left subtree
+2. Be **smaller** than everything else in the right subtree
+3. Have **at most one child** (right child only), making it easy to delete
+
+---
+
+## Part 7: Inorder Traversal (Sorted Order)
+
+```cpp
+void inorderHelper(Node* node) const {
+    if (node != nullptr) {
+        inorderHelper(node->left);   // Visit left
+        cout << node->data << " ";    // Visit root
+        inorderHelper(node->right);   // Visit right
+    }
+}
+```
+
+### Order: Left → Root → Right
+
+**Why this gives sorted order?**
+
+BST property: Left < Root < Right
+
+So visiting left first, then root, then right gives **ascending order**!
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+
+Inorder traversal:
+
+inorderHelper(50):
+  Visit left (30):
+    inorderHelper(30):
+      Visit left (20):
+        inorderHelper(20):
+          Visit left (null) ← Base case
+          Print 20
+          Visit right (null) ← Base case
+      Print 30
+      Visit right (40):
+        inorderHelper(40):
+          Visit left (null)
+          Print 40
+          Visit right (null)
+  Print 50
+  Visit right (70):
+    inorderHelper(70):
+      Visit left (60):
+        inorderHelper(60):
+          Visit left (null)
+          Print 60
+          Visit right (null)
+      Print 70
+      Visit right (80):
+        inorderHelper(80):
+          Visit left (null)
+          Print 80
+          Visit right (null)
+
+Output: 20 30 40 50 60 70 80 ← Sorted! ✓
+```
+
+---
+
+## Part 8: Preorder Traversal
+
+```cpp
+void preorderHelper(Node* node) const {
+    if (node != nullptr) {
+        cout << node->data << " ";    // Visit root FIRST
+        preorderHelper(node->left);   // Then left
+        preorderHelper(node->right);  // Then right
+    }
+}
+```
+
+### Order: Root → Left → Right
+
+**Use case:** Creating a copy of the tree (process root before children)
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+
+Preorder: 50 30 20 40 70 60 80
+
+Process root first, then its children!
+```
+
+---
+
+## Part 9: Postorder Traversal
+
+```cpp
+void postorderHelper(Node* node) const {
+    if (node != nullptr) {
+        postorderHelper(node->left);   // Visit left
+        postorderHelper(node->right);  // Visit right
+        cout << node->data << " ";      // Visit root LAST
+    }
+}
+```
+
+### Order: Left → Right → Root
+
+**Use case:** Deleting a tree (process children before parent)
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+
+Postorder: 20 40 30 60 80 70 50
+
+Process children before parent!
+```
+
+---
+
+## Part 10: Level Order Traversal (BFS)
+
+```cpp
+void levelOrder() const {
+    if (root == nullptr) {
+        cout << "Tree is empty" << endl;
+        return;
+    }
+
+    cout << "Level Order: ";
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* current = q.front();
+        q.pop();
+
+        cout << current->data << " ";
+
+        if (current->left != nullptr) {
+            q.push(current->left);
+        }
+        if (current->right != nullptr) {
+            q.push(current->right);
+        }
+    }
+    cout << endl;
+}
+```
+
+### Uses a Queue (FIFO)
+
+**Algorithm:**
+1. Start with root in queue
+2. While queue not empty:
+   - Dequeue a node
+   - Print it
+   - Enqueue its children (left, then right)
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \   / \
+    20 40 60 80
+
+Level order:
+
+Initial: queue = [50]
+
+Step 1: Dequeue 50, print 50
+  Enqueue children: queue = [30, 70]
+
+Step 2: Dequeue 30, print 30
+  Enqueue children: queue = [70, 20, 40]
+
+Step 3: Dequeue 70, print 70
+  Enqueue children: queue = [20, 40, 60, 80]
+
+Step 4: Dequeue 20, print 20
+  No children: queue = [40, 60, 80]
+
+Step 5: Dequeue 40, print 40
+  No children: queue = [60, 80]
+
+Step 6: Dequeue 60, print 60
+  No children: queue = [80]
+
+Step 7: Dequeue 80, print 80
+  No children: queue = []
+
+Output: 50 30 70 20 40 60 80
+```
+
+---
+
+## Part 11: Height Calculation
+
+```cpp
+int heightHelper(Node* node) const {
+    if (node == nullptr) {
+        return -1;  // Height of empty tree is -1
+    }
+    return 1 + max(heightHelper(node->left), heightHelper(node->right));
+}
+```
+
+### Definition
+
+**Height:** Number of edges on the longest path from node to a leaf.
+
+**Why -1 for empty tree?**
+- Leaf node has height 0 (no edges below it)
+- Parent of leaf: `1 + max(-1, -1) = 0` (correct!)
+
+### Example
+
+```
+Tree:
+        50  ← height 2
+       /  \
+      30   70  ← height 1
+     / \   / \
+    20 40 60 80  ← height 0 (leaves)
+
+height(50):
+  return 1 + max(height(30), height(70))
+  
+  height(30):
+    return 1 + max(height(20), height(40))
+    
+    height(20):
+      return 1 + max(height(null), height(null))
+      return 1 + max(-1, -1) = 0
+    
+    height(40):
+      return 0
+    
+    return 1 + max(0, 0) = 1
+  
+  height(70):
+    return 1
+  
+  return 1 + max(1, 1) = 2 ✓
+```
+
+---
+
+## Part 12: Count Nodes
+
+```cpp
+int countNodesHelper(Node* node) const {
+    if (node == nullptr) {
+        return 0;
+    }
+    return 1 + countNodesHelper(node->left) + countNodesHelper(node->right);
+}
+```
+
+### Simple Recursive Count
+
+```
+count(node) = 1 (self) + count(left) + count(right)
+```
+
+### Example
+
+```
+Tree:
+        50
+       /  \
+      30   70
+     / \
+    20 40
+
+count(50):
+  = 1 + count(30) + count(70)
+  
+  count(30):
+    = 1 + count(20) + count(40)
+    = 1 + (1 + 0 + 0) + (1 + 0 + 0)
+    = 1 + 1 + 1 = 3
+  
+  count(70):
+    = 1 + 0 + 0 = 1
+  
+  = 1 + 3 + 1 = 5 ✓
+```
+
+---
+
+## Part 13: Clear Tree (Destructor)
+
+```cpp
+void clearHelper(Node* node) {
+    if (node != nullptr) {
+        clearHelper(node->left);
+        clearHelper(node->right);
+        delete node;
+    }
+}
+```
+
+### Postorder Deletion
+
+**Why postorder?** Must delete children before parent!
+
+```
+Tree:
+        50
+       /  \
+      30   70
+
+Delete order (postorder):
+1. Delete 30's children (if any)
+2. Delete 30
+3. Delete 70's children (if any)
+4. Delete 70
+5. Delete 50
+
+Never delete a parent before its children!
+```
+
+---
+
+## Part 14: Public Interface
+
+```cpp
+public:
+    BST() : root(nullptr) {}
+    
     ~BST() {
         clear();
     }
-
-    // Insert value
+    
     void insert(int value) {
         root = insertHelper(root, value);
         cout << "Inserted: " << value << endl;
     }
+    
+    // ... other public methods
+```
 
-    // Search for value
-    bool search(int value) const {
-        return searchHelper(root, value);
-    }
+### Constructor
 
-    // Delete value
-    void remove(int value) {
-        if (search(value)) {
-            root = deleteHelper(root, value);
-            cout << "Deleted: " << value << endl;
-        } else {
-            cout << "Value " << value << " not found!" << endl;
-        }
-    }
+```cpp
+BST() : root(nullptr) {}
+```
 
-    // Traversals
-    void inorder() const {
-        cout << "Inorder: ";
-        inorderHelper(root);
-        cout << endl;
-    }
+- Initialize `root` to `nullptr` (empty tree)
 
-    void preorder() const {
-        cout << "Preorder: ";
-        preorderHelper(root);
-        cout << endl;
-    }
+### Destructor
 
-    void postorder() const {
-        cout << "Postorder: ";
-        postorderHelper(root);
-        cout << endl;
-    }
-
-    // Level order traversal (BFS)
-    void levelOrder() const {
-        if (root == nullptr) {
-            cout << "Tree is empty" << endl;
-            return;
-        }
-
-        cout << "Level Order: ";
-        queue<Node*> q;
-        q.push(root);
-
-        while (!q.empty()) {
-            Node* current = q.front();
-            q.pop();
-
-            cout << current->data << " ";
-
-            if (current->left != nullptr) {
-                q.push(current->left);
-            }
-            if (current->right != nullptr) {
-                q.push(current->right);
-            }
-        }
-        cout << endl;
-    }
-
-    // Get height
-    int height() const {
-        return heightHelper(root);
-    }
-
-    // Count nodes
-    int countNodes() const {
-        return countNodesHelper(root);
-    }
-
-    // Check if empty
-    bool isEmpty() const {
-        return root == nullptr;
-    }
-
-    // Clear tree
-    void clear() {
-        clearHelper(root);
-        root = nullptr;
-    }
-
-    // Find minimum value
-    int findMinimum() const {
-        if (root == nullptr) {
-            throw runtime_error("Tree is empty!");
-        }
-        Node* min = findMin(root);
-        return min->data;
-    }
-
-    // Find maximum value
-    int findMaximum() const {
-        if (root == nullptr) {
-            throw runtime_error("Tree is empty!");
-        }
-        Node* current = root;
-        while (current->right != nullptr) {
-            current = current->right;
-        }
-        return current->data;
-    }
-};
-
-int main() {
-    cout << "=== Binary Search Tree Implementation ===" << endl;
-
-    BST bst;
-
-    // Insert elements
-    cout << "\n--- Inserting elements ---" << endl;
-    bst.insert(50);
-    bst.insert(30);
-    bst.insert(70);
-    bst.insert(20);
-    bst.insert(40);
-    bst.insert(60);
-    bst.insert(80);
-
-    /*
-    Tree structure:
-            50
-           /  \
-          30   70
-         / \   / \
-        20 40 60 80
-    */
-
-    // Traversals
-    cout << "\n--- Traversals ---" << endl;
-    bst.inorder();      // Sorted order: 20 30 40 50 60 70 80
-    bst.preorder();     // Root first: 50 30 20 40 70 60 80
-    bst.postorder();    // Root last: 20 40 30 60 80 70 50
-    bst.levelOrder();   // Level by level: 50 30 70 20 40 60 80
-
-    // Search
-    cout << "\n--- Searching ---" << endl;
-    cout << "Search 40: " << (bst.search(40) ? "Found" : "Not Found") << endl;
-    cout << "Search 25: " << (bst.search(25) ? "Found" : "Not Found") << endl;
-
-    // Min and Max
-    cout << "\n--- Min and Max ---" << endl;
-    cout << "Minimum: " << bst.findMinimum() << endl;
-    cout << "Maximum: " << bst.findMaximum() << endl;
-
-    // Tree properties
-    cout << "\n--- Tree Properties ---" << endl;
-    cout << "Height: " << bst.height() << endl;
-    cout << "Total nodes: " << bst.countNodes() << endl;
-
-    // Delete elements
-    cout << "\n--- Deleting elements ---" << endl;
-    bst.remove(20);  // Leaf node
-    bst.inorder();
-
-    bst.remove(30);  // Node with two children
-    bst.inorder();
-
-    bst.remove(50);  // Root node
-    bst.inorder();
-
-    return 0;
+```cpp
+~BST() {
+    clear();
 }
 ```
+
+- Automatically called when BST object is destroyed
+- Frees all memory to prevent leaks
+
+### Public Methods
+
+All public methods are **wrappers** that call private helper functions:
+
+```cpp
+void insert(int value) {
+    root = insertHelper(root, value);
+}
+```
+
+- User doesn't need to know about `root` pointer
+- Clean, simple interface
+
+---
+
+## Summary: Time Complexity
+
+| Operation | Best | Average | Worst |
+|-----------|------|---------|-------|
+| **Search** | O(1) | O(log n) | O(n) |
+| **Insert** | O(1) | O(log n) | O(n) |
+| **Delete** | O(1) | O(log n) | O(n) |
+| **Traversal** | O(n) | O(n) | O(n) |
+| **Height** | O(n) | O(n) | O(n) |
+
+**Worst case (O(n))** happens when tree becomes a **linked list** (all nodes in one direction).
+
+**Best/Average case (O(log n))** happens when tree is **balanced**.
+
+
 
 ## Iterative Insert and Search
 

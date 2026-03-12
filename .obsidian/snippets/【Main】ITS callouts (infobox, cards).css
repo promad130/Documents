@@ -896,6 +896,10 @@ body {
   padding-top: 750px;
 }
 
+.internal-embed.pdf-embed[alt="fix"] .pdf-container {
+    pointer-events: none;
+}   
+
 /*@settings
 name: Alternate Callouts
 id: alternate-callouts

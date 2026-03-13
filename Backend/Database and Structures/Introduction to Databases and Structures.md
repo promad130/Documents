@@ -6448,7 +6448,7 @@ ORDER BY rating;
 
 **Relational Algebra:**
 ```
-σ_num_sailors > 1(ℱ_rating; COUNT(*) AS num_sailors(SAILORS))
+σ_{num_sailors > 1}(ℱ_rating; COUNT(*) AS num_sailors(SAILORS))
 ```
 
 **MySQL:**
@@ -7895,7 +7895,7 @@ CHECK (NOT EXISTS (
 
 **MySQL Implementation (Using Trigger):**
 
-```sql
+```mysql
 DELIMITER $$
 
 -- Trigger for INSERT on LOAN

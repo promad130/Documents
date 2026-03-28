@@ -10,7 +10,6 @@ Assembly is different for different CPU architectures because assembly language 
 
 Here’s why it varies:
 
----
 ### 1. **Different Instruction Sets (ISA)**
 
 - Each CPU architecture (x86, ARM, RISC-V, MIPS, etc.) has its own **Instruction Set Architecture (ISA)**.    
@@ -373,7 +372,7 @@ This is the part that trips everyone up. Let's look at the difference:
 |`MOV AX, [BX]`|Goes to memory address in `BX`, opens the box, and takes the **data**.|The **Value** inside memory.|
 |`LEA AX, [BX]`|Calculates the address of `[BX]`. The answer is just the value of `BX`.|The **Address** (same as `BX`).|
 
-**Wait, isn't `LEA AX, [BX]` the same as `MOV AX, BX`?** Yes, in that specific case, they result in the same thing. Both transfer a copy of the offset address into the register. However, `MOV AX, BX` is faster and more efficient. You only use `LEA` when the math gets complicated.
+**Wait, isn't `LEA AX, [BX]` the same as `MOV AX, BX`?** Yes, in that specific case, they result in the same thing. Both transfer a copy of the offset address into the register. However, `MOV AX, BX` is faster and more efficient. *You only use `LEA` when the math gets complicated.*
 
 ---
 
@@ -398,7 +397,7 @@ Imagine you have a list, and you want to find the address of an item based on an
 
 You might see `MOV BX, OFFSET LIST`.
 
-- **OFFSET:** Only works with simple variable names (like `LIST`). The **Assembler** calculates this before the program runs.
+- **OFFSET:** *Only works with simple variable names (like `LIST`).* The **Assembler** calculates this before the program runs.
     
 - **LEA:** Works with complex math like `[DI]` or `LIST [SI]`. The **Microprocessor** calculates this while the program is actually running.
     
@@ -832,6 +831,12 @@ In standard programming, if you want to do something 100 times, you write a `for
 The **REP (Repeat)** prefix is a **hardware-level loop**. It tells the CPU: _"Don't just do this instruction once; do it over and over until the counter reaches zero."_ 
 It is specifically designed to work with the **String Instructions** we just discussed (MOVS, STOS, etc.), making memory operations incredibly fast.
 
+The general syntax of the **REP** prefix in MASM is:
+
+```Assembly
+REP <string-instruction>
+```
+
 ---
 
 ### Layer 2: Conceptual Breakdown
@@ -841,6 +846,16 @@ The `REP` prefix relies on three "hard-wired" components:
 1. **The Instruction:** It must be a string instruction (like `MOVSB`).
 2. **The Counter (`CX` or `ECX`):** The CPU automatically looks at this register to know how many times to repeat.
 3. **The Termination Condition:** For basic `REP`, it stops when `CX = 0`. For others (like `REPE`), it can also stop if a certain flag changes.
+
+**REP works with specific string instructions only.** It's not a general-purpose repeat command.
+
+#### Valid String Instructions for REP:
+
+1. **MOVSB/MOVSW/MOVSD** – Move string (byte/word/dword)
+2. **STOSB/STOSW/STOSD** – Store string (byte/word/dword)
+3. **LODSB/LODSW/LODSD** – Load string (byte/word/dword)
+4. **SCASB/SCASW/SCASD** – Scan string (byte/word/dword)
+5. **CMPSB/CMPSW/CMPSD** – Compare string (byte/word/dword)
 
 ---
 
@@ -880,10 +895,9 @@ There are actually three versions of the repeat prefix, depending on whether you
 3. **`REPNE` / `REPNZ` (Repeat while Not Equal / Not Zero):**
     
     - **Usage:** With `CMPS` or `SCAS`.
-        
     - **Condition:** Repeat while `CX != 0` **AND** the Zero Flag (`ZF`) is 0.
-        
     - **Goal:** Search for a specific value. Stop as soon as you find a match.
+
 
 
 ## CMP and JUMP Statements in Assembly
@@ -1878,7 +1892,7 @@ It is WINDOWS ASSEMBLER
 
 ## A few things that needs to be address to avoid future conflict of interest for linux users:
 
-**1. Is MASM only for Windows?** **Yes.** It is a Microsoft product. It is built to create programs specifically for the Windows operating system (and historically MS-DOS). If you were on Linux, you would likely use **NASM** or **GAS** instead.
+**1. Is MASM only for Windows?** **Yes.** It is a Microsoft product. It is built to create programs specifically for the Windows operating system (and historically MS-DOS). If you were on Linux, you would likely use **NASM** or **GAS** instead, but remember that `NASM` is cross-platform, i.e., it works with linux kernel as well. 
 
 **2. Is it just an "addition" to normal assembly?** **No.** It is a **Dialect.** There is no such thing as "Normal Assembly" that exists on its own as a text file. You _always_ need a specific tool (an Assembler) to read your code.
 
@@ -1888,11 +1902,8 @@ It is WINDOWS ASSEMBLER
 Think of it like this:
 
 - **The Language:** English.
-    
 - **The Dialect:** American vs. British.
-    
 - **The Result:** Both are understood by the human (or CPU), but the spelling and grammar rules (directives) differ slightly.
-    
 
 **3. Does it allow for directives?** **Yes, but ALL assemblers use directives.** Every assembler needs to know "where does the code start?" or "make space for a variable."
 
@@ -1901,12 +1912,9 @@ Think of it like this:
 
 **The "BS-Free" Summary:**
 
-- **Instructions (CPU):** Universal (Hardware). `MOV` is always `MOV`.
-    
+- **Instructions (CPU):** Universal (Hardware). `MOV` is always `MOV`.    
 - **Directives (Assembler):** Specific to the tool. MASM directives don't work in NASM.
-    
 - **MASM:** The Microsoft tool that understands Microsoft-style directives.
-
 
 # MASM Directives
 
@@ -1996,7 +2004,7 @@ Explain the file structure, small, medium ,huge and include the examples given [
 
 
 # Interrupts
-(First Read and follow along [[Introduction to Microprocessors and Interfacing#Interrupts]])
+(First Read and follow along [[Introduction to Microprocessors and Interfacing#Interrupts (INT)]])
 
 ## The `INT3` and `INTO` commands
 ### Part 1: `INT 3` (The Debugger's Secret Weapon)
@@ -2350,21 +2358,15 @@ _(Hint: Did I tell the Site Manager **what** I wanted to do?)_
 Imagine you go to a coat check at a theater.
 
 1. **Drop Off (Open):** You give them your coat. They don't give you the coat back immediately; they give you a **numbered ticket** (e.g., #42).
-    
 2. **Retrieve (Read/Write):** Later, when you want your coat, you don't describe the coat ("It's black and wool"). You just give them **Ticket #42**.
-    
-3. **Leave (Close):** You hand back the ticket, and the transaction is done.
-    
+3. **Leave (Close):** You hand back the ticket, and the transaction is done.    
 
 In DOS (and modern OSs like Windows/Linux), this "Ticket" is called a **File Handle**.
 
 - It is just a 16-bit number (like `0005`).
-    
 - You **never** use the filename (`MYFILE.TXT`) after the first step. You only use the Handle.
-    
 
 ---
-
 ### Layer 2: The Protocol (3 Steps)
 
 The file operations follow a strict sequence. All of them use `INT 21H`, but with different `AH` values.
@@ -2375,36 +2377,22 @@ The file operations follow a strict sequence. All of them use `INT 21H`, but wit
     
 - **Function:** `AH = 3DH` (Open existing) or `3CH` (Create new).
     
-- **Key Input:** `DX` points to the filename string (must end with 0, not $). `AL` sets the mode (0=Read, 1=Write, 2=Read/Write).
-    
-    +1
+- **Key Input:** `DX` points to the filename string (must end with  0, not $). `AL` sets the mode (0=Read, 1=Write, 2=Read/Write).
     
 - **Key Output:** If successful, `AX` contains the **File Handle**. You **must** save this into a variable.
-    
 
 #### Step 2: Work (Read/Write using Ticket)
 
 - **Action:** Move data between the file and a memory buffer.
-    
 - **Function:** `AH = 3FH` (Read) or `40H` (Write).
-    
-    +1
-    
 - **Key Input:** `BX` = **The File Handle** (from Step 1).
-    
-    +1
-    
 - **Key Output:** `AX` = Number of bytes actually processed.
-    
 
 #### Step 3: Close (Return Ticket)
 
 - **Action:** Tell DOS you are finished so it can save changes to the disk.
-    
 - **Function:** `AH = 3EH`.
-    
 - **Key Input:** `BX` = The File Handle.
-    
 
 ---
 
@@ -2418,9 +2406,7 @@ Let's look at the specific example provided in your file (Slide 25) for reading 
 
 We need variables to store the filename, the handle, and the data we read.
 
-Code snippet
-
-```
+```Code snippet
 .DATA
     FNAME   DB 'MYDATA.TXT', 0  ; ASCII String ending in 0 (NULL) 
     HANDLE  DW ?                ; Variable to save the Ticket #

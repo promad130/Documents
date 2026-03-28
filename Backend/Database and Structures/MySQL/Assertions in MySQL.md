@@ -1,0 +1,1 @@
+![[Introduction to Databases and Structures#2. Assertions]]

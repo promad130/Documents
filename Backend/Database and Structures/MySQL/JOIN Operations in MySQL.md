@@ -54,7 +54,7 @@ Result rows = (rows in table1) × (rows in table2)
 ```
 
 ### Syntax:
-```sql
+```mysql
 SELECT customers.name, orders.order_id, orders.amount
 FROM customers
 CROSS JOIN orders;

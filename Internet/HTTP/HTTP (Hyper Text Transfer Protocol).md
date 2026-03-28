@@ -1,24 +1,46 @@
+For Detailed Explanation, refer to [this](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview) as well
+
 ## What is HTTP?
 
-**HTTP** (Hypertext Transfer Protocol) is the foundational protocol used for transferring data on the World Wide Web. It operates at the application layer of the Internet protocol suite and defines how messages are formatted and transmitted between web clients (such as browsers) and servers.
+**HTTP** (Hypertext Transfer Protocol) is the foundational [protocol](https://developer.mozilla.org/en-US/docs/Glossary/Protocol) used for transferring data on the World Wide Web. It operates at the application layer of the Internet protocol suite and defines how messages are formatted and transmitted between web clients (such as browsers) and servers.
 
 ## How HTTP Works
-- **Client-Server Model:** HTTP follows a client-server architecture. The client (usually a web browser) initiates a request for a resource (like a web page or image), and the server responds with the requested data.
+- **Client-Server Model:** HTTP follows a client-server architecture. The client (usually a web browser) initiates a request for a resource (like a web page or image) called a **request**, and the server responds with the requested data called a **response**.
+
 - **Request-Response Cycle:** Communication occurs through discrete HTTP requests and responses. The client sends an HTTP request, and the server returns an HTTP response containing the requested resource or an error message.
+
 - **Stateless Protocol:** HTTP is stateless, meaning each request is independent; the server does not retain information about previous requests. Any necessary state is managed using mechanisms like cookies.
+
 - **Resource Types:** HTTP can transfer a variety of resource types, including HTML documents, images, videos, scripts, and data (such as JSON or XML).
 
-## Key Features
-- **Extensible and Evolving:** HTTP was first developed by Tim Berners-Lee at CERN in 1989 and has evolved through several versions (HTTP/1.0, HTTP/1.1, HTTP/2, and HTTP/3), each improving performance, reliability, and security.
-- **Underlying Protocols:** Traditionally, HTTP runs over TCP/IP, but newer versions like HTTP/3 use QUIC, a protocol designed for faster and more reliable connections.
-- **Secure Variant:** HTTPS (Hypertext Transfer Protocol Secure) is the encrypted version of HTTP, providing authentication and confidentiality through TLS (Transport Layer Security).
 
-## Typical Use Cases
-- Loading web pages and resources in browsers.
-- Transmitting data between web applications and servers (e.g., via APIs).
-- Enabling machine-to-machine communication and programmatic access to web services.
+![[Pasted image 20260327222846.png]]
 
----
+
+## Components of HTTP based System
+HTTP is a client-server protocol: requests are sent by one entity, the user-agent (or a proxy on behalf of it). Most of the time the user-agent is a Web browser, but it can be anything, for example, a robot that crawls the Web to populate and maintain a search engine index.
+
+Each individual request is sent to a server, which handles it and provides an answer called the _response_. Between the client and the server there are numerous entities, collectively called [proxies](https://developer.mozilla.org/en-US/docs/Glossary/Proxy_server), which perform different operations and act as gateways or [caches](https://developer.mozilla.org/en-US/docs/Glossary/Cache), for example.
+
+![[client-server-chain.svg|717]]
+
+In reality, there are more computers between a browser and the server handling the request: there are routers, modems, and more. Thanks to the layered design of the Web, these are hidden in the network and transport layers. HTTP is on top, at the application layer. Although important for diagnosing network problems, the underlying layers are mostly irrelevant to the description of HTTP.
+
+### Proxies
+Between the Web browser and the server, numerous computers and machines relay the HTTP messages. Due to the layered structure of the Web stack, most of these operate at the transport, network or physical levels, becoming transparent at the HTTP layer and potentially having a significant impact on performance. Those operating at the application layers are generally called **proxies**. 
+
+These can be transparent, forwarding on the requests they receive without altering them in any way, or non-transparent, in which case they will change the request in some way before passing it along to the server. 
+
+Proxies may perform numerous functions:
+
+- caching (the cache can be public or private, like the browser cache)
+- filtering (like an antivirus scan or parental controls)
+- load balancing (to allow multiple servers to serve different requests)
+- authentication (to control access to different resources)
+- logging (allowing the storage of historical information)
+
+Next up, check out [[HTTP Flow]]
+
 # What is HTTPS?
 **HTTPS** stands for _Hypertext Transfer Protocol Secure_. It is the secure version of HTTP, the foundational protocol used for data communication on the web. HTTPS enhances HTTP by adding a layer of security through encryption, ensuring that data transmitted between a user's browser and a website's server is protected from interception and tampering.
 
@@ -48,6 +70,8 @@
 
 ---
 # What Kind of Information is Sent Over HTTP/HTTPS?
+
+![[HTTP Flow]]
 
 When using HTTP or HTTPS, a wide range of information can be transmitted between a client (like a web browser) and a server. This information is exchanged through structured messages called **requests** (from client to server) and **responses** (from server to client).
 
@@ -99,10 +123,12 @@ When using HTTP or HTTPS, a wide range of information can be transmitted between
 - **Requests** include:
     - HTTP method (GET, POST, etc.)
     - URL/path of the resource
+    - Protocol
     - Headers (metadata)
     - Optional body (for methods like POST, containing user data)
     
 - **Responses** include:
+	- Protocol and its version
     - Status code and message
     - Headers (metadata about the response)
     - Optional body (the requested resource or data))
@@ -137,7 +163,7 @@ HTTP headers can be grouped based on their context and function
     - `Server`: Information about the server software
 
 #### **3. Representation Headers**
-- Describe the body of the resource, such as its MIME type or encoding (e.g., `Content-Encoding`, `Content-Type`).
+- Contain information about the body of the resource, like its [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types), or encoding/compression applied.
 
 #### **4. Payload Headers**
 - Provide information about the payload data, independent of representation (e.g., `Content-Length`, `Transfer-Encoding`).
@@ -166,6 +192,91 @@ Server: Apache
 - Historically, custom headers used the `X-` prefix (e.g., `X-Requested-With`), but this practice is now deprecated.
 
 ---
+# HTTP Request Methods
+HTTP defines a set of **request methods** to indicate the purpose of the request and what is expected if the request is successful. Although they can also be nouns, these request methods are sometimes referred to as _HTTP verbs_. Each request method has its own semantics, but some characteristics are shared across multiple methods, specifically request methods can be [safe](https://developer.mozilla.org/en-US/docs/Glossary/Safe/HTTP), [idempotent](https://developer.mozilla.org/en-US/docs/Glossary/Idempotent), or [cacheable](https://developer.mozilla.org/en-US/docs/Glossary/Cacheable).
+
+- [`GET`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET)
+	
+	The `GET` method requests a representation of the specified resource. Requests using `GET` should only retrieve data and should not contain a request [content](https://developer.mozilla.org/en-US/docs/Glossary/HTTP_Content).
+	
+- [`HEAD`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/HEAD)
+	
+	The `HEAD` method asks for a response identical to a `GET` request, but without a response body.
+	
+- [`POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST)
+	
+	The `POST` method submits an entity to the specified resource, often causing a change in state or side effects on the server.
+	
+- [`PUT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PUT)
+	
+	The `PUT` method replaces all current representations of the target resource with the request [content](https://developer.mozilla.org/en-US/docs/Glossary/HTTP_Content).
+	
+- [`DELETE`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/DELETE)
+	
+	The `DELETE` method deletes the specified resource.
+	
+- [`CONNECT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/CONNECT)
+	
+	The `CONNECT` method establishes a tunnel to the server identified by the target resource.
+	
+- [`OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/OPTIONS)
+	
+	The `OPTIONS` method describes the communication options for the target resource.
+	
+- [`TRACE`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/TRACE)
+	
+	The `TRACE` method performs a message loop-back test along the path to the target resource.
+	
+- [`PATCH`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PATCH)
+	
+	The `PATCH` method applies partial modifications to a resource.
+
+
+## Safe, idempotent, and cacheable request methods
+
+The following table lists HTTP request methods and their categorization in terms of safety, cacheability, and idempotency.
+
+| Method                                                                                   | Safe | Idempotent | Cacheable    |
+| ---------------------------------------------------------------------------------------- | ---- | ---------- | ------------ |
+| [`GET`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET)         | Yes  | Yes        | Yes          |
+| [`HEAD`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/HEAD)       | Yes  | Yes        | Yes          |
+| [`OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/OPTIONS) | Yes  | Yes        | No           |
+| [`TRACE`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/TRACE)     | Yes  | Yes        | No           |
+| [`PUT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PUT)         | No   | Yes        | No           |
+| [`DELETE`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/DELETE)   | No   | Yes        | No           |
+| [`POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST)       | No   | No         | Conditional* |
+| [`PATCH`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PATCH)     | No   | No         | Conditional* |
+| [`CONNECT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/CONNECT) | No   | No         | No           |
+
+* `POST` and `PATCH` are cacheable when responses explicitly include [freshness](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching) information and a matching [`Content-Location`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Location) header.
+
+## Specifications
+
+| Specification                                                                  |
+| ------------------------------------------------------------------------------ |
+| [HTTP Semantics  <br># OPTIONS](https://httpwg.org/specs/rfc9110.html#OPTIONS) |
+| [HTTP Semantics  <br># POST](https://httpwg.org/specs/rfc9110.html#POST)       |
+| [HTTP Semantics  <br># GET](https://httpwg.org/specs/rfc9110.html#GET)         |
+| [HTTP Semantics  <br># DELETE](https://httpwg.org/specs/rfc9110.html#DELETE)   |
+| [HTTP Semantics  <br># HEAD](https://httpwg.org/specs/rfc9110.html#HEAD)       |
+| [HTTP Semantics  <br># CONNECT](https://httpwg.org/specs/rfc9110.html#CONNECT) |
+| [HTTP Semantics  <br># PUT](https://httpwg.org/specs/rfc9110.html#PUT)         |
+
+## Browser compatibility
+
+| desktop                                                                                  |        |      |         |       | mobile |                |                     |               |               |                  |                 |                |
+| ---------------------------------------------------------------------------------------- | ------ | ---- | ------- | ----- | ------ | -------------- | ------------------- | ------------- | ------------- | ---------------- | --------------- | -------------- |
+|                                                                                          | Chrome | Edge | Firefox | Opera | Safari | Chrome Android | Firefox for Android | Opera Android | Safari on iOS | Samsung Internet | WebView Android | WebView on iOS |
+| [`CONNECT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/CONNECT) | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+| [`DELETE`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/DELETE)   | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+| [`GET`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET)         | 1      | 12   | 1       | 2     | 1      | 18             | 4                   | 10.1          | 1             | 1                | 1               | 1              |
+| [`HEAD`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/HEAD)       | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+| [`OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/OPTIONS) | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+| [`POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST)       | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+| [`PUT`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PUT)         | 1      | 12   | 1       | 15    | 1      | 18             | 4                   | 14            | 1             | 1                | 4.4             | 1              |
+The cells are the versions in which the compatibility was introduced
+
+
 # HTTP Status Codes:
 HTTP status codes are three-digit numbers returned by a server in response to a client's request, indicating the result of the request and guiding the client on what to do next. These codes are grouped into five classes, determined by the first digit of the code:
 
@@ -223,29 +334,3 @@ HTTP status codes are three-digit numbers returned by a server in response to a 
 - `404`: Not found
 - `500`: Internal server error 
 
-# Response-Request Cycle
-The **request-response cycle** is a core concept in web development that describes how data is exchanged between a **client** (such as your web browser) and a **server** (the computer hosting the website or application).
-
-**How the request-response cycle works:**
-
-1. **Client Sends a Request:**  
-    When you enter a URL in your browser and press Enter, your browser (the client) sends a **request** to the server. This request asks for specific information or resources, such as a web page, image, or data.
-2. **Server Processes the Request:**  
-    The server receives the request, processes it (which may involve looking up data, running code, or accessing a database), and prepares a **response**.
-3. **Server Sends a Response:**  
-    The server sends the response back to the client. This response includes the requested content (like an HTML page or image) and a **status code** indicating whether the request was successful (e.g., 200 OK) or if there was an error (e.g., 404 Not Found).
-4. **Client Renders the Response:**  
-    Your browser receives the response and renders it for you to see and interact with. If the page includes additional resources (like images or scripts), the browser may send more requests to fetch those.
-5. **User Interaction Continues:**  
-    Any further interaction (like clicking a link or submitting a form) starts the cycle again with a new request[4](https://pravinmd.hashnode.dev/request-response-cycle-explained).    
-
-
-| Element      | Width | Height | X     | Y     |
-| ------------ | ----- | ------ | ----- | ----- |
-| Wreck        | 567.9 | 177.8  | 857.8 | 102.7 |
-| Havoc        | 527.1 | 165    | 880.1 | 238.2 |
-| Fuel the ... | 269.5 | 22.8   | 1009  | 391.8 |
-| insert Coin  | 237.5 | 43.6   | 1025  | 546.9 |
-
-
-for screen dimensions: 1366x768 px

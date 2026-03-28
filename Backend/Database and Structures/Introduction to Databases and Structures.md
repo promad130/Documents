@@ -954,7 +954,7 @@ Entities in both sets can relate to **multiple** entities in the other set.
 
 **ER Notation:**
 ```
-┌──────���──┐     M      ◇      M     ┌─────────┐
+┌─────────┐     M      ◇      M     ┌─────────┐
 │ STUDENT │─────────enrolls─────────│ COURSE  │
 └─────────┘                         └─────────┘
 ```
@@ -1497,7 +1497,7 @@ A **weak entity** is an entity that:
 ┌────────────────┐                    ╔══════════════════╗
 │     LOAN       │                    ║    PAYMENT       ║
 ├────────────────┤                    ╠══════════════════╣
-│ loan_number PK │◇◇──has_payment──◇◇║ payment_number   ║ ← Discriminator
+│ loan_number PK │◇◇───has_payment──◇◇║ payment_number   ║ ← Discriminator
 │ amount         │                    ║ payment_date     ║
 │ interest_rate  │                    ║ payment_amount   ║
 └────────────────┘                    ╚══════════════════╝
@@ -1550,13 +1550,13 @@ INSERT INTO PAYMENT VALUES (1, 1002, '2026-01-20', 2500);  -- payment_number 1 a
 
 **ER Diagram:**
 ```
-┌────────────────┐                    ╔══════════════════╗
-│   EMPLOYEE     │                    ║    DEPENDENT     ║
-├────────────────┤                    ╠══════════════════╣
-│ emp_id PK      │◇◇───has_dependent──◇◇║ dependent_name   ║ ← Discriminator
-│ name           │                    ║ birth_date       ║
-│ salary         │                    ║ relationship     ║
-└────────────────┘                    ╚══════════════════╝
+┌────────────────┐                     ╔══════════════════╗
+│   EMPLOYEE     │                     ║    DEPENDENT     ║
+├────────────────┤                     ╠══════════════════╣
+│ emp_id PK      │◇◇──has_dependent──◇◇║ dependent_name   ║ ← Discriminator
+│ name           │                     ║ birth_date       ║
+│ salary         │                     ║ relationship     ║
+└────────────────┘                     ╚══════════════════╝
       (Strong)                              (Weak)
 ```
 
@@ -1697,9 +1697,7 @@ CREATE TABLE COURSE (
 
 ---
 
-## Advanced Concepts 
-
-### Aggregation
+## Aggregation
 
 **Aggregation** treats a **relationship as an entity** to participate in another relationship.
 
@@ -1709,14 +1707,14 @@ CREATE TABLE COURSE (
 
 **ER Diagram:**
 ```
-         ┌─────────────────────────────────┐
-         │        Aggregation              │
-         │                                 │
-         │  ┌─────────┐      ┌─────────┐  │
-         │  │ EMPLOYEE│──◇───│ PROJECT │  │      ┌──────────┐
-         │  └─────────┘ works └─────────┘  │───◇──│ MANAGER  │
-         │             on                   │ manages └──────────┘
-         └─────────────────────────────────┘
+         ┌──────────────────────────────────┐
+         │        Aggregation               │
+         │                                  │
+         │  ┌─────────┐       ┌─────────┐   │
+         │  │ EMPLOYEE│───◇───│ PROJECT │   │         ┌──────────┐
+         │  └─────────┘ works └─────────┘   │────◇────│ MANAGER  │
+         │               on                 │ manages └──────────┘
+         └──────────────────────────────────┘
 ```
 
 **Example Scenario:** 
@@ -1763,750 +1761,11 @@ CREATE TABLE MANAGES_WORK (
     -- This foreign key references the aggregated relationship
     FOREIGN KEY (emp_id, project_id) REFERENCES WORKS_ON(emp_id, project_id)
 );
+-- So we reference the relation we are refering to in aggregates
 ```
 
-### 8.2 Generalization and Specialization
-
-**Generalization:** Combining multiple entity types into a higher-level entity (bottom-up)
-
-**Specialization:** Dividing an entity type into sub-entities (top-down)
-
-**Example: Person → Student, Employee**
-
-```
-      ┌─────────┐
-      │  PERSON │  ← Superclass/Generalization
-      └────┬────┘
-           │
-      ╱────┴────╲
-     ╱           ╲
-┌─────────┐   ┌──────────┐
-│ STUDENT │   │ EMPLOYEE │  ← Subclasses/Specializations
-└─────────┘   └──────────┘
-```
-
-**Implementation Strategies:**
-
-#### Strategy 1: Single Table (Table per Hierarchy)
-
-```sql
-CREATE TABLE PERSON (
-    person_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    birth_date DATE,
-    person_type VARCHAR(20),  -- 'Student' or 'Employee'
-    
-    -- Student-specific attributes (NULL for employees)
-    student_id VARCHAR(20),
-    major VARCHAR(50),
-    gpa DECIMAL(3,2),
-    
-    -- Employee-specific attributes (NULL for students)
-    emp_id VARCHAR(20),
-    salary DECIMAL(10,2),
-    hire_date DATE
-);
-```
-
-**Pros:** Simple queries, no joins needed
-**Cons:** Wasted space (many NULL values)
-
-#### Strategy 2: Table per Type (Class Table Inheritance)
-
-```sql
--- Superclass table
-CREATE TABLE PERSON (
-    person_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    birth_date DATE
-);
-
--- Subclass tables
-CREATE TABLE STUDENT (
-    person_id INT PRIMARY KEY,
-    student_id VARCHAR(20),
-    major VARCHAR(50),
-    gpa DECIMAL(3,2),
-    
-    FOREIGN KEY (person_id) REFERENCES PERSON(person_id)
-);
-
-CREATE TABLE EMPLOYEE (
-    person_id INT PRIMARY KEY,
-    emp_id VARCHAR(20),
-    salary DECIMAL(10,2),
-    hire_date DATE,
-    
-    FOREIGN KEY (person_id) REFERENCES PERSON(person_id)
-);
-```
-
-**Pros:** No wasted space, clear structure
-**Cons:** Requires joins to get full information
-
-#### Strategy 3: Table per Concrete Class
-
-```sql
--- No PERSON table, each subclass is independent
-CREATE TABLE STUDENT (
-    person_id INT PRIMARY KEY,
-    name VARCHAR(100),        -- Repeated from Person
-    birth_date DATE,          -- Repeated from Person
-    student_id VARCHAR(20),
-    major VARCHAR(50),
-    gpa DECIMAL(3,2)
-);
-
-CREATE TABLE EMPLOYEE (
-    person_id INT PRIMARY KEY,
-    name VARCHAR(100),        -- Repeated from Person
-    birth_date DATE,          -- Repeated from Person
-    emp_id VARCHAR(20),
-    salary DECIMAL(10,2),
-    hire_date DATE
-);
-```
-
-**Pros:** No joins needed, fast queries
-**Cons:** Data duplication, hard to query all people
-
-### 8.3 Disjoint vs Overlapping Constraints
-
-**Disjoint:** An entity can belong to **at most one** subclass
-
-```
-      PERSON
-      /    \
-   (d)      \   ← (d) = disjoint
-STUDENT  EMPLOYEE
-```
-
-A person is either a student OR an employee, not both.
-
-**Overlapping:** An entity can belong to **multiple** subclasses
-
-```
-      PERSON
-      /    \
-   (o)      \   ← (o) = overlapping
-STUDENT  EMPLOYEE
-```
-
-A person can be both a student AND an employee.
-
-```sql
--- Overlapping implementation (allowing both)
-CREATE TABLE PERSON (
-    person_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE STUDENT (
-    person_id INT PRIMARY KEY,
-    student_id VARCHAR(20),
-    FOREIGN KEY (person_id) REFERENCES PERSON(person_id)
-);
-
-CREATE TABLE EMPLOYEE (
-    person_id INT PRIMARY KEY,
-    emp_id VARCHAR(20),
-    FOREIGN KEY (person_id) REFERENCES PERSON(person_id)
-);
-
--- Person 101 can exist in both STUDENT and EMPLOYEE tables
-INSERT INTO PERSON VALUES (101, 'John');
-INSERT INTO STUDENT VALUES (101, 'S12345');
-INSERT INTO EMPLOYEE VALUES (101, 'E9876');  -- Same person, also an employee
-```
-
-### 8.4 Total vs Partial Specialization
-
-**Total:** Every superclass entity **must belong** to at least one subclass
-
-```
-      VEHICLE
-      /    \
-   [total]  \
-  CAR     TRUCK
-```
-
-Every vehicle must be either a car or a truck.
-
-**Partial:** A superclass entity **may not belong** to any subclass
-
-```
-      PERSON
-      /    \
-  [partial] \
-STUDENT  EMPLOYEE
-```
-
-Some people may be neither students nor employees.
 
 ---
-
-## 9. ER to Relational Mapping
-
-### Step-by-Step Mapping Process
-
-#### Step 1: Map Strong Entity Sets
-
-**Rule:** Each strong entity becomes a table with its simple attributes as columns.
-
-```sql
--- ER: STUDENT(student_id, name, birth_date)
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    birth_date DATE
-);
-```
-
-#### Step 2: Map Weak Entity Sets
-
-**Rule:** Create table with owner's primary key + discriminator as composite primary key.
-
-```sql
--- ER: LOAN → PAYMENT (weak entity)
-CREATE TABLE LOAN (
-    loan_number INT PRIMARY KEY,
-    amount DECIMAL(10,2)
-);
-
-CREATE TABLE PAYMENT (
-    loan_number INT,
-    payment_number INT,
-    payment_date DATE,
-    
-    PRIMARY KEY (loan_number, payment_number),
-    FOREIGN KEY (loan_number) REFERENCES LOAN(loan_number)
-);
-```
-
-#### Step 3: Map Binary 1:1 Relationships
-
-**Option A:** Foreign key in either table (choose the one with total participation)
-
-```sql
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE HOSTEL_ROOM (
-    room_id INT PRIMARY KEY,
-    room_number VARCHAR(10),
-    student_id INT UNIQUE,  -- Foreign key in HOSTEL_ROOM
-    
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id)
-);
-```
-
-**Option B:** Merge both entities into one table (if both have total participation)
-
-#### Step 4: Map Binary 1:M Relationships
-
-**Rule:** Foreign key goes on the "many" side.
-
-```sql
--- 1 Department : M Employees
-CREATE TABLE DEPARTMENT (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(100)
-);
-
-CREATE TABLE EMPLOYEE (
-    emp_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    dept_id INT,  -- Foreign key on "many" side
-    
-    FOREIGN KEY (dept_id) REFERENCES DEPARTMENT(dept_id)
-);
-```
-
-#### Step 5: Map Binary M:M Relationships
-
-**Rule:** Create a new junction table with foreign keys to both entities.
-
-```sql
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE COURSE (
-    course_id VARCHAR(10) PRIMARY KEY,
-    course_name VARCHAR(100)
-);
-
--- Junction table for M:M relationship
-CREATE TABLE ENROLLS_IN (
-    student_id INT,
-    course_id VARCHAR(10),
-    enrollment_date DATE,
-    grade CHAR(1),
-    
-    PRIMARY KEY (student_id, course_id),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(course_id)
-);
-```
-
-#### Step 6: Map Multivalued Attributes
-
-**Rule:** Create a separate table with entity's primary key + attribute.
-
-```sql
--- ER: STUDENT(student_id, name, phone_numbers)
---     phone_numbers is multivalued
-
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE STUDENT_PHONE (
-    student_id INT,
-    phone_number VARCHAR(15),
-    
-    PRIMARY KEY (student_id, phone_number),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id)
-);
-```
-
-#### Step 7: Map Composite Attributes
-
-**Rule:** Create columns only for leaf-level attributes.
-
-```sql
--- ER: PERSON(person_id, name{first, middle, last}, address{street, city, state, zip})
-
-CREATE TABLE PERSON (
-    person_id INT PRIMARY KEY,
-    -- Don't create 'name' column
-    first_name VARCHAR(50),
-    middle_name VARCHAR(50),
-    last_name VARCHAR(50),
-    -- Don't create 'address' column
-    street VARCHAR(100),
-    city VARCHAR(50),
-    state VARCHAR(50),
-    zip VARCHAR(10)
-);
-```
-
-#### Step 8: Map Ternary Relationships
-
-**Rule:** Create table with foreign keys to all three participating entities.
-
-```sql
--- Instructor teaches Student in Course
-CREATE TABLE INSTRUCTOR (
-    instructor_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE COURSE (
-    course_id VARCHAR(10) PRIMARY KEY,
-    course_name VARCHAR(100)
-);
-
-CREATE TABLE TEACHES (
-    instructor_id INT,
-    student_id INT,
-    course_id VARCHAR(10),
-    semester VARCHAR(20),
-    
-    PRIMARY KEY (instructor_id, student_id, course_id, semester),
-    FOREIGN KEY (instructor_id) REFERENCES INSTRUCTOR(instructor_id),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(course_id)
-);
-```
-
----
-
-## 10. Complete Examples {#examples}
-
-### Example 1: University Database
-
-**Requirements:**
-- Students enroll in courses
-- Instructors teach courses
-- Departments offer courses
-- Students have multiple phone numbers
-- Track enrollment grades
-
-**ER Diagram:**
-```
-┌────────────┐     M        ◇        M    ┌─────────┐
-│  STUDENT   │────────enrolls_in─────────│ COURSE  │
-└────────────┘    (grade, semester)       └─────────┘
-     │ ◎◎                                      │
-  phone_nos                                    │ M
-                                               │
-                                          ┌────▼─────┐
-                                          │INSTRUCTOR│
-                                          └──────────┘
-                                               │ M
-                                               │
-                                          ┌────▼──────┐
-                                          │DEPARTMENT │
-                                          └───────────┘
-```
-
-**Implementation:**
-
-```sql
--- Strong entities
-CREATE TABLE DEPARTMENT (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(100) UNIQUE NOT NULL,
-    building VARCHAR(50),
-    budget DECIMAL(12,2)
-);
-
-CREATE TABLE INSTRUCTOR (
-    instructor_id INT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    office VARCHAR(20),
-    salary DECIMAL(10,2),
-    dept_id INT,
-    
-    FOREIGN KEY (dept_id) REFERENCES DEPARTMENT(dept_id)
-);
-
-CREATE TABLE STUDENT (
-    student_id INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    birth_date DATE,
-    major_dept_id INT,
-    
-    FOREIGN KEY (major_dept_id) REFERENCES DEPARTMENT(dept_id)
-);
-
-CREATE TABLE COURSE (
-    course_id VARCHAR(10) PRIMARY KEY,
-    course_name VARCHAR(100) NOT NULL,
-    credits INT,
-    dept_id INT,
-    instructor_id INT,
-    
-    FOREIGN KEY (dept_id) REFERENCES DEPARTMENT(dept_id),
-    FOREIGN KEY (instructor_id) REFERENCES INSTRUCTOR(instructor_id)
-);
-
--- Multivalued attribute
-CREATE TABLE STUDENT_PHONE (
-    student_id INT,
-    phone_number VARCHAR(15),
-    phone_type ENUM('mobile', 'home', 'emergency'),
-    
-    PRIMARY KEY (student_id, phone_number),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id)
-        ON DELETE CASCADE
-);
-
--- M:M relationship
-CREATE TABLE ENROLLMENT (
-    student_id INT,
-    course_id VARCHAR(10),
-    semester VARCHAR(20),
-    year INT,
-    grade CHAR(1),
-    
-    PRIMARY KEY (student_id, course_id, semester, year),
-    FOREIGN KEY (student_id) REFERENCES STUDENT(student_id),
-    FOREIGN KEY (course_id) REFERENCES COURSE(course_id),
-    
-    CHECK (grade IN ('A', 'B', 'C', 'D', 'F'))
-);
-
--- Sample data
-INSERT INTO DEPARTMENT VALUES (1, 'Computer Science', 'Tech Building', 500000);
-INSERT INTO DEPARTMENT VALUES (2, 'Mathematics', 'Science Hall', 300000);
-
-INSERT INTO INSTRUCTOR VALUES (101, 'Dr. Smith', 'smith@univ.edu', 'TB-201', 85000, 1);
-INSERT INTO INSTRUCTOR VALUES (102, 'Dr. Johnson', 'johnson@univ.edu', 'SH-101', 78000, 2);
-
-INSERT INTO STUDENT VALUES (1001, 'John', 'Doe', 'john@student.edu', '2004-05-15', 1);
-INSERT INTO STUDENT VALUES (1002, 'Mary', 'Smith', 'mary@student.edu', '2003-08-22', 1);
-
-INSERT INTO STUDENT_PHONE VALUES (1001, '555-1234', 'mobile');
-INSERT INTO STUDENT_PHONE VALUES (1001, '555-5678', 'home');
-
-INSERT INTO COURSE VALUES ('CS101', 'Introduction to Programming', 3, 1, 101);
-INSERT INTO COURSE VALUES ('CS201', 'Data Structures', 4, 1, 101);
-INSERT INTO COURSE VALUES ('MATH101', 'Calculus I', 4, 2, 102);
-
-INSERT INTO ENROLLMENT VALUES (1001, 'CS101', 'Fall', 2026, 'A');
-INSERT INTO ENROLLMENT VALUES (1001, 'MATH101', 'Fall', 2026, 'B');
-INSERT INTO ENROLLMENT VALUES (1002, 'CS101', 'Fall', 2026, 'A');
-```
-
-### Example 2: Hospital Management System
-
-**Requirements:**
-- Doctors treat patients
-- Patients are admitted to rooms
-- Doctors work in departments
-- Track appointment history
-
-```sql
--- Strong entities
-CREATE TABLE DEPARTMENT (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(100)
-);
-
-CREATE TABLE DOCTOR (
-    doctor_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    specialization VARCHAR(50),
-    phone VARCHAR(15),
-    dept_id INT,
-    
-    FOREIGN KEY (dept_id) REFERENCES DEPARTMENT(dept_id)
-);
-
-CREATE TABLE PATIENT (
-    patient_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    birth_date DATE,
-    gender CHAR(1),
-    address VARCHAR(200),
-    phone VARCHAR(15),
-    blood_group VARCHAR(5)
-);
-
-CREATE TABLE ROOM (
-    room_id INT PRIMARY KEY,
-    room_number VARCHAR(10),
-    room_type VARCHAR(20),
-    charges_per_day DECIMAL(8,2)
-);
-
--- Relationships
-CREATE TABLE APPOINTMENT (
-    appointment_id INT PRIMARY KEY AUTO_INCREMENT,
-    doctor_id INT,
-    patient_id INT,
-    appointment_date DATE,
-    appointment_time TIME,
-    diagnosis VARCHAR(500),
-    prescription TEXT,
-    
-    FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id),
-    FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id)
-);
-
--- 1:1 relationship (patient admitted to room)
-CREATE TABLE ADMISSION (
-    admission_id INT PRIMARY KEY AUTO_INCREMENT,
-    patient_id INT,
-    room_id INT UNIQUE,  -- Each room has at most one patient
-    admission_date DATE,
-    discharge_date DATE,
-    
-    FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id),
-    FOREIGN KEY (room_id) REFERENCES ROOM(room_id)
-);
-```
-
-### Example 3: E-Commerce System
-
-```sql
--- Customer
-CREATE TABLE CUSTOMER (
-    customer_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255),
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    registration_date DATE
-);
-
--- Customer addresses (multivalued attribute)
-CREATE TABLE CUSTOMER_ADDRESS (
-    address_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    address_type ENUM('billing', 'shipping'),
-    street VARCHAR(100),
-    city VARCHAR(50),
-    state VARCHAR(50),
-    zip VARCHAR(10),
-    country VARCHAR(50),
-    
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
-        ON DELETE CASCADE
-);
-
--- Product
-CREATE TABLE PRODUCT (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
-    product_name VARCHAR(200),
-    description TEXT,
-    price DECIMAL(10,2),
-    stock_quantity INT,
-    category VARCHAR(50)
-);
-
--- Order (strong entity)
-CREATE TABLE `ORDER` (
-    order_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    order_date DATETIME,
-    total_amount DECIMAL(12,2),
-    status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled'),
-    
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id)
-);
-
--- Order items (M:M between Order and Product)
-CREATE TABLE ORDER_ITEM (
-    order_id INT,
-    product_id INT,
-    quantity INT,
-    unit_price DECIMAL(10,2),
-    subtotal DECIMAL(12,2),
-    
-    PRIMARY KEY (order_id, product_id),
-    FOREIGN KEY (order_id) REFERENCES `ORDER`(order_id),
-    FOREIGN KEY (product_id) REFERENCES PRODUCT(product_id)
-);
-
--- Payment (weak entity depending on ORDER)
-CREATE TABLE PAYMENT (
-    order_id INT,
-    payment_number INT,
-    payment_date DATETIME,
-    amount DECIMAL(10,2),
-    payment_method ENUM('credit_card', 'debit_card', 'paypal', 'cash'),
-    
-    PRIMARY KEY (order_id, payment_number),
-    FOREIGN KEY (order_id) REFERENCES `ORDER`(order_id)
-        ON DELETE CASCADE
-);
-```
-
----
-
-## Complete ER Notation Reference
-
-| Element                      | Symbol                                                                    | MySQL Implementation          |
-| ---------------------------- | ------------------------------------------------------------------------- | ----------------------------- |
-| **Strong Entity**            | `┌───┐` Rectangle                                                         | `CREATE TABLE`                |
-| **Weak Entity**              | `╔═══╗` Double Rectangle                                                  | Composite PK with FK          |
-| **Attribute**                | `○` Ellipse                                                               | Column                        |
-| **Key Attribute**            | <u>○</u> Underlined                                                       | `PRIMARY KEY`                 |
-| **Composite Attribute**      | `○` with branches                                                         | Multiple columns (leaf level) |
-| **Multivalued Attribute**    | `◎◎` Double Ellipse                                                       | Separate table                |
-| **Derived Attribute**        | `(○)` Dashed Ellipse                                                      | Calculated, not stored        |
-| **Relationship**             | `◇` Diamond                                                               | Junction table or FK          |
-| **Identifying Relationship** | `◇◇` Double Diamond                                                       | FK with CASCADE               |
-| **Total Participation**      | `═══` Double Line                                                         | `NOT NULL` FK                 |
-| **Partial Participation**    | `───` Single Line                                                         | Nullable FK                   |
-| **Cardinality 1:1**          | `1───◇───1`                                                               | UNIQUE FK                     |
-| **Cardinality 1:M**          | `1───◇───M`                                                               | FK on "many" side             |
-| **Cardinality M:M**          | `M───◇───M`                                                               | Junction table                |
-| **Discriminator**            | Dashed underline, while the primary keys on the other hand are underlined | Part of composite PK          |
-| **Generalization**           | Triangle `△`                                                              | Inheritance tables            |
-
----
-
-## Best Practices
-
-### 1. Naming Conventions
-- Use **singular** nouns for entity names: `STUDENT` not `STUDENTS`
-- Use **descriptive** relationship names: `enrolls_in`, `works_for`
-- Use **lowercase_underscore** for MySQL: `student_id`, `course_name`
-
-### 2. Key Selection
-- Choose **stable** attributes for primary keys (won't change)
-- Prefer **simple** keys over composite when possible
-- Use **surrogate keys** (auto-increment) for complex scenarios
-
-### 3. Normalization
-- Avoid **redundant** data
-- Use **separate tables** for multivalued attributes
-- Don't store **derived** attributes
-
-### 4. Referential Integrity
-- Always define **foreign key constraints**
-- Use appropriate **CASCADE** actions
-- Consider **NULL** vs `NOT NULL` carefully
-
-### 5. Documentation
-- Comment complex relationships
-- Document business rules
-- Maintain ER diagrams alongside code
-
----
-
-## Common Mistakes to Avoid
-
-❌ **Storing derived attributes**
-```sql
--- DON'T
-CREATE TABLE STUDENT (
-    birth_date DATE,
-    age INT  -- Derived - will become outdated
-);
-```
-
-✅ **Calculate derived attributes**
-```sql
--- DO
-SELECT TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age
-FROM STUDENT;
-```
-
-❌ **Not using foreign keys**
-```sql
--- DON'T
-CREATE TABLE EMPLOYEE (
-    dept_id INT  -- No foreign key constraint
-);
-```
-
-✅ **Always use foreign keys**
-```sql
--- DO
-CREATE TABLE EMPLOYEE (
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES DEPARTMENT(dept_id)
-);
-```
-
-❌ **Storing multivalued attributes in one column**
-```sql
--- DON'T
-CREATE TABLE STUDENT (
-    phone_numbers VARCHAR(200)  -- '555-1234, 555-5678, 555-9012'
-);
-```
-
-✅ **Separate table for multivalued attributes**
-```sql
--- DO
-CREATE TABLE STUDENT_PHONE (
-    student_id INT,
-    phone_number VARCHAR(15),
-    PRIMARY KEY (student_id, phone_number)
-);
-```
-
----
-
 # Enhanced Entity-Relationship (EER) Model
 
 ## Introduction to EER Model 
@@ -3128,14 +2387,14 @@ The overlapping constraint describes **membership rules**, not the **design pr
 ```
                     ┌─────────────────────┐
                     │      PATIENT        │
-                    └══════════┬══════════┘  ← Double line
-                               │
+                    └══════════┬┬═════════┘  ← Double line
+                               ││
                                ○ d  ← Total, Disjoint
-                              ╱│╲
-                             ╱ │ ╲
-              ┌────────────┐  ┌┴──────────────┐
-              │ OUTPATIENT │  │RESIDENT_PATIENT│
-              └────────────┘  └────────────────┘
+                              ╱ ╲
+                             ╱   ╲
+                ┌───────────┴┐   ┌┴───────────────┐
+                │ OUTPATIENT │   │RESIDENT_PATIENT│
+                └────────────┘   └────────────────┘
 ```
 
 **MySQL Enforcement:**
@@ -3249,7 +2508,6 @@ INSERT INTO EMPLOYEE VALUES ('111-22-3333', 'Mike Johnson', 40000);
 #### Attribute-Defined (Condition-Defined)
 
 Membership is **automatically determined** by the value of a specific attribute.
-
 **Notation:** Attribute name shown next to the circle
 
 **Real-World Examples:**
@@ -3468,11 +2726,9 @@ INSERT INTO COURSE VALUES ('CS103', 'Web Development', 'Online');
 ```
 
 ---
-
 ## 6. Attribute Inheritance
 
 ### Definition
-
 **Attribute Inheritance:** An entity in a subclass **automatically inherits ALL attributes and relationships** from its superclass.
 
 ### Rules
@@ -7168,15 +6424,6 @@ WHERE B.bid NOT IN (SELECT bid FROM RESERVES);
 
 # Complete Guide to Views, Assertions, and Bitmap Indexing in DBMS
 
-## Table of Contents
-1. [Views](#views)
-2. [Assertions](#assertions)
-3. [Bitmap Indexing](#bitmap-indexing)
-4. [Materialized Views](#materialized-views)
-5. [Complete Examples](#examples)
-
----
-
 ## 1. Views
 
 ### What is a View?
@@ -7200,614 +6447,11 @@ A **view** is a **virtual table** based on the result of a SQL query. It doesn't
 | **Customization** | Different users see different data representations |
 | **Reusability** | Encapsulate frequently used queries |
 
----
-
-### Creating Views
-
-**Syntax:**
-```sql
-CREATE VIEW view_name AS
-SELECT column1, column2, ...
-FROM table_name
-WHERE condition;
-```
-
-### Sample Database Schema
-
-```sql
--- Base Tables
-CREATE TABLE EMPLOYEE (
-    emp_id INT PRIMARY KEY,
-    name VARCHAR(100),
-    salary DECIMAL(10,2),
-    dept_id INT,
-    manager_id INT,
-    hire_date DATE
-);
-
-CREATE TABLE DEPARTMENT (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(50),
-    location VARCHAR(100)
-);
-
-CREATE TABLE CUSTOMER (
-    customer_id INT PRIMARY KEY,
-    customer_name VARCHAR(100),
-    city VARCHAR(50),
-    credit_score INT
-);
-
-CREATE TABLE LOAN (
-    loan_number VARCHAR(20) PRIMARY KEY,
-    branch_name VARCHAR(50),
-    amount DECIMAL(12,2),
-    loan_type VARCHAR(20)
-);
-
-CREATE TABLE BORROWER (
-    customer_id INT,
-    loan_number VARCHAR(20),
-    PRIMARY KEY (customer_id, loan_number),
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
-    FOREIGN KEY (loan_number) REFERENCES LOAN(loan_number)
-);
-
-CREATE TABLE ACCOUNT (
-    account_number VARCHAR(20) PRIMARY KEY,
-    branch_name VARCHAR(50),
-    balance DECIMAL(12,2)
-);
-
-CREATE TABLE DEPOSITOR (
-    customer_id INT,
-    account_number VARCHAR(20),
-    PRIMARY KEY (customer_id, account_number),
-    FOREIGN KEY (customer_id) REFERENCES CUSTOMER(customer_id),
-    FOREIGN KEY (account_number) REFERENCES ACCOUNT(account_number)
-);
-
--- Sample Data
-INSERT INTO EMPLOYEE VALUES
-    (101, 'John Smith', 75000, 1, NULL, '2020-01-15'),
-    (102, 'Jane Doe', 65000, 1, 101, '2020-03-20'),
-    (103, 'Bob Wilson', 85000, 2, NULL, '2019-06-10'),
-    (104, 'Alice Brown', 55000, 2, 103, '2021-02-01'),
-    (105, 'Charlie Davis', 95000, 1, 101, '2018-11-05');
-
-INSERT INTO DEPARTMENT VALUES
-    (1, 'Engineering', 'Building A'),
-    (2, 'Sales', 'Building B'),
-    (3, 'HR', 'Building C');
-
-INSERT INTO CUSTOMER VALUES
-    (201, 'Michael Johnson', 'New York', 720),
-    (202, 'Sarah Williams', 'Boston', 680),
-    (203, 'David Miller', 'Chicago', 750);
-
-INSERT INTO LOAN VALUES
-    ('L-101', 'Downtown', 50000, 'Personal'),
-    ('L-102', 'Uptown', 100000, 'Business'),
-    ('L-103', 'Downtown', 75000, 'Home');
-
-INSERT INTO BORROWER VALUES
-    (201, 'L-101'),
-    (202, 'L-102'),
-    (203, 'L-103');
-
-INSERT INTO ACCOUNT VALUES
-    ('A-101', 'Downtown', 5000),
-    ('A-102', 'Uptown', 8000),
-    ('A-103', 'Downtown', 1200);
-
-INSERT INTO DEPOSITOR VALUES
-    (201, 'A-101'),
-    (202, 'A-102'),
-    (203, 'A-103');
-```
+Follow Along [[Views in MySQL]] in [[Introduction to MySQL]].
 
 ---
 
-### Example 1: Simple View (Hide Sensitive Data)
-
-**Requirement:** Show employee information without salary details
-
-```sql
--- Create view without salary
-CREATE VIEW EMPLOYEE_PUBLIC AS
-SELECT emp_id, name, dept_id, hire_date
-FROM EMPLOYEE;
-
--- Query the view
-SELECT * FROM EMPLOYEE_PUBLIC;
-```
-
-**Result:**
-```
-┌────────┬───────────────┬─────────┬────────────┐
-│ emp_id │ name          │ dept_id │ hire_date  │
-├────────┼───────────────┼─────────┼────────────┤
-│ 101    │ John Smith    │ 1       │ 2020-01-15 │
-│ 102    │ Jane Doe      │ 1       │ 2020-03-20 │
-│ 103    │ Bob Wilson    │ 2       │ 2019-06-10 │
-│ 104    │ Alice Brown   │ 2       │ 2021-02-01 │
-│ 105    │ Charlie Davis │ 1       │ 2018-11-05 │
-└────────┴───────────────┴─────────┴────────────┘
-```
-
-**Benefit:** Users querying this view cannot see salary information.
-
----
-
-### Example 2: View with JOIN (Simplification)
-
-**Requirement:** Simplify employee-department query
-
-```sql
--- Create view joining tables
-CREATE VIEW EMPLOYEE_DEPT_INFO AS
-SELECT 
-    e.emp_id,
-    e.name AS employee_name,
-    e.salary,
-    d.dept_name,
-    d.location
-FROM EMPLOYEE e
-JOIN DEPARTMENT d ON e.dept_id = d.dept_id;
-
--- Query the view
-SELECT * FROM EMPLOYEE_DEPT_INFO WHERE dept_name = 'Engineering';
-```
-
-**Result:**
-```
-┌────────┬───────────────┬─────────┬─────────────┬───────────┐
-│ emp_id │ employee_name │ salary  │ dept_name   │ location  │
-├────────┼───────────────┼─────────┼─────────────┼───────────┤
-│ 101    │ John Smith    │ 75000   │ Engineering │ Building A│
-│ 102    │ Jane Doe      │ 65000   │ Engineering │ Building A│
-│ 105    │ Charlie Davis │ 95000   │ Engineering │ Building A│
-└────────┴───────────────┴─────────┴─────────────┴───────────┘
-```
-
-**Benefit:** Users don't need to know the JOIN syntax; they query a simple view.
-
----
-
-### Example 3: View with Aggregation
-
-**Requirement:** Show department-wise average salary
-
-```sql
--- Create aggregate view
-CREATE VIEW DEPT_SALARY_STATS AS
-SELECT 
-    d.dept_name,
-    COUNT(e.emp_id) AS num_employees,
-    AVG(e.salary) AS avg_salary,
-    MIN(e.salary) AS min_salary,
-    MAX(e.salary) AS max_salary
-FROM DEPARTMENT d
-LEFT JOIN EMPLOYEE e ON d.dept_id = e.dept_id
-GROUP BY d.dept_id, d.dept_name;
-
--- Query the view
-SELECT * FROM DEPT_SALARY_STATS ORDER BY avg_salary DESC;
-```
-
-**Result:**
-```
-┌─────────────┬───────────────┬────────────┬────────────┬────────────┐
-│ dept_name   │ num_employees │ avg_salary │ min_salary │ max_salary │
-├─────────────┼───────────────┼────────────┼────────────┼────────────┤
-│ Engineering │ 3             │ 78333.33   │ 65000      │ 95000      │
-│ Sales       │ 2             │ 70000.00   │ 55000      │ 85000      │
-│ HR          │ 0             │ NULL       │ NULL       │ NULL       │
-└─────────────┴───────────────┴────────────┴────────────┴────────────┘
-```
-
----
-
-### Example 4: View with Computed Columns
-
-**Requirement:** Show employee tenure
-
-```sql
--- Create view with calculated column
-CREATE VIEW EMPLOYEE_TENURE AS
-SELECT 
-    emp_id,
-    name,
-    hire_date,
-    TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) AS years_of_service,
-    salary,
-    CASE 
-        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) >= 5 THEN 'Senior'
-        WHEN TIMESTAMPDIFF(YEAR, hire_date, CURDATE()) >= 2 THEN 'Mid-Level'
-        ELSE 'Junior'
-    END AS seniority_level
-FROM EMPLOYEE;
-
--- Query the view
-SELECT * FROM EMPLOYEE_TENURE ORDER BY years_of_service DESC;
-```
-
-**Result:**
-```
-┌────────┬───────────────┬────────────┬──────────────────┬────────┬─────────────────┐
-│ emp_id │ name          │ hire_date  │ years_of_service │ salary │ seniority_level │
-├────────┼───────────────┼────────────┼──────────────────┼────────┼─────────────────┤
-│ 105    │ Charlie Davis │ 2018-11-05 │ 7                │ 95000  │ Senior          │
-│ 103    │ Bob Wilson    │ 2019-06-10 │ 6                │ 85000  │ Senior          │
-│ 101    │ John Smith    │ 2020-01-15 │ 6                │ 75000  │ Senior          │
-│ 102    │ Jane Doe      │ 2020-03-20 │ 5                │ 65000  │ Senior          │
-│ 104    │ Alice Brown   │ 2021-02-01 │ 4                │ 55000  │ Mid-Level       │
-└────────┴───────────────┴────────────┴──────────────────┴────────┴─────────────────┘
-```
-
----
-
-### Example 5: Parameterized View (Using WHERE)
-
-**Requirement:** View for high-performing customers
-
-```sql
--- Create view with condition
-CREATE VIEW HIGH_CREDIT_CUSTOMERS AS
-SELECT 
-    customer_id,
-    customer_name,
-    city,
-    credit_score
-FROM CUSTOMER
-WHERE credit_score >= 700;
-
--- Query the view
-SELECT * FROM HIGH_CREDIT_CUSTOMERS;
-```
-
-**Result:**
-```
-┌─────────────┬─────────────────┬─────────┬──────────────┐
-│ customer_id │ customer_name   │ city    │ credit_score │
-├─────────────┼─────────────────┼─────────┼──────────────┤
-│ 201         │ Michael Johnson │ New York│ 720          │
-│ 203         │ David Miller    │ Chicago │ 750          │
-└─────────────┴─────────────────┴─────────┴──────────────┘
-```
-
----
-
-### View Operations
-
-#### 1. Querying Views
-
-Views can be queried like regular tables:
-
-```sql
--- Simple SELECT
-SELECT * FROM EMPLOYEE_PUBLIC;
-
--- With WHERE clause
-SELECT * FROM EMPLOYEE_PUBLIC WHERE dept_id = 1;
-
--- With JOIN (view joining with table)
-SELECT 
-    ep.name,
-    d.dept_name
-FROM EMPLOYEE_PUBLIC ep
-JOIN DEPARTMENT d ON ep.dept_id = d.dept_id;
-
--- Nested view query
-SELECT dept_name, avg_salary
-FROM DEPT_SALARY_STATS
-WHERE avg_salary > 70000;
-```
-
----
-
-#### 2. Updating Views
-
-**View updates** are allowed under certain conditions but have restrictions.
-
-##### Updatable View Requirements:
-
-A view is **updatable** if:
-1. ✓ Defined on a **single base table**
-2. ✓ Contains **no aggregates** (SUM, AVG, COUNT, etc.)
-3. ✓ Contains **no GROUP BY** or **HAVING**
-4. ✓ Contains **no DISTINCT**
-5. ✓ Contains **no subqueries** in SELECT clause
-6. ✓ Contains **no UNION** operations
-
-##### Example: Updatable View
-
-```sql
--- Create updatable view
-CREATE VIEW ENGINEERING_EMPLOYEES AS
-SELECT emp_id, name, salary, dept_id
-FROM EMPLOYEE
-WHERE dept_id = 1;
-
--- UPDATE through view (✓ Allowed)
-UPDATE ENGINEERING_EMPLOYEES
-SET salary = salary * 1.10
-WHERE emp_id = 102;
-
--- Verify update
-SELECT * FROM EMPLOYEE WHERE emp_id = 102;
-```
-
-**Result:** Jane Doe's salary updated to 71,500 (65,000 * 1.10)
-
-##### Example: INSERT through View
-
-```sql
--- INSERT through view (✓ Allowed)
-INSERT INTO ENGINEERING_EMPLOYEES (emp_id, name, salary, dept_id)
-VALUES (106, 'Tom Anderson', 70000, 1);
-
--- Verify insertion
-SELECT * FROM EMPLOYEE WHERE emp_id = 106;
-```
-
-**Result:** New employee added to EMPLOYEE table
-
-##### Example: DELETE through View
-
-```sql
--- DELETE through view (✓ Allowed)
-DELETE FROM ENGINEERING_EMPLOYEES
-WHERE emp_id = 106;
-
--- Verify deletion
-SELECT * FROM EMPLOYEE WHERE emp_id = 106;
-```
-
-**Result:** Employee removed from EMPLOYEE table
-
----
-
-##### Example: Non-Updatable View (Aggregate)
-
-```sql
--- This view is NOT updatable (has aggregation)
-CREATE VIEW DEPT_AVG_SALARY AS
-SELECT dept_id, AVG(salary) AS avg_salary
-FROM EMPLOYEE
-GROUP BY dept_id;
-
--- Try to UPDATE (❌ Will FAIL)
-UPDATE DEPT_AVG_SALARY
-SET avg_salary = 80000
-WHERE dept_id = 1;
-```
-
-**Error:** Cannot update aggregate view
-
-**Why?** How would the system translate "set average to 80000" into updates on individual employee salaries?
-
----
-
-##### Example: View with NULL Challenge
-
-```sql
--- View missing some columns
-CREATE VIEW EMPLOYEE_BASIC AS
-SELECT emp_id, name, dept_id
-FROM EMPLOYEE;
-
--- Try to INSERT (⚠️ Problem: missing salary)
-INSERT INTO EMPLOYEE_BASIC (emp_id, name, dept_id)
-VALUES (107, 'Lisa Green', 2);
-
--- What happens in base table?
-SELECT * FROM EMPLOYEE WHERE emp_id = 107;
-```
-
-**Result:**
-```
-┌────────┬────────────┬─────────┬─────────┬────────────┬───────────┐
-│ emp_id │ name       │ salary  │ dept_id │ manager_id │ hire_date │
-├────────┼────────────┼─────────┼─────────┼────────────┼───────────┤
-│ 107    │ Lisa Green │ NULL    │ 2       │ NULL       │ NULL      │
-└────────┴────────────┴─────────┴─────────┴────────────┴───────────┘
-```
-
-**Issue:** Missing columns get NULL values, which may violate constraints.
-
----
-
-##### WITH CHECK OPTION
-
-Prevents updates/inserts that would make rows disappear from the view.
-
-```sql
--- Create view with check option
-CREATE VIEW ENGINEERING_EMPLOYEES_SAFE AS
-SELECT emp_id, name, salary, dept_id
-FROM EMPLOYEE
-WHERE dept_id = 1
-WITH CHECK OPTION;
-
--- Try to change dept_id (❌ Will FAIL)
-UPDATE ENGINEERING_EMPLOYEES_SAFE
-SET dept_id = 2
-WHERE emp_id = 102;
-```
-
-**Error:** CHECK OPTION violated
-
-**Reason:** Changing dept_id to 2 would remove the row from the view (which shows only dept_id = 1), so it's blocked.
-
----
-
-#### 3. Dropping Views
-
-```sql
--- Drop a view
-DROP VIEW IF EXISTS EMPLOYEE_PUBLIC;
-
--- Drop multiple views
-DROP VIEW IF EXISTS EMPLOYEE_PUBLIC, DEPT_SALARY_STATS;
-```
-
----
-
-#### 4. Altering Views
-
-MySQL doesn't have `ALTER VIEW`, so you must `CREATE OR REPLACE`:
-
-```sql
--- Replace existing view
-CREATE OR REPLACE VIEW EMPLOYEE_PUBLIC AS
-SELECT emp_id, name, dept_id, hire_date, salary  -- Added salary
-FROM EMPLOYEE;
-```
-
----
-
-### View Performance Considerations
-
-#### How Views Work Internally
-
-**When you query a view:**
-
-```sql
-SELECT * FROM EMPLOYEE_DEPT_INFO WHERE dept_name = 'Engineering';
-```
-
-**MySQL internally rewrites it as:**
-
-```sql
-SELECT 
-    e.emp_id,
-    e.name AS employee_name,
-    e.salary,
-    d.dept_name,
-    d.location
-FROM EMPLOYEE e
-JOIN DEPARTMENT d ON e.dept_id = d.dept_id
-WHERE d.dept_name = 'Engineering';  -- Condition pushed down
-```
-
-**Key Points:**
-- View definition is **substituted** into the query
-- No intermediate result stored (unless materialized)
-- Conditions are **pushed down** to base tables for efficiency
-
----
-
-### View Materialization
-
-Some complex views benefit from **materialization** (storing results).
-
-**Standard View (Virtual):**
-```sql
-CREATE VIEW COMPLEX_REPORT AS
-SELECT ...
-FROM table1 t1
-JOIN table2 t2 ON ...
-JOIN table3 t3 ON ...
-WHERE ...;
-```
-
-**Problem:** Query runs every time you access the view (slow for complex queries)
-
-**Solution:** Materialized View (covered later in this guide)
-
----
-
-### Practical View Examples
-
-#### Example 6: Customer Loan Summary
-
-```sql
--- Create comprehensive customer view
-CREATE VIEW CUSTOMER_LOAN_SUMMARY AS
-SELECT 
-    c.customer_id,
-    c.customer_name,
-    c.city,
-    c.credit_score,
-    COUNT(l.loan_number) AS num_loans,
-    COALESCE(SUM(l.amount), 0) AS total_loan_amount
-FROM CUSTOMER c
-LEFT JOIN BORROWER b ON c.customer_id = b.customer_id
-LEFT JOIN LOAN l ON b.loan_number = l.loan_number
-GROUP BY c.customer_id, c.customer_name, c.city, c.credit_score;
-
--- Query the view
-SELECT * FROM CUSTOMER_LOAN_SUMMARY
-WHERE total_loan_amount > 50000;
-```
-
-**Result:**
-```
-┌─────────────┬──────────��──────┬─────────┬──────────────┬───────────┬───────────────────┐
-│ customer_id │ customer_name   │ city    │ credit_score │ num_loans │ total_loan_amount │
-├─────────────┼─────────────────┼─────────┼──────────────┼───────────┼───────────────────┤
-│ 202         │ Sarah Williams  │ Boston  │ 680          │ 1         │ 100000            │
-│ 203         │ David Miller    │ Chicago │ 750          │ 1         │ 75000             │
-└─────────────┴─────────────────┴─────────┴──────────────┴───────────┴───────────────────┘
-```
-
----
-
-#### Example 7: View on View (Nested Views)
-
-```sql
--- First-level view
-CREATE VIEW HIGH_SALARY_EMPLOYEES AS
-SELECT emp_id, name, salary, dept_id
-FROM EMPLOYEE
-WHERE salary > 70000;
-
--- Second-level view (based on first view)
-CREATE VIEW HIGH_SALARY_ENGINEERING AS
-SELECT hse.emp_id, hse.name, hse.salary, d.dept_name
-FROM HIGH_SALARY_EMPLOYEES hse
-JOIN DEPARTMENT d ON hse.dept_id = d.dept_id
-WHERE d.dept_name = 'Engineering';
-
--- Query nested view
-SELECT * FROM HIGH_SALARY_ENGINEERING;
-```
-
-**Result:**
-```
-┌────────┬──────────���────┬────────┬─────────────┐
-│ emp_id │ name          │ salary │ dept_name   │
-├────────┼───────────────┼────────┼─────────────┤
-│ 101    │ John Smith    │ 75000  │ Engineering │
-│ 105    │ Charlie Davis │ 95000  │ Engineering │
-└────────┴───────────────┴────────┴─────────────┘
-```
-
----
-
-### View Metadata
-
-Check existing views:
-
-```sql
--- Show all views in database
-SHOW FULL TABLES WHERE Table_type = 'VIEW';
-
--- Show view definition
-SHOW CREATE VIEW EMPLOYEE_PUBLIC;
-
--- Query information schema
-SELECT 
-    TABLE_NAME,
-    VIEW_DEFINITION
-FROM INFORMATION_SCHEMA.VIEWS
-WHERE TABLE_SCHEMA = 'your_database_name';
-```
-
----
-
-## 2. Assertions {#assertions}
+## 2. Assertions
 
 ### What is an Assertion?
 
@@ -7829,7 +6473,7 @@ CHECK (predicate);
 DROP ASSERTION assertion_name;
 ```
 
-**⚠️ IMPORTANT:** MySQL **does NOT support assertions** natively. However, we can achieve similar functionality using:
+**IMPORTANT:** MySQL **does NOT support assertions** natively. However, we can achieve similar functionality using:
 1. **CHECK constraints** (MySQL 8.0.16+)
 2. **Triggers**
 3. **Stored procedures**
@@ -8916,6 +7560,1059 @@ SELECT * FROM STUDENT_TRANSCRIPT WHERE student_id = 1001;
 4. ✓ Combine with compression
 5. ✓ Monitor update performance
 
+
+# Database Internals
+
+![[11 Storage and Indexing.pdf]]
+
+## 1. The Hierarchy of Data: From Bits to Tables
+
+Before looking at hardware, we must understand how data is bundled. Think of this like a Russian nesting doll.
+
+- **Field (Attribute):** The smallest unit. A single value (e.g., `Price: 19.99`). Corresponds to a **Column**.
+    
+- **Record (Tuple):** A collection of fields describing one entity. Corresponds to a **Row**.
+    
+    - _Fixed-Length:_ Every field has a set size. Finding the $i^{th}$ field is easy math: $Offset = \sum Sizes$.
+        
+    - _Variable-Length:_ Uses an array of "field offsets" at the start of the record to tell the DB where each field begins.
+        
+- **Page (Block):** The fundamental unit of I/O. Databases don't read one row; they read a **Page** (usually 16KB).
+    
+- **Extent:** A group of contiguous pages (usually 64). Used to keep related data physically close to minimize disk arm movement.
+    
+- **File:** A collection of pages making up a Table or an Index.
+    
+
+## 2. Physical Storage: The "Hard" in Hardware
+
+DBMS performance is dictated by the physical limitations of the disk.
+
+### Disk Anatomy & Performance
+
+- **Platter:** The physical disk spinning at high speeds.
+    
+- **Spindle:** The axis that holds the platters.
+    
+- **Read-Write Head:** The "needle" that reads data.
+    
+- **Track:** A ring on the platter.
+    
+- **Cylinder:** The set of tracks at a given arm position across all platters.
+    
+
+### The Math of Waiting (Disk Access Metrics)
+
+1. **Seek Time (1–20ms):** Moving the arm to the correct track. **(Dominant Cost)**.
+    
+2. **Rotational Delay (0–10ms):** Waiting for the disk to spin to the right block.
+    
+3. **Transfer Time (~1ms per 4KB):** Moving data to RAM.
+    
+
+**💡 The Trend:** Disk capacity grows 50% yearly, but access speed (Seek/Rotate) stays almost flat. This is why software optimization (Indexing) is mandatory.
+
+## 3. Buffer Management: The "Waiting Room"
+
+The **Buffer Manager** allocates RAM to hold pages. It acts as a middleman between the disk and the query engine.
+
+### Why not use the Operating System (OS)?
+
+OS memory management is generic. A DBMS knows _more_ about the data:
+
+- **Prefetching:** If you are scanning a table, the DBMS knows you'll need Page 2 after Page 1 and can load it ahead of time.
+    
+- **Force-Writing:** For security/logging (WAL), the DBMS must ensure data is _actually_ on disk, which OS caches might delay.
+    
+
+### Buffer Replacement Policies
+
+When RAM is full, which page gets kicked out?
+
+- **LRU (Least Recently Used):** Kick out the page untouched for the longest time.
+    
+- **MRU (Most Recently Used):** Kicked out the page used _last_. (Best for "Big Scans" where you won't repeat the read soon).
+    
+- **Clock:** Uses a "use bit." If a page is hit, bit=1. The "hand" moves; if bit=1, it sets it to 0 and moves on. if bit=0, it evicts.
+    
+- **Dirty Pages:** If a page was modified, it must be written to disk before being evicted.
+    
+- **Pinning:** Prevents a page from being evicted while a transaction is active.
+    
+
+## 4. File and Record Organization
+
+How are records packed into a Page?
+
+### Page Formats for Fixed-Length Records
+
+1. **Packed:** Records are stored side-by-side. Deleting a record requires moving all subsequent records up to fill the hole.
+    
+2. **Unpacked (Bitmap):** A header tracks which "slots" are full or empty using bits (1 or 0). Deletion just flips a bit.
+    
+
+### File Organization Types
+
+- **Heap:** Records are placed anywhere there is space. No order. Search = $O(N)$.
+    
+- **Sequential:** Records are stored in a specific order. Great for ranges, but $O(N)$ for insertions because you have to "shift" data.
+    
+- **Hashing:** A hash function determines the "Bucket." Search = $O(1)$ ideally.
+    
+- **Clustering:** Storing records from _different_ tables (e.g., Orders and OrderItems) in the same physical file to minimize I/O for Joins.
+    
+
+## 5. Indexing: The "Library Catalog"
+
+An index is an "Access Path" to data.
+
+### Alternatives for Data Entries ($k^*$)
+
+- **Alternative 1:** The index entry _is_ the data record. (Clustered Index).
+    
+- **Alternative 2:** Entry is `<Key, RID>` (Record ID).
+    
+- **Alternative 3:** Entry is `<Key, List of RIDs>`.
+    
+
+### Index Classifications
+
+- **Primary vs. Secondary:** Primary indexes use the Primary Key. Secondary indexes use any other field.
+    
+- **Clustered vs. Unclustered:** * **Clustered:** Data is stored in the same order as the index. (Fastest).
+    
+    - **Unclustered:** Index is sorted, but data is scattered. Requires one "Seek" per row found.
+        
+- **Sparse vs. Dense:** * **Dense:** Every record has an entry in the index.
+    
+    - **Sparse:** Only one entry per _page_ of the data file. (Saves space).
+        
+- **Bitmap Index:** Uses a string of bits (001010) to represent values (e.g., "Color: Blue"). Extremely fast for complex `AND/OR` queries.
+    
+
+## 6. MySQL Implementation & SQL Commands
+
+```
+-- Create a table with a Primary Key (Clustered Index in InnoDB)
+CREATE TABLE Products (
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    category_id INT,
+    price DECIMAL(10,2)
+);
+
+-- Create a Unique Index (Prevents duplicate barcodes)
+CREATE UNIQUE INDEX idx_barcode ON Products(barcode);
+
+-- Create a Composite Index (Order: Category then Price)
+-- Optimizes: WHERE category_id = 5 AND price < 100
+CREATE INDEX idx_cat_price ON Products(category_id, price);
+
+-- Drop an index to save write performance
+DROP INDEX idx_name ON Products;
+```
+
+## 7. Optimization Tricks & Tips
+
+1. **The Fill Factor:** Leave ~10-20% of your pages empty. This allows for new record inserts without causing "Page Splits" (where the DB has to reorganize the disk).
+    
+2. **Index Selectivity:** Don't index a column like `is_active` (Boolean). If the index doesn't filter out at least 80-90% of the table, the DBMS will ignore it and just scan the whole file.
+    
+3. **Covering Index:** Try to include all columns from a `SELECT` in your index.
+    
+    - _Bad:_ `SELECT name FROM Users WHERE id = 1` (Hits Index, then hits Data File).
+        
+    - _Good:_ Create index on `(id, name)`. (Hits Index only).
+        
+4. **Avoid Functions on Indexed Columns:** `WHERE YEAR(created_at) = 2023` will **not** use an index on `created_at`. Use `WHERE created_at >= '2023-01-01'` instead.
+    
+5. **Sequential UUIDs:** If using UUIDs as Primary Keys, use "ordered" UUIDs. Random UUIDs cause massive fragmentation and slow down every insert.
+    
+
+## Visual Summary: Performance Comparison
+
+|                    |               |                     |               |                     |
+| ------------------ | ------------- | ------------------- | ------------- | ------------------- |
+| **Operation**      | **Heap File** | **Sequential File** | **Hash File** | **Clustered Index** |
+| **Insert**         | $O(1)$        | $O(N)$              | $O(1)$        | $O(\log N)$         |
+| **Search (Exact)** | $O(N)$        | $O(\log N)$         | $O(1)$        | $O(\log N)$         |
+| **Search (Range)** | $O(N)$        | $O(\log N)$         | $O(N)$        | $O(\log N)$         |
+| **Delete**         | $O(N)$        | $O(N)$              | $O(1)$        | $O(\log N)$         |
+
+# Normalization in DBMS
+I'll teach you all of this systematically with real MySQL examples. Let me break it down into digestible sections.
+
 ---
 
-**End of Complete Guide**
+## **Part 1: Functional Dependencies (FDs) - The Foundation**
+
+### **What is a Functional Dependency?**
+
+A **Functional Dependency** is a constraint that says: *If you know the value of attribute X, you can always determine the value of attribute Y with 100% certainty.*
+
+**Notation:** `X → Y` (X determines Y)
+
+**Real example:**
+```
+Student (StudentID, Name, Email)
+```
+
+Here: `StudentID → Name` (knowing the StudentID tells you the Name)
+And: `StudentID → Email` (knowing the StudentID tells you the Email)
+
+But: `Name ↛ Email` (knowing a name doesn't uniquely tell you the email—multiple students could have the same name)
+
+### **Why does this matter?**
+
+When you violate FDs, you create **update anomalies**—situations where changing data causes problems.
+
+---
+
+### **Attribute Closure (X⁺) - Finding What You Can Determine**
+
+**Definition:** X⁺ is the set of ALL attributes that can be determined by knowing X.
+
+**Algorithm to calculate X⁺:**
+
+1. Start with X in your set
+2. Look at every FD rule
+3. If the left side is completely in your set, add the right side
+4. Repeat until nothing new is added
+
+**MySQL Example:**
+
+Suppose you have these FDs:
+- `StudentID → Name`
+- `StudentID → Email`
+- `Email → Department`
+
+**Calculate StudentID⁺:**
+
+```
+Step 1: Start = {StudentID}
+Step 2: StudentID → Name matches, add Name = {StudentID, Name}
+Step 3: StudentID → Email matches, add Email = {StudentID, Name, Email}
+Step 4: Email → Department matches, add Department = {StudentID, Name, Email, Department}
+Step 5: No more FDs match
+Result: StudentID⁺ = {StudentID, Name, Email, Department}
+```
+
+**Why this matters:** If StudentID⁺ includes ALL attributes in the table, then StudentID is a **Candidate Key** (a unique identifier).
+
+**Real MySQL example:**
+```sql
+-- Table: Student
+-- Attributes: StudentID, Name, Email, Department, Phone
+
+-- FDs:
+-- StudentID → Name, Email, Department, Phone
+-- Email → StudentID, Name, Department, Phone
+
+-- Calculate StudentID⁺
+-- Start: {StudentID}
+-- Apply StudentID → Name, Email, Department, Phone
+-- Result: {StudentID, Name, Email, Department, Phone}
+-- This is ALL attributes! So StudentID is a Candidate Key.
+```
+
+---
+
+### **Armstrong's Axioms - The Rules of Inference**
+
+These are formal rules to prove that an FD logically follows from other FDs.
+
+**1. Reflexivity:** If Y ⊆ X, then X → Y
+```
+If you know StudentID and Name, you can always determine StudentID.
+StudentID, Name → StudentID
+```
+
+**2. Augmentation:** If X → Y, then XZ → YZ
+```
+If StudentID → Name, then:
+StudentID, Email → Name, Email
+(Add the same attributes to both sides)
+```
+
+**3. Transitivity:** If X → Y and Y → Z, then X → Z
+```
+If StudentID → Email and Email → Department, then:
+StudentID → Department
+```
+
+**Secondary Rules (derived from the above):**
+
+**4. Union:** If X → Y and X → Z, then X → YZ
+```
+StudentID → Name AND StudentID → Email
+Therefore: StudentID → Name, Email
+```
+
+**5. Decomposition:** If X → YZ, then X → Y and X → Z
+```
+StudentID → Name, Email
+Therefore: StudentID → Name AND StudentID → Email
+```
+
+**6. Pseudotransitivity:** If X → Y and YZ → W, then XZ → W
+```
+StudentID → Email AND Email, Department → Phone
+Therefore: StudentID, Department → Phone
+```
+
+**Practical example - proving an FD:**
+
+```
+Given FDs:
+1. StudentID → Name
+2. StudentID → Email
+3. Email → Department
+
+Prove: StudentID → Department
+
+Proof:
+- From FD1: StudentID → Name (given)
+- From FD2: StudentID → Email (given)
+- From FD3: Email → Department (given)
+- Apply Transitivity on FD2 and FD3:
+  StudentID → Email AND Email → Department
+  Therefore: StudentID → Department ✓
+```
+
+---
+
+### **Minimal Cover (Canonical Cover)**
+
+A **Minimal Cover** is the "cleanest" version of your FD set—no redundancy, minimum complexity.
+
+**Steps to find it:**
+
+1. **Remove extraneous attributes from left sides**
+2. **Remove extraneous attributes from right sides**
+3. **Remove redundant FDs**
+
+**Example:**
+
+```
+Original FDs:
+1. StudentID, Name → Email
+2. StudentID → Email
+3. StudentID → Name
+
+Step 1 & 2: Are there extra attributes?
+FD1 has "Name" on the left but StudentID alone is enough (from FD2)
+So remove FD1 entirely
+
+Minimal Cover:
+- StudentID → Email
+- StudentID → Name
+(FD3 is kept because it's needed)
+```
+
+**Why minimal? Because:**
+- Easier to understand
+- Easier to enforce in database
+- Shows exactly what you need, nothing more
+
+---
+
+## **Part 2: Normalization & Normal Forms**
+
+Now that you understand FDs, let's use them to **clean up bad tables**.
+
+### **What are Anomalies?**
+
+When your table violates FD rules, you get three types of problems:
+
+**1. Update Anomaly:** Changing one thing requires changing multiple rows
+
+**2. Insertion Anomaly:** You can't insert data without redundancy
+
+**3. Deletion Anomaly:** Deleting one fact removes unrelated facts
+
+### **Example - A Badly Designed Table:**
+
+```sql
+CREATE TABLE StudentCourses (
+    StudentID INT,
+    Name VARCHAR(100),
+    Email VARCHAR(100),
+    CourseID INT,
+    CourseName VARCHAR(100),
+￼
+%
+￼
+of 41
+1
+L9 Storage &
+Indexing
+Storage and Indexing(courtesy : The University of Sydney)
+2
+L9 Storage &
+Indexing Disks and Files
+DBMS stores information on (“hard”) disks.
+This has major implications for DBMS design!
+READ: transfer data from disk to main memory (RAM).
+WRITE: transfer data from RAM to disk.
+Both are high-cost operations, relative to in-memory
+operations, so must be planned carefully!
+Indeed, overall performance is determined largely by the
+number of disk I/Os done
+3
+L9 Storage &
+Indexing Disks
+Secondary storage device of choice.
+Main advantage over tapes: random access vs.
+sequential.
+Data is stored and retrieved in units called disk
+blocks or pages.
+Unlike RAM, time to retrieve a disk page varies
+depending upon location on disk.
+Therefore, relative placement of pages on disk has real
+impact on DBMS performance!
+Trends: Disk capacity is growing rapidly, but
+access speed is not!
+4
+L9 Storage &
+Indexing Components of a Disk
+The platters spin (say,
+120rps).
+The arm assembly is moved
+in or out to position a head
+on a desired track. Tracks
+under heads make a
+cylinder (imaginary!).
+Only one head reads/writes
+at any one time.
+Block size is a multiple
+of sector size (which is
+fixed).
+block
+5
+L9 Storage &
+Indexing Accessing a Disk Page
+Time to access (read/write) a disk block:
+seek time (moving arms to position disk head on track)
+rotational delay (waiting for block to rotate under head)
+transfer time (actually moving data to/from disk surface)
+Seek time and rotational delay dominate.
+Seek time varies from about 1 to 20msec
+Rotational delay varies from 0 to 10msec
+Transfer rate is about 1msec per 4KB page
+Key to lower I/O cost: reduce seek/rotation
+delays! Hardware vs. software solutions?
+6
+L9 Storage &
+Indexing RAID
+Data Array: arrangement of several disks
+RAID: Redundant Arrays of Independent Disks
+Data striping + redundancy
+Data striping
+distribute data over several disks
+High capacity and high speed
+the more disk, the lower reliability
+Redundancy
+redundant information is maintained
+high reliability by storing data redundantly, so that data can be
+recovered even if a disk fails
+
+￼￼￼1. The Hierarchy of Data: From Bits to Tables
+
+Before looking at hardware, we must understand how data is bundled. Think of this like a Russian nesting doll.
+
+- ￼￼Field (Attribute):￼￼ The smallest unit. A single value (e.g., ￼￼Price: 19.99￼￼). Corresponds to a ￼￼Column￼￼.
+    
+￼- ￼￼Record (Tuple):￼￼ A collection of fields describing one entity. Corresponds to a ￼￼Row￼￼.
+    
+    - ￼￼Fixed-Length:￼￼ Every field has a set size. Finding the ￼￼ field is easy math: ￼￼.
+        
+    - ￼￼Variable-Length:￼￼ Uses an array of "field offsets" at the start of the record to tell the DB where each field begins.
+        
+- ￼￼Page (Block):￼￼ The fundamental unit of I/O. Databases don't read one row; they read a ￼￼Page￼￼ (usually 16KB).
+    
+- ￼￼Extent:￼￼ A group of contiguous pages (usually 64). Used to keep related data physically close to minimize disk arm movement.
+    
+- ￼￼File:￼￼ A collection of pages making up a Table or an Index.
+    
+
+￼￼￼2. Physical Storage: The "Hard" in Hardware
+
+DBMS performance is dictated by the physical limitations of the disk.
+
+￼￼￼Disk Anatomy & Performance
+
+- ￼￼Platter:￼￼ The physical disk spinning at high speeds.
+    
+- ￼￼Spindle:￼￼ The axis that holds the platters.
+    
+- ￼￼Read-Write Head:￼￼ The "needle" that reads data.
+    
+- ￼￼Track:￼￼ A ring on the platter.
+    
+- ￼￼Cylinder:￼￼ The set of tracks at a given arm position across all platters.
+    
+
+￼￼￼The Math of Waiting (Disk Access Metrics)
+
+1. ￼￼Seek Time (1–20ms):￼￼ Moving the arm to the correct track. ￼￼(Dominant Cost)￼￼.
+    
+2. ￼￼Rotational Delay (0–10ms):￼￼ Waiting for the disk to spin to the right block.
+    
+3. ￼￼Transfer Time (~1ms per 4KB):￼￼ Moving data to RAM.
+    
+
+￼￼💡 The Trend:￼￼ Disk capacity grows 50% yearly, but access speed (Seek/Rotate) stays almost flat. This is why software optimization (Indexing) is mandatory.
+
+￼￼￼3. Buffer Management: The "Waiting Room"
+
+The ￼￼Buffer Manager￼￼ allocates RAM to hold pages. It acts as a middleman between the disk and the query engine.
+
+￼￼￼Why not use the Operating System (OS)?
+
+OS memory management is generic. A DBMS knows ￼￼more￼￼ about the data:
+
+- ￼￼Prefetching:￼￼ If you are scanning a table, the DBMS knows you'll need Page 2 after Page 1 and can load it ahead of time.
+
+    Instructor VARCHAR(100),
+    PRIMARY KEY (StudentID, CourseID)
+);
+
+INSERT INTO StudentCourses VALUES
+(101, 'Alice', 'alice@uni.com', 'C001', 'Database', 'Dr. Smith'),
+(101, 'Alice', 'alice@uni.com', 'C002', 'Algorithms', 'Dr. Jones'),
+(102, 'Bob', 'bob@uni.com', 'C001', 'Database', 'Dr. Smith');
+```
+
+**Problems here:**
+- **Update Anomaly:** If Alice changes her email, you must update TWO rows
+- **Insertion Anomaly:** You can't add a new course (no StudentID) or a student without a course
+- **Deletion Anomaly:** If Alice drops all courses, you lose her email!
+
+---
+
+## **1NF (First Normal Form) - Atomic Values**
+
+**Rule:** Every attribute must contain only **atomic (indivisible) values**.
+
+**Bad (violates 1NF):**
+```sql
+CREATE TABLE Student_Bad (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Courses VARCHAR(255)  -- Contains 'Database, Algorithms, OS' (NOT atomic)
+);
+```
+
+**Good (1NF compliant):**
+```sql
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Enrollment (
+    StudentID INT,
+    CourseID INT,
+    PRIMARY KEY (StudentID, CourseID),
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID)
+);
+```
+
+**Why it matters:** Atomic values prevent awkward string parsing and enable proper relationships.
+
+---
+
+## **2NF (Second Normal Form) - No Partial Dependencies**
+
+**Rule:** Every non-key attribute must depend on the **ENTIRE primary key**, not just part of it.
+
+**Problem - Partial Dependency:**
+```sql
+CREATE TABLE StudentCourse_Bad (
+    StudentID INT,
+    CourseID INT,
+    Name VARCHAR(100),        -- Depends ONLY on StudentID (partial!)
+    CourseName VARCHAR(100),  -- Depends ONLY on CourseID (partial!)
+    Grade CHAR(1),            -- Depends on BOTH (OK)
+    PRIMARY KEY (StudentID, CourseID)
+);
+```
+
+Here:
+- `StudentID, CourseID → Name` ✓ But also `StudentID → Name` (partial!)
+- `StudentID, CourseID → CourseName` ✓ But also `CourseID → CourseName` (partial!)
+
+**Solution - Decompose into 3 tables:**
+
+```sql
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Course (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100)
+);
+
+CREATE TABLE Enrollment (
+    StudentID INT,
+    CourseID INT,
+    Grade CHAR(1),
+    PRIMARY KEY (StudentID, CourseID),
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+);
+```
+
+**Now:**
+- Each table has a single purpose
+- No partial dependencies
+- Changes to Name only affect Student table
+
+---
+
+## **3NF (Third Normal Form) - No Transitive Dependencies**
+
+**Rule:** No non-key attribute should depend on another non-key attribute.
+
+**Problem - Transitive Dependency:**
+```sql
+CREATE TABLE Student_Bad (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    DepartmentID INT,
+    DepartmentName VARCHAR(100)  -- Depends on DepartmentID (non-key!)
+);
+
+-- FDs:
+-- StudentID → Name ✓
+-- StudentID → DepartmentID ✓
+-- DepartmentID → DepartmentName ← TRANSITIVE DEPENDENCY
+-- Therefore: StudentID → DepartmentName (through DepartmentID)
+```
+
+**Anomalies:**
+- **Update:** Change department name? Update every student row
+- **Deletion:** Delete last student in a department? Lose department info
+
+**Solution - Decompose:**
+
+```sql
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    DepartmentID INT,
+    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID)
+);
+
+CREATE TABLE Department (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(100)
+);
+```
+
+**Now:** DepartmentName is only in the Department table. Changes are isolated.
+
+---
+
+## **BCNF (Boyce-Codd Normal Form) - The Strict Version**
+
+**Rule:** Every **determinant** (left side of an FD) must be a **Candidate Key**.
+
+This is stricter than 3NF.
+
+**Problem case (3NF OK, BCNF not):**
+
+```sql
+CREATE TABLE Professor_Advisor_Student (
+    StudentID INT,
+    Professor VARCHAR(100),
+    Advisor VARCHAR(100),
+    PRIMARY KEY (StudentID, Professor)
+);
+
+-- FDs:
+-- StudentID, Professor → Advisor
+-- Advisor → Professor (each advisor teaches only one subject)
+-- But Advisor is NOT a Candidate Key!
+```
+
+**Issue:** Advisor determines Professor, but Advisor isn't a key.
+
+**Solution:**
+
+```sql
+CREATE TABLE StudentProfessor (
+    StudentID INT,
+    Professor VARCHAR(100),
+    PRIMARY KEY (StudentID, Professor)
+);
+
+CREATE TABLE ProfessorAdvisor (
+    Advisor VARCHAR(100) PRIMARY KEY,
+    Professor VARCHAR(100)
+);
+```
+
+**Rule of thumb:** If 3NF, check every FD's left side. If it's not a candidate key, decompose further for BCNF.
+
+---
+
+## **4NF (Fourth Normal Form) - Multivalued Dependencies**
+
+**New concept: Multivalued Dependency (MVD)**
+
+`X ⇶ Y` means: *X independently determines multiple values of Y*
+
+**Typical scenario:** A table storing two independent many-to-many relationships.
+
+**Problem:**
+
+```sql
+CREATE TABLE TeacherSubjectBook (
+    Teacher VARCHAR(100),
+    Subject VARCHAR(100),
+    Book VARCHAR(100),
+    PRIMARY KEY (Teacher, Subject, Book)
+);
+
+-- Data:
+-- Alice | Math    | Book1
+-- Alice | Math    | Book2
+-- Alice | Science | Book1
+-- Alice | Science | Book2
+
+-- MVD: Teacher ⇶ Subject (Teacher determines multiple subjects)
+-- MVD: Teacher ⇶ Book (Teacher determines multiple books)
+-- Problem: These are INDEPENDENT, causing redundancy
+```
+
+If Alice teaches both Math and Science, and uses both Book1 and Book2, we need ALL combinations (2×2=4 rows).
+
+**Solution - Decompose by MVD:**
+
+```sql
+CREATE TABLE TeacherSubject (
+    Teacher VARCHAR(100),
+    Subject VARCHAR(100),
+    PRIMARY KEY (Teacher, Subject)
+);
+
+CREATE TABLE TeacherBook (
+    Teacher VARCHAR(100),
+    Book VARCHAR(100),
+    PRIMARY KEY (Teacher, Book)
+);
+```
+
+**Now:** Independent relationships are separate. No redundancy.
+
+---
+
+## **5NF (Projection-Join NF) - Join Dependencies**
+
+**Concept:** Sometimes you need to split a table into 3+ pieces to reconstruct it losslessly.
+
+**Problem case (rare in practice):**
+
+```sql
+CREATE TABLE Project (
+    Supplier VARCHAR(100),
+    Part VARCHAR(100),
+    Project VARCHAR(100),
+    PRIMARY KEY (Supplier, Part, Project)
+);
+
+-- A supplier supplies a part
+-- A part is used in a project
+-- A supplier works on a project
+-- But these three facts are independent
+
+-- You need the Supplier supplies the Part AND
+-- Part is used in Project AND
+-- Supplier works on Project
+```
+
+**Solution:**
+
+```sql
+CREATE TABLE SupplierPart (
+    Supplier VARCHAR(100),
+    Part VARCHAR(100),
+    PRIMARY KEY (Supplier, Part)
+);
+
+CREATE TABLE PartProject (
+    Part VARCHAR(100),
+    Project VARCHAR(100),
+    PRIMARY KEY (Part, Project)
+);
+
+CREATE TABLE SupplierProject (
+    Supplier VARCHAR(100),
+    Project VARCHAR(100),
+    PRIMARY KEY (Supplier, Project)
+);
+```
+
+**When you need to know all three facts, you JOIN these three tables.**
+
+---
+
+## **Part 3: Schema Decomposition Properties**
+
+When you split a table, two critical properties matter:
+
+### **1. Lossless Join Property**
+
+**Definition:** When you decompose a table and rejoin the pieces, you get EXACTLY the original data back (no extra rows, no lost rows).
+
+**Example - Lossy Decomposition (BAD):**
+
+```
+Original Table:
+StudentID | Name  | Department
+101       | Alice | Math
+102       | Bob   | CS
+
+Split into:
+Table A:
+StudentID | Name
+101       | Alice
+102       | Bob
+
+Table B:
+StudentID | Department
+101       | Math
+102       | CS
+
+JOIN A and B:
+StudentID | Name  | Department
+101       | Alice | Math
+102       | Bob   | CS
+✓ Same data! LOSSLESS
+
+But what if we did:
+Table A:
+Name      | Department
+Alice     | Math
+Bob       | CS
+
+Table B:
+StudentID | Name
+101       | Alice
+102       | Bob
+
+JOIN A and B:
+StudentID | Name  | Department
+101       | Alice | Math
+101       | Alice | CS      ← WRONG! (phantom data)
+102       | Bob   | Math    ← WRONG! (phantom data)
+102       | Bob   | CS
+✗ Extra rows! LOSSY
+```
+
+**How to test: The Matrix Method (Algorithm 15.2)**
+
+This is a formal algorithm to verify losslessness. Here's the simplified version:
+
+1. Create a matrix with attributes as columns, decomposed tables as rows
+2. Fill with symbols based on attribute presence
+3. Apply FD rules to unify symbols
+4. If any row becomes all identical symbols, it's lossless
+
+**Practical check:** Use the **Lossless Decomposition Rule**:
+
+For decomposition into R1 and R2:
+- `(R1 ∩ R2) → R1` OR `(R1 ∩ R2) → R2` must be true
+
+**Example:**
+
+```
+Original: Student(StudentID, Name, Email, DepartmentID, DepartmentName)
+FD: DepartmentID → DepartmentName
+
+Decompose into:
+R1 = Student(StudentID, Name, Email, DepartmentID)
+R2 = Department(DepartmentID, DepartmentName)
+
+Check: (R1 ∩ R2) = {DepartmentID}
+Does DepartmentID → R1? No
+Does DepartmentID → R2? YES! (DepartmentID → DepartmentName)
+Therefore: LOSSLESS ✓
+```
+
+---
+
+### **2. Dependency Preservation**
+
+**Definition:** All original FDs can still be enforced without joining tables.
+
+**Example - Lost Dependency (BAD):**
+
+```sql
+Original FDs:
+1. StudentID → Name
+2. StudentID → Email
+3. Email → Department
+
+Decompose into:
+R1 = Student(StudentID, Name, Email)
+R2 = Department(Email, Department)
+
+Can we enforce:
+1. StudentID → Name? YES (in R1)
+2. StudentID → Email? YES (in R1)
+3. Email → Department? YES (in R2)
+
+Result: DEPENDENCY PRESERVED ✓
+
+But if we decomposed as:
+R1 = Student(StudentID, Name)
+R2 = Course(Email, Department)
+
+Can we enforce Email → Department? YES (in R2)
+But we LOST the connection between StudentID and Email!
+
+Result: DEPENDENCY LOST ✗
+```
+
+---
+
+## **Complete MySQL Example - From Bad to 3NF**
+
+Let's normalize a real-world example from start to finish.
+
+### **Step 0: Bad Table (0NF)**
+
+```sql
+CREATE TABLE StudentCourses_0NF (
+    StudentID INT,
+    Name VARCHAR(100),
+    Courses VARCHAR(255),  -- Multiple courses as comma-separated string
+    PRIMARY KEY (StudentID)
+);
+
+INSERT INTO StudentCourses_0NF VALUES
+(101, 'Alice', 'Database, Algorithms, OS'),
+(102, 'Bob', 'Database, Web Dev');
+```
+
+**Problems:**
+- Courses attribute is not atomic
+- Can't query individual courses
+- Can't add course without student
+
+### **Step 1: Fix to 1NF**
+
+```sql
+CREATE TABLE Student_1NF (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Enrollment_1NF (
+    StudentID INT,
+    CourseID INT,
+    CourseName VARCHAR(100),
+    Instructor VARCHAR(100),
+    PRIMARY KEY (StudentID, CourseID)
+);
+
+INSERT INTO Student_1NF VALUES
+(101, 'Alice'),
+(102, 'Bob');
+
+INSERT INTO Enrollment_1NF VALUES
+(101, 1, 'Database', 'Dr. Smith'),
+(101, 2, 'Algorithms', 'Dr. Jones'),
+(101, 3, 'OS', 'Dr. Lee'),
+(102, 1, 'Database', 'Dr. Smith'),
+(102, 4, 'Web Dev', 'Dr. Brown');
+```
+
+**Remaining problems:**
+- CourseName and Instructor depend ONLY on CourseID (partial dependency)
+- If Dr. Smith changes, must update multiple rows
+
+### **Step 2: Fix to 2NF**
+
+```sql
+CREATE TABLE Student_2NF (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Course_2NF (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100),
+    Instructor VARCHAR(100)
+);
+
+CREATE TABLE Enrollment_2NF (
+    StudentID INT,
+    CourseID INT,
+    PRIMARY KEY (StudentID, CourseID),
+    FOREIGN KEY (StudentID) REFERENCES Student_2NF(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Course_2NF(CourseID)
+);
+```
+
+**Remaining problem:**
+- Instructor depends on CourseID, but what if we want to track multiple instructors?
+
+### **Step 3: Fix to 3NF**
+
+```sql
+CREATE TABLE Student_3NF (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100)
+);
+
+CREATE TABLE Instructor_3NF (
+    InstructorID INT PRIMARY KEY,
+    InstructorName VARCHAR(100)
+);
+
+CREATE TABLE Course_3NF (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100),
+    InstructorID INT,
+    FOREIGN KEY (InstructorID) REFERENCES Instructor_3NF(InstructorID)
+);
+
+CREATE TABLE Enrollment_3NF (
+    StudentID INT,
+    CourseID INT,
+    PRIMARY KEY (StudentID, CourseID),
+    FOREIGN KEY (StudentID) REFERENCES Student_3NF(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Course_3NF(CourseID)
+);
+
+-- Queries now:
+INSERT INTO Student_3NF VALUES (101, 'Alice');
+INSERT INTO Instructor_3NF VALUES (1, 'Dr. Smith');
+INSERT INTO Course_3NF VALUES (1, 'Database', 1);
+INSERT INTO Enrollment_3NF VALUES (101, 1);
+
+-- Update Instructor name—only one place!
+UPDATE Instructor_3NF SET InstructorName = 'Dr. Smith Jr.' WHERE InstructorID = 1;
+
+-- Query: Get all courses Alice takes
+SELECT c.CourseName, i.InstructorName
+FROM Enrollment_3NF e
+JOIN Course_3NF c ON e.CourseID = c.CourseID
+JOIN Instructor_3NF i ON c.InstructorID = i.InstructorID
+WHERE e.StudentID = 101;
+```
+
+---
+
+## **Quick Reference: Check if a Table is in 3NF**
+
+For each FD `X → Y` in the table:
+
+1. **Is X a Candidate Key?** → YES = OK
+2. **Is Y a Prime Attribute** (part of any candidate key)? → YES = OK
+3. **Otherwise** → VIOLATES 3NF, decompose

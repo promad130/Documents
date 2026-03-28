@@ -9,6 +9,18 @@ ALTER TABLE students MODIFY percentage DECIMAL(10,2);
 
 Changes `percentage` from `DECIMAL(5,2)` to `DECIMAL(10,2)`.
 
+```mysql
+ALTER TABLE table_name
+MODIFY column_name INT AUTO_INCREMENT;
+```
+
+**Breaking it down:**
+
+- `ALTER TABLE` = Modify existing table
+- `table_name` = Which table to modify
+- `MODIFY` = Change a column's properties
+- `column_name INT AUTO_INCREMENT` = Make this column auto-increment
+
 #### 2. RENAME – Rename the Table
 
 Gives the table a new name.

@@ -120,7 +120,20 @@ Unity's message system checks at runtime whether a script contains specific meth
 If the method exists, Unity adds it to internal lists and calls it at the appropriate time.
 
 ### `start()`
-Runs at the start of the unity in the Play Mode
+
+The `Start` method is called **only once** in the lifetime of a script instance. It is triggered when:
+
+1. The GameObject is **Active**.
+    
+2. The Script (Component) is **Enabled**.
+    
+3. The frame starts, but **before** the first `Update` call.    
+
+**It is not necessarily at the start of the game.** If you instantiate a prefab or activate a GameObject halfway through your game, its `Start` method will run at that moment (specifically, right before its first frame update).
+
+once a script has called its `Start` or `Awake` methods, they are "checked off" the list for that specific instance. Flipping the GameObject from inactive to active (or toggling the checkbox on the script) will **not** make them run a second time.
+
+If you need code to run every single time an object is toggled back on, you’ll want to use `OnEnable()`.
 
 ### `update()`
 Gets executed at the start of each frame. 
@@ -469,6 +482,66 @@ gameObject.SetActive(true);
 - Triggers **`OnEnable()`** on all attached MonoBehaviour scripts (if this changes `activeInHierarchy`)
 
 # Component
+
+## `this` keyword
+In Unity, the `this` keyword refers to the **Script instance itself**. While you can use it, it’s usually optional unless you are trying to resolve a naming conflict (like if a function parameter has the same name as a class variable).
+
+In C#, any property or method belonging to the class you are currently writing in can be accessed without the `this.` prefix. Because your script inherits from `MonoBehaviour`, it automatically "owns" certain properties like `gameObject`, `transform`, and `enabled`.
+
+---
+
+### When to use (or skip) the `this` keyword
+
+#### 1. The "Shortcut" Properties
+
+Unity provides built-in shortcuts for the most common things. You can use these directly anywhere in your script:
+
+- **`gameObject`**: The GameObject this script is attached to.
+    
+- **`transform`**: The Transform component of that GameObject.
+    
+- **`name`**: The name of the GameObject.
+    
+
+#### 2. When `this` is actually required (Disambiguation)
+
+The only time you **must** use `this` is when a local variable (like a function parameter) has the same name as a class variable. This tells the computer, "I mean the one belonging to the class, not the one I just passed into the function."
+
+```C#
+public class Player : MonoBehaviour {
+    int health;
+
+    public void SetHealth(int health) {
+        // 'health' refers to the parameter above.
+        // 'this.health' refers to the variable at the top of the script.
+        this.health = health; 
+    }
+}
+```
+
+#### 3. Accessing Components
+
+As you noticed, you can call `GetComponent<T>()` directly. Internally, the computer understands this as `this.GetComponent<T>()`.
+
+
+### The Hierarchy of Access
+
+It helps to visualize what you are actually touching when you type these words:
+
+|**Code**|**What it refers to**|
+|---|---|
+|**`this`**|The specific **C# Script** (e.g., "PlayerMovement.cs").|
+|**`gameObject`**|The **Entity** in the Hierarchy that holds the script.|
+|**`transform`**|The **Position/Rotation/Scale** component of that entity.|
+|**`this.enabled`**|Whether the **Script** is checked "on" or "off".|
+|**`gameObject.SetActive()`**|Whether the **Entire Object** is "on" or "off".|
+
+
+### A Note on Modern Unity (Performance)
+
+In very old versions of Unity (years ago), using `this.transform` was slightly faster than `gameObject.GetComponent<Transform>()`. However, in modern Unity, `transform` and `gameObject` are highly optimized properties. You don't need to worry about performance differences between `this.gameObject` and `gameObject`—**it is purely a matter of your personal coding style.**
+
+Most Unity developers omit `this.` to keep the code cleaner and easier to read.
 
 ## Attributes in Component
 ### `gameObject` - reference to the GameObject this component is attached to

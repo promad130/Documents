@@ -2,7 +2,7 @@
 ***(Follow along [[Introduction to assembly]])***
 ## Microprocessor-Based Computer System
 
-A **microprocessor-based computer system** is a digital system where the microprocessor acts as the central processing unit (CPU) that executes instructions, performs arithmetic/logic operations, and controls data flow between memory and I/O devices. Think of the microprocessor as the brain—it fetches instructions from memory, decodes what they mean, executes them, and manages communication with all other components through buses.[^1]
+A **microprocessor-based computer system** is a digital system where the microprocessor acts as the central processing unit (CPU) that executes instructions, performs arithmetic/logic operations, and controls data flow between memory and I/O devices. Think of the microprocessor as the brain—it fetches instructions from memory, decodes what they mean, executes them, and manages communication with all other components through buses.
 
 The system consists of three main components:
 
@@ -227,7 +227,6 @@ $$MaxAddress = \mathbf{1,114,095}$$
 **5. Conclusion**
 
 The math generates a number that is **65,519 bytes larger** than 1 MB.
-
 In Hexadecimal, the maximum address is **10FFEFh**.
 
 - $100000h$ is the start of the 2nd Megabyte.
@@ -242,11 +241,10 @@ This is a famous historical quirk!
 - **On the original 8086:** It only had 20 address lines. It physically could not handle bit #21 (the '1' at the front of `10FFEF`). The CPU simply ignored it, and the address **wrapped around** to zero. (e.g., `10FFEF` became `0FFEF`).
     
 - **On newer CPUs (80286+):** They had more address lines. This extra ~64KB is called the **High Memory Area (HMA)**. Operating systems like MS-DOS used special tricks to turn on "Line A20" to access this bonus memory to store drivers!
-    
 
 ### 8086 Architecture: Two-Unit Design
 
-The 8086 is divided into two independent units that work in parallel:[^1]
+The 8086 is divided into two independent units that work in parallel:
 
 **1. Execution Unit (EU):**
 
@@ -294,6 +292,7 @@ The 8086 uses **memory segmentation** because 16-bit registers can only address 
 
 - 16-bit register pointing to the *next instruction's offset* within the code segment
 - Works with CS: Next instruction address = (CS × 16) + IP
+- The 8086 instruction set is a **CISC** (Complex Instruction Set Computer) architecture where instructions vary in length from **1 to 6 bytes**. A 6-byte queue ensures that the Bus Interface Unit (BIU) can hold at least one complete "longest" instruction or several shorter ones.
 
 ![[Pasted image 20260123205552.png]]
 
@@ -326,9 +325,7 @@ The Overflow Flag (OF) uses a specific logic gate called an **XOR (Exclusive OR)
 Internally, the Arithmetic Logic Unit (ALU) looks at two specific carry signals:
 
 1. **Carry-In ($C_{in}$):** The carry coming into the MSB (Sign Bit).
-    
 2. **Carry-Out ($C_{out}$):** The carry going out of the MSB into nothingness.
-    
 
 **The Formula:** `OF = (Carry-In to MSB) XOR (Carry-Out from MSB)`
 
@@ -350,7 +347,7 @@ Let's see how this logic "catches" your $10 - 200$ scenario.
 In 8-bit, $10 - 200$ is treated as $10 + (-200)$.
 
 - Binary 10: `0000 1010`
-- Binary -200: `0011 1000` (The "impossible" bit pattern)
+- Binary -200: `0011 1000` (The "impossible" bit pattern, it is the two's complement of binary number `1100 1000`)
 
 **The Math at the MSB (Bit 7):**
 
@@ -744,6 +741,9 @@ So a typical memory/register instruction looks like:
 - Byte 1: opcode + control bits (D, W). 
 - Byte 2: MOD‑REG‑R/M. 
 - Extra bytes: displacement and/or immediate depending on addressing mode and instruction type. 
+
+Now, keep this in mind:
+- The 8086 instruction set is a **CISC** (Complex Instruction Set Computer) architecture where instructions vary in length from **1 to 6 bytes**. A 6-byte queue ensures that the Bus Interface Unit (BIU) can hold at least one complete "longest" instruction or several shorter ones.
 
 ![[Pasted image 20260128011143.png]]
 
@@ -1422,7 +1422,6 @@ They are the modes in which the CPU works in the x86 computer architecture.
     - **Cons:** Complex. You need permission for everything.
         
     - **Who uses it?** Windows, Linux, macOS, Android.
-        
 
 ---
 
@@ -1483,6 +1482,7 @@ You might ask: _"If Real Mode is so old and unsafe, why do we still learn it?"_
 [[Introduction to assembly#`INT24H` Command]]
 
 # Interfacing 
+**Interfacing in a microprocessor** refers to the process of connecting external devices—such as memory (RAM, ROM), input/output (I/O) peripherals (keyboard, display, sensors), and other components—to the microprocessor to enable effective communication and data exchange.
 
 ![[21 Lecture_1.pdf]]
 
@@ -1508,7 +1508,6 @@ To ensure the chip is installed correctly, DIPs have specific orientation marker
 2. **Pin 1:** When looking at the chip from the top with the notch facing up, Pin 1 is the top-left pin. The numbering then continues down the left side and back up the right side in a counter-clockwise direction.
 
 ## Multiplexing of Address and Data in AD (1 to 20) pins:
-
 
 Multiplexing in the 8086 and 8088 processors is a clever engineering "hack" to save on the physical pin count of the chip. Since a 40-pin **Dual Inline Package (DIP)** is relatively small, there aren't enough pins to give every address and data line its own dedicated spot.
 
@@ -1708,6 +1707,21 @@ When you flip that switch to Minimum Mode, these pins take on their "Min Mode" i
 |**30**|**HLDA**|**Hold Acknowledge:** The CPU says "Okay, I've stopped using the bus," in response to a HOLD request.|
 |**31**|**HOLD**|**Hold Request:** An external device (like a DMA controller) asks the CPU, "Can I borrow the bus for a second?"|
 
+ When the 8086 microprocessor is in **Maximum Mode** (switched by connecting the $MN/\overline{MX}$ pin to ground), pins 24 through 31 change their functions entirely to support multiprocessor configurations and co-processors (like the 8087).
+
+Here is the breakdown for the same pins in **Maximum Mode**:
+
+| Pin # | Name | Description |
+| :--- | :--- | :--- |
+| **24** | $QS_1$ | **Queue Status 1**: Works with $QS_0$ (Pin 25) to tell external devices (like a coprocessor) what the internal Instruction Queue is doing (e.g., "I just took an opcode byte," or "The queue is empty"). |
+| **25** | $QS_0$ | **Queue Status 0**: The partner to $QS_1$. Together, they provide the status code (00=No Op, 01=First Byte of Opcode, 10=Queue Empty, 11=Subsequent Byte). |
+| **26** | $\overline{S_0}$ | **Status 0**: Part of the 3-bit status bus ($\overline{S_0}, \overline{S_1}, \overline{S_2}$). These replace the single control signals (like $\overline{RD}$, $\overline{WR}$) and tell the **8288 Bus Controller** exactly what bus cycle is happening (e.g., Interrupt Acknowledge, I/O Read, Code Access). |
+| **27** | $\overline{S_1}$ | **Status 1**: The second bit of the bus status code. |
+| **28** | $\overline{S_2}$ | **Status 2**: The third bit of the bus status code. Together with $\overline{S_0}$ and $\overline{S_1}$, they define 8 distinct bus cycle types. |
+| **29** | $\overline{LOCK}$ | **Lock**: The "Do Not Disturb" sign. When this signal is active (Low), the CPU tells other bus masters that they cannot take control of the system bus. This is crucial for atomic instructions like `LOCK XCHG`. |
+| **30** | $\overline{RQ}/\overline{GT_1}$ | **Request/Grant 1**: A bidirectional line used for bus arbitration. Other processors use this to ask for the bus ("Request"), and the CPU uses the *same pin* to say "Go ahead" ("Grant"). This pin has **lower priority** than Pin 31. |
+| **31** | $\overline{RQ}/\overline{GT_0}$ | **Request/Grant 0**: Same function as Pin 30 (Request/Grant), but this pin has **higher priority**. If both pins receive a request simultaneously, the device on this pin wins the bus. |
+
 ---
 
 ### Layer 3: Visual & Diagrammatic Reinforcement
@@ -1797,15 +1811,11 @@ Here is the sequence of events that creates the 8086's heartbeat:
     
 4. **Pulse Shaping:** The circuit ensures the 5 MHz signal is high for one-third of each cycle, creating the **CLK** signal for the 8086.
     
-    +1
-    
 5. **Peripheral Clocking:** A second "Divide-by-2" stage takes the CLK and creates **PCLK** (2.5 MHz), which is a slower, 50% duty cycle clock for older, slower peripheral chips.
     
 6. **Synchronization:** Simultaneously, the 8284A monitors the **RES** (Reset) and **RDY** (Ready) pins to ensure that when you press "Reset," the signal is perfectly aligned with the clock so the CPU doesn't get confused.
-    
 
 ---
-
 ### Layer 5: Hardware Example & "Syntax"
 
 To build this, you follow these hardware "syntax" rules:
@@ -1816,10 +1826,7 @@ To build this, you follow these hardware "syntax" rules:
     
 - **Clock Connection:** `8284A Pin 8 (CLK) -> 8086 Pin 19 (CLK)`.
     
-    +1
-    
 - **Source Select:** `Pin 13 (F/C)` tied to **GND** to use the local crystal.
-    
 
 **RESTRICTIONS:**
 
@@ -1855,19 +1862,13 @@ How has this changed in the age of Intel Core i9s and AMD Ryzens?
     
 - **CLK Pin:** The main 33% duty cycle heartbeat.
     
-    +1
-    
 - **Modern Era:** Everything is now internal, using PLLs to multiply speed rather than external dividers to reduce it.
-    
 
 **Self-Test Questions:**
 
 1. If I want my 8086 to run at 10 MHz, what frequency crystal should I plug into the 8284A?
-    
 2. What is the duty cycle percentage required by the 8086 clock input?
-    
 3. Why did the 8284A provide a separate **PCLK** signal?
-    
 
 
 ## But how does CPU Uses this to start and fetch first instruction from the state of complete nothingness?
@@ -1888,16 +1889,11 @@ When you flip the power switch, the CPU is in a state of "amnesia." It doesn't k
 
 To get that first instruction, the CPU must perform a **Read Bus Cycle**. This requires four distinct heartbeats, which we call **T-States** (T1, T2, T3, and T4).
 
-+1
-
 1. **The Wake-Up Call (RESET):** When the `RESET` pin is held high for at least four clock cycles, the CPU's internal registers are cleared.
     
 2. **The Home Address:** The 8086/8088 always wakes up at memory location **FFFF0H**. This is known as the **Cold-Start Location**.
     
-    +1
-    
 3. **The Latch (ALE):** Because the CPU uses the same pins for both addresses and data, it needs a "postal worker" (the ALE signal) to tell the system, "Hey, I'm sending an address right now; catch it!".
-    
 
 ---
 
@@ -1907,23 +1903,13 @@ Imagine a timeline divided into four segments (T1 to T4).
 
 - **T1:** Address is sent out; **ALE** pulses high to "lock" the address into external hardware.
     
-    +1
-    
 - **T2:** The CPU stops sending the address and gets the data bus ready.
-    
-    +1
-    
+       
 - **T3:** The **$\overline{RD}$** (Read) signal goes low, telling memory to "Speak now!".
     
-    +1
-    
 - **T4:** The CPU "grabs" the data from the bus and brings it inside.
-    
-    +1
-    
 
 ---
-
 ### Layer 4: Step-by-Step Walkthrough
 
 Here is exactly what happens during the very first bus cycle:
@@ -1992,4 +1978,881 @@ Since this is a fixed hardware process, the "syntax" is in the wiring.
     
 3. _Because there are only 16 bytes left at the top of the 1MB memory map; there isn't enough room for a full program._
 
+---
+
+![[24 Lecture_4_new.pdf]]
+
+### Layer 1: Big Picture & Motivation (Why do we need this?)
+
+Imagine you are a world-class chef (the CPU) working in a tiny, incredibly fast food truck. You have thousands of ingredients (Memory) and several cooking stations (I/O devices). But here is the catch: your food truck only has **one small window** to pass orders out and bring ingredients in.
+
+Because you only have one window, you can't shout an order number (an **Address**) and receive the ingredients (the **Data**) at the exact same time through that same window. They would crash into each other! You have to do it in phases: first, you shout the address, then you wait a split second, and then the ingredients are passed through.
+
+In the microprocessor world, the 8086 is a 16-bit processor with a 20-bit address bus. To have separate pins for 20 Address lines and 16 Data lines, plus control signals, we'd need a massive, expensive chip. So, Intel engineers used **Multiplexing**—they made the pins share jobs! The pins $AD_0$ to $AD_{15}$ act as an Address bus for a fraction of a millionth of a second, and then magically transform into a Data bus.
+
+But memory chips aren't that smart; they get confused. We need external helper chips—**Latches, Buffers, and Decoders**—to organize this traffic.
+
+_Pause: Does this shared highway/window analogy make sense so far? if not then I suggest you check out [[#Multiplexing of Address and Data in AD (1 to 20) pins]]_
+
+---
+
+### Layer 2: Conceptual Breakdown
+
+Let’s divide our external helper hardware into three fundamental building blocks:
+
+#### 1. The Latch (e.g., 74LS373 or 8282)
+
+- **What it is:** A temporary memory storage unit. Inside, it’s made of "D-type flip-flops."
+    
+- **Analogy:** A photographer's camera.
+    
+- **How it works:** When the CPU puts an address on the shared $AD_0-AD_{15}$ pins, it simultaneously sends out a flash of light—a signal called **ALE (Address Latch Enable)**. The Latch sees this "flash," takes a snapshot of the address, and holds it steady on its output pins. Now, the CPU can safely change the $AD$ pins to handle Data, while the memory chip still reads the frozen Address from the Latch.
+	- Check out the diagram of the latch, it is made so that it can hold a byte of information
+    
+
+#### 2. The Transceiver / Buffer (e.g., 74LS245 or 8286)
+
+- **What it is:** An electrical amplifier and traffic director.
+    
+- **Analogy:** A megaphone and a two-way traffic cop.
+    
+- **How it works:** 
+	- A CPU’s electrical signals are mathematically perfect but electrically weak. If you connect a CPU directly to 10 memory chips, the signal drops (we call this a _fan-out_ limitation, check out [[21 Lecture_1.pdf#page=9]], it covers that topic). 
+	- A buffer amplifies the current. Furthermore, a _transceiver_ (transmitter-receiver) has a direction pin ($DT/\overline{R}$ in the 8086) that tells the traffic whether it is flowing _Out_ of the CPU (Write) or _In_ to the CPU (Read).
+    
+
+#### 3. The Decoder (e.g., 74LS138)
+
+- **What it is:** A chip that translates a binary code into a single, specific selection line.
+    
+- **Analogy:** A mail sorting machine.
+    
+- **How it works:** If you have 8 different memory chips, the CPU needs a way to say "I want to talk to Chip #3." The CPU sends a 3-bit binary code (e.g., `011` for 3) to the 74LS138 decoder. The decoder reads `011` and exclusively turns ON the wire connected to Chip #3, waking it up.
+    
+
+_Quick check in your own words: If I want to freeze a signal so it doesn't disappear, which of the three chips do I use? (Answer: The Latch!)_
+
+---
+
+### Layer 3: Visual & Diagrammatic Reinforcement
+
+Let's look at the **Bus Demultiplexing Block Diagram** (as seen in your Lecture 4 PDF):
+
+![[24 Lecture_4_new.pdf#page=12|fix]]
+_Notice the color coding in your mind: Red for control lines (`ALE`, `DT/R'`, `DEN'`), Blue for the mixed `AD` lines, and Green for the pure output lines._
+BB is Bi-Directional Buffer
+
+**ISSUES WITH THE DIAGRAM:**
+
+Looking at this 8086 CPU interfacing diagram, here are the inaccuracies compared to real-world implementations:
+
+#### Inaccuracies in the Diagram:
+
+1. **Incomplete Address Bus Multiplexing**
+   - The diagram shows A19-A0 directly from the CPU, but in real 8086 systems, A19-A8 are multiplexed with AD7-AD0 on the lower address/data bus during the first clock cycle. The diagram doesn't show this multiplexing clearly.
+
+2. **Missing Demultiplexer for Address/Data**
+   - Real 8086 systems require a demultiplexer (typically using latches with ALE signal) to separate the multiplexed address (AD0-AD7) from data during T1 state. This diagram oversimplifies this critical timing.
+
+3. **Oversimplified Latch Operation**
+   - The diagram shows latches but doesn't clearly indicate the ALE (Address Latch Enable) signal timing that controls when latches capture the address. In reality, ALE pulses during T1 to latch the lower address bits.
+
+4. **Buffer Control Logic Not Shown**
+   - The buffers should have directional control signals (typically from control unit) to determine read/write direction. The diagram shows generic "Buffer" boxes without clear control signal connections for direction and enable.
+
+5. **Missing Critical Control Signals**
+   - The diagram doesn't show how RD/WR signals control the bidirectional buffers, or how the status signals (S3-S7) are used for bus control and memory/IO selection.
+
+6. **Incomplete Bus Architecture**
+   - Real systems need separate latches for upper address (A19-A8) which are stable throughout the bus cycle. The diagram doesn't distinguish between multiplexed lower address and stable upper address.
+
+7. **Data Bus Separation Not Clear**
+   - In reality, data (D15-D0) should flow through bidirectional buffers with proper tri-state control. The diagram doesn't clearly show the separation and control of data path.
+
+8. **No Tri-State Control Detail**
+   - The actual enable/disable logic for buffers and latches (typically derived from control signals) isn't shown, making it unclear how bus contention is prevented.
+
+These are pedagogical simplifications common in textbook diagrams, but they omit critical timing and control details essential for actual system design.
+
+Roughly, it should be like this:
+![[Pasted image 20260314052945.png]]
+
+### **Latch 1 (Top - Status/Upper Address)**
+
+- **Inputs:** BHE/S₇, A₁₆/S₃, A₁₇/S₄, A₁₈/S₅, A₁₉/S₆
+- **Outputs:** BHE, A₁₆–A₁₉ (part of address bus)
+- **Purpose:** Latches the upper 4 address bits + BHE signal
+- ✅ **Uses 5 pins** (only needs 5 of the 8 available D inputs)
+
+**The remaining 3 D latch inputs are LEFT UNUSED/FLOATING** - they don't connect to anything.
+
+---
+
+### **Latch 2 (Middle)**
+
+- **Inputs:** AD₈–AD₁₅ (lower 8 bits of multiplexed bus)
+- **Outputs:** A₈–A₁₅ (address bus)
+- **Purpose:** Latches the middle address bits
+- ✅ **Uses all 8 D inputs**
+
+---
+
+### **Latch 3 (Bottom)**
+
+- **Inputs:** AD₀–AD₇ (lower 8 bits of multiplexed bus)
+- **Outputs:** D₀–D₇ (data bus)
+- **Purpose:** Latches lower address during T1, then acts as data bus buffer
+- ✅ **Uses all 8 D inputs**
+
+---
+
+### Layer 4: Step-by-Step Walkthrough (The Bus Cycle)
+
+In your lecture slides, there are timing diagrams for Read and Write operations. A standard 8086 bus cycle takes 4 clock periods, called $T_1, T_2, T_3, T_4$. Let's walk through a **Memory Write Operation**:
+
+1. **Step 1: $T_1$ (The Setup).** The CPU places the 20-bit destination address on the multiplexed pins. It simultaneously forces the **ALE** pin HIGH. The 74LS373 Latch captures the address. The CPU also sets $M/\overline{IO}$ to 1 (telling the world "I want Memory, not an I/O port").
+    
+2. **Step 2: $T_2$ (The Switch).** The CPU drops ALE to LOW. The address disappears from the CPU pins, but the _Latch_ is now holding it safely for the memory chip. The CPU switches the $AD$ pins to become a Data bus. It asserts the $\overline{DEN}$ (Data Enable) to turn on the buffers.
+    
+3. **Step 3: $T_3$ (The Transfer).** The CPU places the actual data onto the data pins. The $\overline{WR}$ (Write) control signal goes LOW, commanding the memory chip: "Grab the data on your pins right now!"
+    
+4. **Step 4: $T_4$ (The Cleanup).** The $\overline{WR}$ signal goes back HIGH (deactivated). The bus cycle ends, and the CPU prepares for the next instruction.
+    
+
+---
+
+### Layer 5: Code / Hardware Example & Syntax Restrictions
+
+How do we actually trigger this beautiful hardware dance in software? By writing an instruction! Let's look at the exact syntax for moving data and multiplying data, complete with the strict rules you must follow.
+
+#### The `MOV` Instruction
+
+Triggers a bus cycle to move data to/from memory or registers.
+
+Code snippet
+
+```
+MOV <Destination>, <Source>
+
+RESTRICTIONS:
+1. Cannot move data directly from one memory location to another memory location (e.g., MOV [1000H], [2000H] is ILLEGAL). You must use a register as a middleman.
+2. Cannot move an immediate value directly into a Segment Register (CS, DS, ES, SS).
+3. Both operands must be the same size (cannot move an 8-bit source into a 16-bit destination without extending).
+4. The CS (Code Segment) register cannot be used as a destination.
+```
+
+#### The `OUT` Instruction
+
+Triggers an I/O Write cycle (using decoders to select a port).
+
+Code snippet
+
+```
+OUT <Port>, <Accumulator>
+
+RESTRICTIONS:
+1. The source MUST be the Accumulator register (AL for 8-bit, AX for 16-bit). You cannot output from BL or CX.
+2. The Port address can be an 8-bit immediate value (00H to FFH).
+3. If the Port address is larger than 8 bits (up to 16 bits), it MUST be pre-loaded into the DX register. You cannot write `OUT 03F8H, AL`. You must do `MOV DX, 03F8H` then `OUT DX, AL`.
+```
+
+#### The `MUL` Instruction (As requested for syntax examples)
+
+Performs unsigned multiplication.
+
+Code snippet
+
+```
+MUL <Source>
+
+RESTRICTIONS:
+1. Only takes ONE operand (the multiplier). The multiplicand is implicitly always in AL (for 8-bit) or AX (for 16-bit).
+2. The operand CANNOT be an immediate number. `MUL 5` is ILLEGAL. You must put 5 in a register or memory first.
+3. If <Source> is 8-bit, it multiplies AL * Source. Result always goes into AX.
+4. If <Source> is 16-bit, it multiplies AX * Source. Result always goes into DX:AX (DX holds high 16 bits, AX holds low 16 bits).
+```
+
+---
+
+### Layer 6: Common Pitfalls & Debugging
+
+When my students wire these up in the lab or simulate them in Proteus, they almost always make these 3 mistakes:
+
+1. **Floating Control Pins:** Forgetting to connect the $\overline{OE}$ (Output Enable) pin of the 74LS373 latch to Ground. If it floats, it randomly turns on and off, and your memory receives garbage addresses. _Fix: Always tie active-low enables to Ground if they should always be on._
+    
+2. **Bus Contention (The "Magic Smoke" Error):** Having two chips try to write data to the data bus at the exact same time. This causes a short circuit! _Fix: Ensure your Address Decoder (74LS138) logic guarantees that only ONE memory chip gets a Chip Select ($\overline{CS}$) signal at a time._
+    
+3. **Ignoring the T-States:** Assuming memory is instantly fast. If you connect an old, slow ROM chip to a fast CPU, the CPU reaches $T_3$ and expects data, but the ROM isn't ready. _Fix: Use the `READY` pin on the 8086 to insert "Wait States" ($T_w$) between $T_2$ and $T_3$, giving the memory time to catch up._
+    
+
+---
+
+### Closure & Reinforcement
+
+**Summary:** Today we learned that microprocessors like the 8086 use multiplexing to save physical pins. To make this work with external devices, we use **Latches** (triggered by ALE) to catch and hold addresses, **Buffers** to amplify and direct data flow, and **Decoders** to precisely select which chip we want to talk to. This entire symphony is orchestrated by the CPU's timing clock ($T_1$ through $T_4$).
+
+**Self-Test Questions:**
+
+1. Why does the 8086 multiplex the Address and Data lines instead of keeping them separate?
+2. During which T-state does the ALE signal go high?
+3. What is the fundamental restriction on the operands of a `MOV` instruction regarding memory?
+
+## Memory interfacing and Clock Timing 
+
+![[25 Lecture_5.pdf]]
+
+
+### 1. Microprocessor Timing & Bus Cycles
+
+A **Bus Cycle** is the time required for the microprocessor to perform a single basic operation, such as reading from or writing to memory. In the 8086, a standard bus cycle consists of four clock periods called **T-states** ($T_1, T_2, T_3, T_4$).
+
+#### The 4 States of a Cycle
+
+- **$T_1$ (Address State):** The microprocessor places the memory or I/O address on the address bus.
+    
+- **$T_2$ (Status/Setup State):** The address is removed from the multiplexed bus to prepare for data. Control signals like $\overline{RD}$ or $\overline{WR}$ are issued.
+    
+- **$T_3$ (Data Transfer):** Data is either sampled from the bus (Read) or placed onto the bus (Write).
+    
+- **$T_4$ (Cycle End):** The control signals are deactivated, and the cycle concludes.
+
+#### Wait States ($T_w$)
+
+If a memory device is slower than the processor, it cannot provide or accept data within the standard $T_2$ to $T_3$ window.
+
+- **The Term:** A **Wait State** is an extra clock period inserted between $T_2$ and $T_3$ to lengthen the bus cycle.
+    
+- **Example:** On a **5 MHz** clock, one $T$-state is **200 ns**. Adding one wait state increases the total available time for memory to respond by exactly 200 ns.
+
+
+### 2. Signal Definitions (Hardware "Language")
+
+To interface with memory, the 8086 uses specific signals to communicate its intent:
+
+- **Multiplexed Busses ($AD_{15}-AD_0$):** To save pins, the same wires carry the **Address** during $T_1$ and **Data** during $T_2-T_4$.
+    
+- **ALE (Address Latch Enable):** A pulse that tells external hardware (latches) to "capture" the address before the pins switch over to carrying data.
+    
+- **$M/\overline{IO}$:** Distinguishes between a **Memory** operation (logic 1) and an **I/O** operation (logic 0).
+    
+- **$DT/\overline{R}$ (Data Transmit/Receive):** Tells the system buffers which direction data is flowing—**out** of the CPU (Transmit) or **into** the CPU (Receive).
+    
+- **$\overline{DEN}$ (Data Enable):** Activates external data buffers to connect the CPU to the memory system.
+
+---
+### 3. Read and Write Cycle Examples
+
+#### Memory Write Cycle Example
+
+1. **$T_1$:** CPU sets $M/\overline{IO} = 1$ (Memory) and $DT/\overline{R} = 1$ (Transmit). It places the address on the bus and pulses **ALE** high.
+    
+2. **$T_2$:** CPU places the **Data** to be written on the $AD$ bus. It drops $\overline{WR}$ (Write) to 0 to signal the memory to prepare for input.
+    
+3. **$T_3$:** The memory chip "grabs" the data from the bus while $\overline{WR}$ is low.
+    
+4. **$T_4$:** $\overline{WR}$ goes back to 1, and the bus is cleared.
+
+#### Memory Read Cycle Example
+
+1. **$T_1$:** CPU pulses **ALE** to latch the address. It sets $DT/\overline{R} = 0$ (Receive).
+    
+2. **$T_2$:** The CPU stops driving the $AD$ bus (it "floats" the pins) so the memory can take control. CPU drops $\overline{RD}$ (Read) to 0.
+    
+3. **$T_3$:** The memory chip places its data on the bus. The CPU "samples" (reads) this data.
+    
+4. **$T_4$:** CPU raises $\overline{RD}$ to 1 and ends the cycle.
+
+### 4. Memory Access Time & Performance
+
+**Memory Access Time** is the time the memory has to provide valid data after the address is stable.
+
+#### **The Calculation**
+
+The available time for memory to respond is roughly 3 clock cycles ($T_1, T_2, T_3$), but we must subtract the overhead required for the CPU to set up the signals.
+
+- **Formula:** $\text{Access Time} = (3 \times \text{Clock Period}) - \text{TCLAV}$.
+    
+- **TCLAV:** Time from **C**lock to **L**ow **A**ddress **V**alid (the delay for the address to appear).
+    
+
+**Example Calculation (5 MHz Clock):**
+
+- One clock period ($T$) = **200 ns**.
+    
+- Three clocking states = **600 ns**.
+    
+- Subtract $TCLAV$ (e.g., **110 ns**) and other setup delays (e.g., **30 ns**).
+    
+- **Net Access Time:** $600 - 110 - 30 = \mathbf{460\text{ ns}}$.
+    
+
+---
+### 5. Memory Hardware Fundamentals
+
+### **Memory Types**
+
+- **RAM (Volatile):** Loses data when power is off. Includes **SRAM** (fast, used for cache) and **DRAM** (cheaper, used for main memory).
+    
+- **ROM (Non-Volatile):** Keeps data without power.
+    
+    - **PROM:** Programmable once.
+        
+    - **EPROM:** Erasable via UV light.
+        
+    - **Flash (EEPROM):** Electrically erasable; writing is slower than RAM.
+
+#### Architecture: Pins vs. Locations
+
+- **Address Pins:** The number of pins ($n$) determines the number of locations ($2^n$).
+    
+    - _Example:_ 10 pins = $2^{10} = 1,024$ (1K) locations.
+        
+- **Data Pins:** Related to the width of each location. A "1K x 8" chip means 1,024 locations, each 8 bits (1 byte) wide.
+    
+- **Control Pins:**
+    
+    - **$\overline{CS}$ (Chip Select):** Must be logic 0 to enable the chip.
+        
+    - **$\overline{OE}$ (Output Enable):** Enables the chip's buffers to send data out.
+        
+    - **$\overline{WE}$ (Write Enable):** Signals the chip to store incoming data.
+
+
+## Address Decoding
+
+![[26 Lecture_6.pdf]]
+
+This guide covers the technical operations of the 8086 microprocessor, focusing on timing precision and memory mapping.
+
+---
+
+### **1. Microprocessor Timing & Bus Operations**
+
+#### **The Bus Cycle**
+
+A **Bus Cycle** is the fundamental time unit the 8086 takes to perform one task (like reading or writing 1 byte). It consists of four **T-states** ($T_1, T_2, T_3, T_4$), each equal to one clock period .
+
+- **$T_1$ (Address State):** The CPU places the memory address on the bus. **ALE** (Address Latch Enable) pulses to tell external hardware to save this address.
+    
+- **$T_2$ (Setup State):** The address is removed. For a **Read**, the bus "floats" (goes idle) to let memory take over. For a **Write**, the CPU puts data on the bus.
+    
+- **$T_3$ (Transfer State):** Data is actually sampled (Read) or accepted by memory (Write).
+    
+- **$T_4$ (Ending State):** Control signals like $\overline{RD}$ or $\overline{WR}$ go high, ending the cycle.
+    
+
+#### **Wait States ($T_w$)**
+
+- **The Point:** Some memory chips are too slow to respond within the standard $T_2$-$T_3$ window.
+    
+- **How it works:** An extra clock period ($T_w$) is inserted between $T_2$ and $T_3$. This "freezes" the CPU for 1 clock cycle, giving the memory more time to stabilize data.
+    
+
+#### **Access Time Constants**
+
+- **$TCLAV$ (Clock to Address Valid):** The delay from the start of $T_1$ until the address is actually stable on the pins (e.g., 110 ns at 5 MHz).
+    
+- **$TDVCL$ (Data Valid to Clock):** The "setup time" the CPU needs—the data must be stable for this long _before_ the end of $T_3$ so the CPU can read it correctly.
+    
+
+---
+
+### **2. Practical Performance Problems**
+
+#### **Clock Frequency Adjustments**
+
+If you speed up the clock, the time for each T-state shrinks.
+
+- **Example (8 MHz):** One clock period ($T$) = $1 / 8\text{ MHz} = \mathbf{125\text{ ns}}$.
+    
+- **Problem:** If 1 wait state is added to an 8 MHz cycle, what is the total memory access time window?
+    
+- **Solution:** Memory access happens over $T_1, T_2,$ and $T_3$. With one $T_w$, you have 4 states. Total time = $4 \times 125\text{ ns} = \mathbf{500\text{ ns}}$.
+    
+
+#### **16-Bit Data Read Problem**
+
+Reading a 16-bit value from an **odd address** (e.g., $2010\text{H}$) requires **two** bus cycles because the 8086 can only access 16 bits in one go if they are at an even address.
+
+- **Calculation:** If one cycle takes 4 T-states (at 8 MHz) and you need two cycles:
+    
+    $\text{Total Time} = 2 \text{ cycles} \times (4 \times 125\text{ ns}) = \mathbf{1000\text{ ns}}$.
+    
+
+---
+
+### **3. Specific Memory Hardware Interfacing**
+
+#### **EPROM 2716 ($2\text{K} \times 8$)**
+
+A non-volatile storage chip holding 2048 bytes.
+
+- **Address Pins ($A_0$-$A_{10}$):** 11 pins are needed because $2^{11} = 2048$.
+    
+- **$PD/PGM$:** Power Down/Program pin. Used to program the chip or put it in standby.
+    
+- **$\overline{CS}$ (Chip Select):** The "wake up" pin. The chip ignores everything unless this is 0.
+    
+
+#### **RAM Signals**
+
+RAM needs to both read and write, so it adds **$\overline{WE}$ (Write Enable)**.
+
+- **$\overline{OE}$ (Output Enable):** Turns on the chip's data output buffers.
+    
+- **Tristate logic:** When $\overline{CS}$ or $\overline{OE}$ are high (1), the pins are in **High-Z** (disconnected), so they don't interfere with other chips on the same bus.
+    
+
+---
+
+### **4. Deep Dive: Memory Address Decoding**
+
+#### **The Splicing Concept**
+
+The 8086 has 20 address lines ($A_0$-$A_{19}$), allowing it to see **1,048,576 addresses (1MB)**. However, a $2\text{K}$ EPROM only uses 11 lines ($A_0$-$A_{10}$). **Decoding** is the logic that uses the "leftover" lines ($A_{11}$-$A_{19}$) to "splice" that small chip into a specific part of the 1MB map.
+
+#### **Decoding Logic ($n = \log_2 N$)**
+
+To interface $P$ locations out of a total $N$ possible locations:
+
+1. Connect the **lowest address lines** (e.g., $A_0$-$A_{10}$) directly to the chip.
+    
+2. Use the **highest address lines** (e.g., $A_{11}$-$A_{19}$) as inputs to a **NAND gate**.
+    
+3. The NAND gate output goes to the chip's **$\overline{CS}$** pin. Because a NAND gate only outputs **0** when all inputs are **1**, the chip only "wakes up" when the CPU calls that specific range.
+    
+
+#### **Example: Mapping $FF800\text{H}$ to $FFFFF\text{H}$**
+
+- **The Goal:** Place a 2KB chip at the very top of the memory map.
+    
+- **Binary of $FF800\text{H}$:** `1111 1111 1000 0000 0000`.
+    
+- **Binary of $FFFFF\text{H}$:** `1111 1111 1111 1111 1111`.
+    
+- **Observation:** In this range, lines $A_{19}, A_{18}, \dots A_{11}$ are **all 1s** .
+    
+- **Implementation:** Connect $A_{11}$ through $A_{19}$ to a 9-input NAND gate. When the CPU hits an address in that range, the gate sees all 1s, outputs a 0, and selects the chip.
+    
+
+#### **Example: Using Inverters for $DF800\text{H}$ to $DFFFF\text{H}$**
+
+- **Address in Binary:** $D = 1101$. So $A_{19}=1, A_{18}=1, A_{17}=0, A_{16}=1$ .
+    
+- **The Problem:** A NAND gate needs all 1s to output a 0. But $A_{17}$ is a **0** here.
+    
+- **The Fix:** Pass $A_{17}$ through an **Inverter (NOT gate)** before it reaches the NAND gate. This flips the 0 to a 1.
+    
+- **Logic:** The chip is selected only when ($A_{19}=1, A_{18}=1, \mathbf{NOT}\ A_{17}=1, A_{16}=1, \dots$). If any bit is wrong, the NAND gate output stays at 1, and the chip stays "asleep".
+
+
+
+![[27 Lecture_7.pdf]]
+
+
+## **1. Advanced Decoding: The 74LS138 (3-to-8 Line Decoder)**
+
+### **The "Why" and the "Point"**
+
+As your memory system grows from one chip to eight or sixteen, using raw NAND gates becomes a nightmare of wiring and physical space. The **74LS138** is an Integrated Circuit (IC) designed specifically to handle **Chip Select ($\overline{CS}$)** logic for up to eight memory devices simultaneously.
+
+Instead of a separate gate for every chip, you use one IC that "decodes" three binary address lines into eight distinct signals.
+
+### **How it Works (Pins & Logic)**
+
+- **Enable Pins ($G_1, \overline{G_{2A}}, \overline{G_{2B}}$):** To "turn on" the decoder, you must satisfy three conditions: $G_1$ must be **High (1)**, and both $\overline{G_{2A}}$ and $\overline{G_{2B}}$ must be **Low (0)**. These are often connected to higher-order address bits or the $M/\overline{IO}$ signal.
+    
+- **Select Inputs ($A, B, C$):** These are connected to the next set of address lines. They act as a 3-bit binary input ($000$ to $111$).
+    
+- **Outputs ($O_0$ to $O_7$):** Based on the $A, B, C$ input, exactly **one** output will drop to **Logic 0** (Active Low), while the other seven stay at Logic 1. This "0" is fed directly into the $\overline{CS}$ pin of a specific memory chip.
+    
+
+---
+
+## **2. Design Example: Mapping a 1K RAM at FFC00H**
+
+Let's design a system that places a **1KB RAM** at the address range **FFC00H to FFFFFH** using the 74LS138.
+
+### **Step 1: Address Line Allocation**
+
+- **Inside the chip ($A_0-A_9$):** Since $2^{10} = 1024$, bits $A_0$ through $A_9$ are wired directly to the RAM's address pins to select bytes _within_ that 1KB block .
+    
+- **The Select Pins ($A_{10}, A_{11}, A_{12}$):** We connect these to the $A, B, C$ inputs of the decoder. For the range starting at **FFC00H**, these bits must be $111$ (binary for 7) .
+    
+- **The Enable Pins ($A_{13}-A_{19}$):** For the hex range **FF** ($1111\ 1111$), all these high bits are 1s. We connect $A_{19}$ to $G_1$ and use NAND gates to group the others into the active-low $\overline{G_{2}}$ enables .
+    
+
+### **The Result**
+
+When the CPU issues any address between **FFC00H and FFFFFH**, the decoder is enabled, sees the binary `111` on its select pins, and pulls its **$Y_7$** output to **0**. This "wakes up" the RAM chip mapped to that output.
+
+---
+
+## **3. Multi-Chip Memory Bank Interfacing**
+
+### **The Point**
+
+In the real world, you might need 8KB of memory but only have 2KB chips available. You must create a **Memory Bank**.
+
+### **Calculation & Mapping (8KB Example)**
+
+- **Chips Required:** $8\text{KB total} / 2\text{KB per chip} = \mathbf{4\text{ chips}}$ ($RAM_1$ to $RAM_4$).
+    
+- **Address Pins:** A 2KB chip needs 11 lines ($A_0-A_{10}$).
+    
+- **The "Banking" Logic:** We use the 74LS138 to select which of the four chips is active .
+    
+    - $RAM_1$ ($00000\text{H}–007\text{FFH}$): Decoder input $000$, Output $O_0$ active .
+        
+    - $RAM_2$ ($00800\text{H}–00\text{FFH}$): Decoder input $001$, Output $O_1$ active .
+        
+    - $RAM_3$ ($01000\text{H}–017\text{FFH}$): Decoder input $010$, Output $O_2$ active .
+        
+    - $RAM_4$ ($01800\text{H}–01\text{FFH}$): Decoder input $011$, Output $O_3$ active .
+        
+
+---
+
+## **4. Mixed RAM/ROM System Design**
+
+### **The Scenario**
+
+Most microprocessors need a mix of **ROM** (to hold the boot/BIOS code) and **RAM** (for temporary data).
+
+### **Mixed Design Example**
+
+- **ROM:** 4KB total, starting at $00000\text{H}$. Uses two 2KB (2716) chips ($ROM_1, ROM_2$).
+    
+- **RAM:** 8KB total, starting at $08000\text{H}$. Uses four 2KB (6116) chips ($RAM_1-RAM_4$) .
+    
+
+**The Logic:**
+
+1. Connect $A_0-A_{10}$ to all chips.
+    
+2. Connect $A_{11}, A_{12}$ to decoder inputs $A, B$. Connect $A_{15}$ to decoder input $C$ .
+    
+3. **ROM Selection:** When $A_{15}=0$ and $A_{12}, A_{11}$ are $00$ or $01$, decoder outputs $O_0$ and $O_1$ trigger the ROM chips.
+    
+4. **RAM Selection:** When $A_{15}=1$, binary input jumps to $100$ (decimal 4). Outputs $O_4, O_5, O_6, O_7$ trigger the RAM chips.
+    
+
+---
+
+## **5. High-Address Space Interfacing (64K EPROM)**
+
+### **The Goal**
+
+Placing a large block of non-volatile memory at the very top of the 1MB map ($F0000\text{H}$ to $FFFFF\text{H}$).
+
+### **Hardware: 2764 EPROMS ($8\text{K} \times 8$)**
+
+- **Chip Count:** To get 64KB using 8KB chips, you need **8 EPROMS**.
+    
+- **Address Pins:** Each 8KB chip uses 13 address lines ($A_0-A_{12}$).
+    
+- **Decoding:**
+    
+    - Lines **$A_{13}, A_{14}, A_{15}$** connect to the Decoder's **$A, B, C$** select pins .
+        
+    - Lines **$A_{16}-A_{19}$** are wired to the Enable pins ($G_1, \overline{G_{2A}}, \overline{G_{2B}}$) to ensure the system only responds when the CPU is in the **"F" ($1111$)** segment of memory .
+        
+
+|**Output**|**Address Range**|**Chip Selected**|
+|---|---|---|
+|**$O_0$**|$F0000\text{H}–F1\text{FFFH}$|EPROM 1|
+|**$O_7$**|$FE000\text{H}–F\text{FFFFH}$|EPROM 8|
+
+---
+
+## **Summary of New Terms**
+
+- **74LS138:** A 3-to-8 decoder chip used to generate active-low chip select signals.
+    
+- **Memory Mapping:** The systematic process of assigning specific binary address ranges to physical hardware chips.
+    
+- **Programmable Logic (PLD/FPGA):** Modern alternatives to the 74LS138 that can be programmed via software for even more complex decoding.
+
+[[A Comprehensive example of Desiging 8K RAM Chip]]
+
+![[28 Lecture_8.pdf]]
+
+### **1. 8086 Memory Bank Organization**
+
+#### **The Problem & The Point**
+
+The 8088 has an 8-bit data bus, so it reads 1 byte at a time. The 8086 has a **16-bit data bus** ($D_0–D_{15}$), meaning it can read **two bytes** in a single bus cycle. However, sometimes the CPU only needs 1 byte. To allow the CPU to pick either the "low" byte, the "high" byte, or both at once, the 1MB memory space is physically split into two parallel **banks**.
+
+- **Even Bank (Low Bank):**
+    
+    - **Addresses:** All even addresses ($00000\text{H}, 00002\text{H}, \dots$).
+        
+    - **Wiring:** Connects to the **lower** half of the data bus ($D_0–D_7$).
+        
+- **Odd Bank (High Bank):**
+    
+    - **Addresses:** All odd addresses ($00001\text{H}, 00003\text{H}, \dots$).
+        
+    - **Wiring:** Connects to the **upper** half of the data bus ($D_8–D_{15}$).
+        
+
+---
+
+### **2. Bank Control Signals ($\overline{BHE}$ and $A_0$)**
+
+To control which bank is "active," the 8086 uses two hardware pins as selectors.
+
+- **$A_0$:** The lowest address bit. In 8086 memory interfacing, $A_0$ is **not** used to select a byte inside a chip; it is used as the **Even Bank Enable**. When $A_0 = 0$, the even bank is on.
+    
+- **$\overline{BHE}$ (Bus High Enable):** A dedicated pin used as the **Odd Bank Enable**. When $\overline{BHE} = 0$, the odd bank is on.
+    
+
+#### **Selection Truth Table**
+
+|**BHE**|**A0​**|**Operation Type**|**What happens?**|
+|---|---|---|---|
+|**0**|**0**|**Whole Word**|Both banks active. CPU reads 16 bits ($D_0–D_{15}$) in 1 cycle.|
+|**0**|**1**|**Upper Byte**|Only Odd Bank active. Data travels on $D_8–D_{15}$.|
+|**1**|**0**|**Lower Byte**|Only Even Bank active. Data travels on $D_0–D_7$.|
+|**1**|**1**|**None**|Neither bank is enabled.|
+
+---
+
+### **3. Transfer Efficiency: Aligned vs. Misaligned**
+
+#### **The Concept**
+
+Because of banking, **where** you store data in memory drastically changes performance.
+
+- **Aligned Word Access:** A 16-bit word starting at an **even address** (e.g., $00004\text{H}$).
+    
+    - **Mechanism:** The CPU sets $\overline{BHE}=0$ and $A_0=0$. It pulls the low byte from the even bank and the high byte from the odd bank **simultaneously**.
+        
+    - **Speed:** Takes **1 Bus Cycle**.
+        
+- **Misaligned Word Access:** A 16-bit word starting at an **odd address** (e.g., $00005\text{H}$).
+    
+    - **Mechanism:** The CPU cannot read this in one go. It must perform **two cycles**:
+        
+        1. Cycle 1: Read the byte at $00005\text{H}$ (Odd Bank).
+            
+        2. Cycle 2: Read the byte at $00006\text{H}$ (Even Bank).
+            
+    - **Speed:** Takes **2 Bus Cycles** (50% slower performance).
+        
+
+---
+
+### **4. Hardware Interfacing with 16-bit Banks**
+
+When building the circuit, you must combine the **Address Decoder** (which picks the address range) with the **Bank Select Signals** (which pick the bank).
+
+#### **The Selection Logic (OR Gates)**
+
+Memory chips have an active-low Chip Select ($\overline{CS}$). To trigger it, you use an **OR gate**.
+
+- **Even Chip Select:** Combine the Decoder Output with **$A_0$**.
+    
+- **Odd Chip Select:** Combine the Decoder Output with **$\overline{BHE}$**.
+    
+
+**How it works:** An OR gate outputs **0** only if **both** inputs are 0. So, the chip only wakes up if the Decoder says "This is the right address" (0) **AND** the CPU says "I want this specific bank" (0).
+
+#### **Memory Mapping Change**
+
+In a 16-bit 8086 system, the chips ignore $A_0$.
+
+- Instead, **CPU $A_1$** connects to **Chip $A_0$**, **CPU $A_2$** to **Chip $A_1$**, and so on.
+    
+- This effectively "skips" every other address for that specific bank, which is exactly what we want since each bank only handles half the addresses.
+    
+
+---
+
+### **5. Scaled Memory Decoding**
+
+#### **1 MB Decoding**
+
+To manage the full 1MB of 8086 memory, engineers use multiple **74LS138 decoders** cascaded together. One decoder might handle a specific "page" or "segment" of memory, while others select individual chips within that segment.
+
+#### **Advanced Architectures (80386SX)**
+
+The 80386SX also has a 16-bit data bus and uses the exact same banking system ($\overline{BHE}$ and $A_0$) as the 8086. Higher-end chips like the full **80386DX** have a **32-bit bus**, meaning they use **four banks** and four selection signals ($\overline{BE_0}$ to $\overline{BE_3}$).
+
+---
+
+### **Term Summary**
+
+- **$D_0–D_{15}$**: The 16-bit wide "highway" for data.
+    
+- **$\overline{BHE}$**: The "Odd Bank Switch".
+    
+- **Aligned**: Efficiently placed at an even address (fast).
+    
+- **Misaligned**: Poorly placed at an odd address (slow).
+    
+- **Bank Select Logic**: Using gates to ensure the right bank speaks at the right time.
+
+# I/O Interfacing
+
+![[29 Lecture_9.pdf]]
+
+### **1. I/O Mapping Methods: Where does the device "live"?**
+
+The CPU needs a way to distinguish between a request for a memory byte and a request for data from a keyboard or sensor.
+
+#### **Isolated I/O (I/O Mapped I/O)**
+
+- **The Point:** Keeps the entire 1MB memory space free for software/data by putting I/O devices in a separate "shadow" map.
+    
+- **How it Works:** The 8086 uses the **$M/\overline{IO}$** pin. When this pin is **Logic 0**, the address on the bus is treated as an I/O port, not a memory location.
+    
+- **Capacity:** It provides a 64K ($65,536$) port address space.
+    
+- **Instructions:** Only specific `IN` and `OUT` instructions work here.
+    
+
+#### **Memory-Mapped I/O**
+
+- **The Point:** Allows the CPU to use its full suite of powerful memory instructions (like `MOV`, `ADD`, `OR`) on external hardware.
+    
+- **How it Works:** A range of the 1MB address space is "stolen" and assigned to a device.
+    
+- **Trade-off:** It reduces the total RAM available to the system, but makes I/O programming more flexible.
+    
+
+---
+
+### **2. I/O Port Addressing & Instructions**
+
+A **Port** is like a mailbox for a specific device.
+
+#### **Addressing Types**
+
+- **Fixed (Direct) Port Addressing:**
+    
+    - **Term:** The port address is a constant 8-bit number ($00\text{H}$ to $FF\text{H}$) hardcoded into the instruction.
+        
+    - **Example:** `IN AL, 10H` — Immediately gets data from Port 10.
+        
+- **Variable (Indirect) Port Addressing:**
+    
+    - **Term:** The port address is stored in the **DX register**, allowing for a 16-bit range.
+        
+    - **Why do it?** This allows you to reach all **65,536 ports** and change the target port dynamically while the program is running.
+        
+    - **Example:** `MOV DX, 03F8H`
+        
+        `IN AL, DX` — Gets data from a high-address COM port.
+        
+
+#### **Instructions: The Mechanics**
+
+- **`IN`**: Transfers data **from** a peripheral **to** the Accumulator (AL or AX).
+    
+- **`OUT`**: Transfers data **from** the Accumulator **to** a peripheral.
+    
+- **The Rule:** All I/O data **must** pass through the Accumulator register. You cannot `OUT` data directly from memory to a port.
+    
+
+---
+
+### **3. Data Transfer Modes: Coordination**
+
+The CPU is millions of times faster than a keyboard or sensor. Coordination is required to prevent data loss.
+
+- **Simple I/O (Unconditional):** The CPU just blasts data out. This is used for devices that are "always ready," like an LED display.
+    
+- **Programmed I/O (Handshaking):** * **The Point:** Synchronizing a fast CPU with a slow device.
+    
+    - **Mechanism:** The CPU "polls" (repeatedly checks) a status bit from the device. It only transfers data when the device indicates it is ready.
+        
+- **Interrupt-Driven I/O:** The most efficient method. The CPU goes about its business, and the device sends an electrical "ping" (Interrupt) only when it actually has data ready.
+
+![[30 Lecture_10.pdf]]
+
+### **4. 8255 Programmable Peripheral Interface (PPI)**
+
+The **8255** is a versatile "middle-man" chip. It provides the physical pins for the CPU to talk to the real world.
+
+#### **Architecture**
+
+- **Port A & Port B:** Two standard 8-bit ports for high-volume data.
+    
+- **Port C:** An 8-bit port that can be split into two **4-bit nibbles** (Upper and Lower).
+    
+- **The "Point" of splitting Port C:** These 4-bit sections often act as the "Handshaking" lines (Status/Control) for Ports A and B.
+    
+
+#### **Operating Modes**
+
+1. **Mode 0 (Basic I/O):** Simple input or output. No status checking. Used for switches or LEDs.
+    
+2. **Mode 1 (Strobed I/O):** Uses Port C pins to handle the Handshaking signals automatically.
+    
+3. **Mode 2 (Bi-directional):** Port A becomes a 2-way street (sending and receiving on the same wires), using 5 bits of Port C for control.
+    
+
+---
+
+### **5. Programming the 8255**
+
+You configure the 8255 by sending a single byte, the **Control Word**, to its internal Control Register.
+
+#### **Control Word Format (I/O Mode)**
+
+To set the chip to I/O mode, **Bit 7 must be 1**.
+
+- **Bit 6 & 5:** Select Mode for Port A ($00$ = Mode 0).
+    
+- **Bit 4:** Port A direction ($1$ = Input, $0$ = Output).
+    
+- **Bit 3:** Port C Upper direction.
+    
+- **Bit 2:** Select Mode for Port B.
+    
+- **Bit 1:** Port B direction.
+    
+- **Bit 0:** Port C Lower direction.
+    
+
+#### **BSR (Bit Set/Reset) Mode**
+
+- **The Point:** You want to flip one single switch (like an LED on Port C bit 3) without changing any other pins.
+    
+- **How it Works:** Set **Bit 7 to 0**. The remaining bits specify which bit of Port C to change and whether to make it a $1$ or a $0$.
+    
+
+---
+
+### **Practical Example: Configuring the 8255**
+
+**Task:** Configure the 8255 where Port A = Input (Switches), Port B = Output (LEDs), and all of Port C = Output. Use Mode 0.
+
+1. **Construct the Control Word:**
+    
+    - Bit 7 = `1` (I/O Mode)
+        
+    - Bits 6,5 = `00` (Port A Mode 0)
+        
+    - Bit 4 = `1` (Port A Input)
+        
+    - Bit 3 = `0` (Port C Upper Output)
+        
+    - Bit 2 = `0` (Port B Mode 0)
+        
+    - Bit 1 = `0` (Port B Output)
+        
+    - Bit 0 = `0` (Port C Lower Output)
+        
+    - **Result:** `10010000` Binary = **$90\text{H}$**.
+        
+2. **Code:**
+    
+    `MOV AL, 90H`
+    
+    `OUT Control_Register_Address, AL`
+
+
+[[Memory Interfacing Cheat Sheet]]
 

@@ -29,6 +29,8 @@ A **database** is just an organized place in a computer where related data is st
 - **SQL** (Structured Query Language) is a language used to talk to relational databases: create tables, insert data, query, update, delete.
 - **MySQL** is a specific relational DBMS that uses SQL; it’s one of the most widely used open‑source database systems in web apps.
 
+# ![[Hosting and Navigating the MySQL servers and Databases]]
+
 
 # The Syntax
 ### Conventions used:
@@ -52,6 +54,8 @@ This is working, changing and managing the defination of the data in the databas
 
 ### [[CREATE DATABASE;]]
 
+### [[Check in MySQL]]
+
 ### [[SHOW DATABASE;]]
 
 ### [[USE;]]
@@ -71,6 +75,15 @@ This is working, changing and managing the defination of the data in the databas
 ### [[DROP DATABASE]]
 
 ### [[INDEX in MySQL]]
+
+### [[Views in MySQL]]
+
+### [[Assertions in MySQL]]
+
+### [[Triggers in MySQL]]
+
+### [[User Defined Functions in MySQL]]
+
 
 
 - ## Data Manipulation Language (DML) Commands:
@@ -100,6 +113,12 @@ This is Manipulation the data that is there in the tables in the active database
 ### [[JOIN Operations in MySQL]]
 
 ### [[GROUP BY and HAVING Clause]]
+
+### [[CASE Statements in MySQL]]
+
+## Views
+
+
 
 
 - ## Transition Control Language:
@@ -2029,4 +2048,162 @@ Remember the `OWNER` category that could be a `PERSON`, a `BANK`, or a `COMPANY`
 
 ---
 
-If you mess up these mappings in Thursday's Lab 5, your SQL queries won't work. Want to test this out by applying these 4 options to the "General Hospital" or "NFL" database scenarios we looked at earlier?
+# Practice Questions
+
+[[Practice for Views, Assertions and Triggers]]
+[[Practice for User Defined Functions]]
+
+# AUTO_INCREMENT in MySQL for Primary Keys
+
+### **What is AUTO_INCREMENT?**
+
+`AUTO_INCREMENT` automatically assigns the **next available number** to the primary key.
+
+You don't have to manually specify IDs—MySQL does it for you.
+
+**AUTO_INCREMENT is NOT a constraint.**
+
+It's a **column property/attribute** that tells MySQL to automatically generate sequential numbers for that column.
+
+**Constraints** (like PRIMARY KEY, FOREIGN KEY, CHECK, NOT NULL) enforce **rules about what values are allowed**.
+
+**AUTO_INCREMENT** is a **generation mechanism** that **produces values automatically**.
+
+**Simple analogy:**
+- **Constraint** = "No negative numbers allowed" (rule)
+- **AUTO_INCREMENT** = "Make the next number for me" (automation)
+
+---
+
+**Classification:**
+- ✓ Column property/attribute
+- ✓ Works with PRIMARY KEY/UNIQUE KEY
+- ✗ NOT a constraint
+- ✗ NOT a data type (INT, VARCHAR etc. are data types)
+
+**It's best described as a "Column Modifier" or "Column Attribute".**
+
+### **Basic Syntax:**
+
+SQL
+
+```
+CREATE TABLE movies (
+    movie_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100),
+    rental_price DECIMAL(5,2)
+);
+```
+
+**What this means:**
+
+- `movie_id` is the primary key
+- `AUTO_INCREMENT` = MySQL automatically assigns 1, 2, 3, 4...
+
+![[ALTER TABLE Commands#1. MODIFY – Change Column Data Type or Attributes]]
+
+---
+
+### **How AUTO_INCREMENT Works:**
+
+SQL
+
+```
+-- Insert without specifying movie_id
+INSERT INTO movies (title, rental_price) 
+VALUES ('Inception', 5.99);
+-- MySQL assigns: movie_id = 1
+
+INSERT INTO movies (title, rental_price) 
+VALUES ('Avatar', 6.99);
+-- MySQL assigns: movie_id = 2
+
+INSERT INTO movies (title, rental_price) 
+VALUES ('Titanic', 4.50);
+-- MySQL assigns: movie_id = 3
+
+-- View the table
+SELECT * FROM movies;
+
+-- Result:
+-- movie_id | title      | rental_price
+-- ---------|------------|---------------
+-- 1        | Inception  | 5.99
+-- 2        | Avatar     | 6.99
+-- 3        | Titanic    | 4.50
+```
+
+**You never had to type the IDs!** MySQL handled it automatically. ✓
+
+---
+
+### **Inserting Through a View with AUTO_INCREMENT:**
+
+SQL
+
+```
+CREATE VIEW EXPENSIVE_MOVIES AS
+SELECT movie_id, title, rental_price
+FROM movies
+WHERE rental_price > 5.00
+WITH CHECK OPTION;
+
+-- Insert through view (without specifying movie_id)
+INSERT INTO EXPENSIVE_MOVIES (title, rental_price) 
+VALUES ('New Movie', 5.99);
+
+-- ✓ SUCCESS
+-- MySQL auto-generates movie_id = 4
+-- Inserted into base table (movies)
+-- View shows it because 5.99 > 5.00
+
+SELECT * FROM EXPENSIVE_MOVIES;
+-- Shows the new movie with auto-generated ID
+```
+
+---
+
+### **How AUTO_INCREMENT Tracks the Next ID:**
+
+MySQL keeps track of the **last used ID**:
+
+SQL
+
+```
+-- After inserting movies with IDs 1, 2, 3
+-- MySQL's counter = 3
+
+INSERT INTO movies (title, rental_price) 
+VALUES ('Movie 4', 5.50);
+-- MySQL sees counter = 3, so assigns 4
+-- Updates counter to 4
+
+INSERT INTO movies (title, rental_price) 
+VALUES ('Movie 5', 6.00);
+-- MySQL sees counter = 4, so assigns 5
+-- Updates counter to 5
+```
+
+**The counter is NEVER reset** (until you manually reset it).
+
+---
+
+### **What if You Manually Specify an ID?**
+
+SQL
+
+```
+-- Manually specify ID = 10
+INSERT INTO movies (movie_id, title, rental_price) 
+VALUES (10, 'Manual Movie', 5.99);
+
+-- ✓ Succeeds
+
+-- Next insertion:
+INSERT INTO movies (title, rental_price) 
+VALUES ('Auto Movie', 6.50);
+-- MySQL assigns movie_id = 11
+-- (not 4, because it saw ID 10 was used)
+```
+
+**MySQL updates its counter to the highest ID it sees.**

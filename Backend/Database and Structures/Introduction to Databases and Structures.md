@@ -7740,9 +7740,6 @@ DROP INDEX idx_name ON Products;
 | **Delete**         | $O(N)$        | $O(N)$              | $O(1)$        | $O(\log N)$         |
 
 # Normalization in DBMS
-I'll teach you all of this systematically with real MySQL examples. Let me break it down into digestible sections.
-
----
 
 ## **Part 1: Functional Dependencies (FDs) - The Foundation**
 
@@ -7932,147 +7929,13 @@ When your table violates FD rules, you get three types of problems:
 
 ### **Example - A Badly Designed Table:**
 
-```sql
+```SQL
 CREATE TABLE StudentCourses (
     StudentID INT,
     Name VARCHAR(100),
     Email VARCHAR(100),
     CourseID INT,
     CourseName VARCHAR(100),
-￼
-%
-￼
-of 41
-1
-L9 Storage &
-Indexing
-Storage and Indexing(courtesy : The University of Sydney)
-2
-L9 Storage &
-Indexing Disks and Files
-DBMS stores information on (“hard”) disks.
-This has major implications for DBMS design!
-READ: transfer data from disk to main memory (RAM).
-WRITE: transfer data from RAM to disk.
-Both are high-cost operations, relative to in-memory
-operations, so must be planned carefully!
-Indeed, overall performance is determined largely by the
-number of disk I/Os done
-3
-L9 Storage &
-Indexing Disks
-Secondary storage device of choice.
-Main advantage over tapes: random access vs.
-sequential.
-Data is stored and retrieved in units called disk
-blocks or pages.
-Unlike RAM, time to retrieve a disk page varies
-depending upon location on disk.
-Therefore, relative placement of pages on disk has real
-impact on DBMS performance!
-Trends: Disk capacity is growing rapidly, but
-access speed is not!
-4
-L9 Storage &
-Indexing Components of a Disk
-The platters spin (say,
-120rps).
-The arm assembly is moved
-in or out to position a head
-on a desired track. Tracks
-under heads make a
-cylinder (imaginary!).
-Only one head reads/writes
-at any one time.
-Block size is a multiple
-of sector size (which is
-fixed).
-block
-5
-L9 Storage &
-Indexing Accessing a Disk Page
-Time to access (read/write) a disk block:
-seek time (moving arms to position disk head on track)
-rotational delay (waiting for block to rotate under head)
-transfer time (actually moving data to/from disk surface)
-Seek time and rotational delay dominate.
-Seek time varies from about 1 to 20msec
-Rotational delay varies from 0 to 10msec
-Transfer rate is about 1msec per 4KB page
-Key to lower I/O cost: reduce seek/rotation
-delays! Hardware vs. software solutions?
-6
-L9 Storage &
-Indexing RAID
-Data Array: arrangement of several disks
-RAID: Redundant Arrays of Independent Disks
-Data striping + redundancy
-Data striping
-distribute data over several disks
-High capacity and high speed
-the more disk, the lower reliability
-Redundancy
-redundant information is maintained
-high reliability by storing data redundantly, so that data can be
-recovered even if a disk fails
-
-￼￼￼1. The Hierarchy of Data: From Bits to Tables
-
-Before looking at hardware, we must understand how data is bundled. Think of this like a Russian nesting doll.
-
-- ￼￼Field (Attribute):￼￼ The smallest unit. A single value (e.g., ￼￼Price: 19.99￼￼). Corresponds to a ￼￼Column￼￼.
-    
-￼- ￼￼Record (Tuple):￼￼ A collection of fields describing one entity. Corresponds to a ￼￼Row￼￼.
-    
-    - ￼￼Fixed-Length:￼￼ Every field has a set size. Finding the ￼￼ field is easy math: ￼￼.
-        
-    - ￼￼Variable-Length:￼￼ Uses an array of "field offsets" at the start of the record to tell the DB where each field begins.
-        
-- ￼￼Page (Block):￼￼ The fundamental unit of I/O. Databases don't read one row; they read a ￼￼Page￼￼ (usually 16KB).
-    
-- ￼￼Extent:￼￼ A group of contiguous pages (usually 64). Used to keep related data physically close to minimize disk arm movement.
-    
-- ￼￼File:￼￼ A collection of pages making up a Table or an Index.
-    
-
-￼￼￼2. Physical Storage: The "Hard" in Hardware
-
-DBMS performance is dictated by the physical limitations of the disk.
-
-￼￼￼Disk Anatomy & Performance
-
-- ￼￼Platter:￼￼ The physical disk spinning at high speeds.
-    
-- ￼￼Spindle:￼￼ The axis that holds the platters.
-    
-- ￼￼Read-Write Head:￼￼ The "needle" that reads data.
-    
-- ￼￼Track:￼￼ A ring on the platter.
-    
-- ￼￼Cylinder:￼￼ The set of tracks at a given arm position across all platters.
-    
-
-￼￼￼The Math of Waiting (Disk Access Metrics)
-
-1. ￼￼Seek Time (1–20ms):￼￼ Moving the arm to the correct track. ￼￼(Dominant Cost)￼￼.
-    
-2. ￼￼Rotational Delay (0–10ms):￼￼ Waiting for the disk to spin to the right block.
-    
-3. ￼￼Transfer Time (~1ms per 4KB):￼￼ Moving data to RAM.
-    
-
-￼￼💡 The Trend:￼￼ Disk capacity grows 50% yearly, but access speed (Seek/Rotate) stays almost flat. This is why software optimization (Indexing) is mandatory.
-
-￼￼￼3. Buffer Management: The "Waiting Room"
-
-The ￼￼Buffer Manager￼￼ allocates RAM to hold pages. It acts as a middleman between the disk and the query engine.
-
-￼￼￼Why not use the Operating System (OS)?
-
-OS memory management is generic. A DBMS knows ￼￼more￼￼ about the data:
-
-- ￼￼Prefetching:￼￼ If you are scanning a table, the DBMS knows you'll need Page 2 after Page 1 and can load it ahead of time.
-
     Instructor VARCHAR(100),
     PRIMARY KEY (StudentID, CourseID)
 );
@@ -8082,6 +7945,7 @@ INSERT INTO StudentCourses VALUES
 (101, 'Alice', 'alice@uni.com', 'C002', 'Algorithms', 'Dr. Jones'),
 (102, 'Bob', 'bob@uni.com', 'C001', 'Database', 'Dr. Smith');
 ```
+
 
 **Problems here:**
 - **Update Anomaly:** If Alice changes her email, you must update TWO rows

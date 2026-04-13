@@ -58,11 +58,21 @@ Here, the code "waits" at each `await` until the promise resolves, then continue
     
 - **Error Handling:**  
     Use `try...catch` to handle errors just like synchronous code:
-    
-    javascript
-    
-    `async function getData() {   try {    let response = await fetch('bad-url');    let data = await response.json();    console.log(data);  } catch (error) {    console.error(error); // Handles network or parsing errors  } }`
-    
+```javascript
+async function getData() 
+{   
+	try 
+	{    
+		let response = await fetch('bad-url');    
+		let data = await response.json();    
+		
+		console.log(data);  
+	} catch (error) 
+	{    
+		console.error(error); // Handles network or parsing errors  
+	} 
+}
+```
 
 ---
 
@@ -79,30 +89,48 @@ Here, the code "waits" at each `await` until the promise resolves, then continue
     
 
 **Example:**
-
-javascript
-
-`async function demo() {   let a = await 42; // 42  let b = await Promise.resolve("hi"); // "hi"  let c = await { then: resolve => resolve("thenable!") }; // "thenable!"  console.log(a, b, c); } demo();`
-
+```javascript
+async function demo() 
+{   
+	let a = await 42; // 42  
+	let b = await Promise.resolve("hi"); // "hi"  
+	let c = await { then: resolve => resolve("thenable!") }; // "thenable!"  
+	console.log(a, b, c); 
+} 
+demo();
+```
 ---
 
 ## 5. Key Rules and Limitations
 
-- `await` can **only** be used inside async functions or at the top level of ES modules[1](https://www.w3schools.com/js/js_async.asp)[2](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)[3](https://javascript.info/async-await)[4](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)[5](https://blog.postman.com/understanding-async-await-in-node-js/)[6](https://www.programiz.com/javascript/async-await)[8](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await).
-    
-- An async function **always** returns a promise, even if you return a plain value[1](https://www.w3schools.com/js/js_async.asp)[2](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)[3](https://javascript.info/async-await).
-    
-- You can use multiple `await` statements in a row; each one will pause until the promise resolves[6](https://www.programiz.com/javascript/async-await)7.
-    
+- `await` can **only** be used inside async functions or at the top level of ES modules.
+- An async function **always** returns a promise, even if you return a plain value.
+- You can use multiple `await` statements in a row; each one will pause until the promise resolves.
 
 ---
 
 ## 6. Practical Example
+```javascript
+function wait(ms) 
+{   
+	return new Promise(resolve => setTimeout(resolve, ms)); 
+} 
 
-javascript
+async function doTasks() 
+{   
+	console.log("Start");  
+	await wait(1000); // Waits 1 second  
+	console.log("1 second passed");  
+	await wait(2000); // Waits 2 more seconds  
+	console.log("2 more seconds passed"); 
+} 
 
-`function wait(ms) {   return new Promise(resolve => setTimeout(resolve, ms)); } async function doTasks() {   console.log("Start");  await wait(1000); // Waits 1 second  console.log("1 second passed");  await wait(2000); // Waits 2 more seconds  console.log("2 more seconds passed"); } doTasks(); // Output: // Start // (after 1 second) 1 second passed // (after 2 more seconds) 2 more seconds passed`
-
+doTasks(); 
+// Output: 
+// Start 
+// (after 1 second) 1 second passed 
+// (after 2 more seconds) 2 more seconds passed
+```
 ---
 
 ## 7. Benefits of async/await
@@ -132,13 +160,3 @@ javascript
 - `await` pauses inside an async function until a promise is resolved or rejected, letting you write asynchronous code in a synchronous style.
     
 - Use `try...catch` for error handling, and remember that `await` only works inside async functions or modules[1](https://www.w3schools.com/js/js_async.asp)[2](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)[3](https://javascript.info/async-await)[4](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)[5](https://blog.postman.com/understanding-async-await-in-node-js/)[6](https://www.programiz.com/javascript/async-await)[8](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await).
-    
-
-1. [https://www.w3schools.com/js/js_async.asp](https://www.w3schools.com/js/js_async.asp)
-2. [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
-3. [https://javascript.info/async-await](https://javascript.info/async-await)
-4. [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)
-5. [https://blog.postman.com/understanding-async-await-in-node-js/](https://blog.postman.com/understanding-async-await-in-node-js/)
-6. [https://www.programiz.com/javascript/async-await](https://www.programiz.com/javascript/async-await)
-7. [https://www.youtube.com/watch?v=9j1dZwFEJ-c](https://www.youtube.com/watch?v=9j1dZwFEJ-c)
-8. [https://www.theodinproject.com/lessons/node-path-javascript-async-and-await](https://www.theodinproject.com/lessons/node-path-javascript-async-and-await)

@@ -3,6 +3,7 @@
 **Tags:**  [[Control Flow Statements]], [[Looping Statements]], [[Conditional Statements]], [[Functions]], [[Introduction to JavaScript]], [[Jump Statements]]
 
 ![[Syntax of JS#Functions]]
+
 ## Control Flow in JavaScript
 **Control flow** refers to the order in which the JavaScript engine executes statements in a script. By default, code runs from the top of the file to the bottom, one line at a time. 
 However, control flow statements allow you to alter this sequence, making your programs capable of making decisions, repeating actions, or responding to events.
@@ -62,7 +63,9 @@ And this will bring the flow of execution out of both loops when the given condi
 ---
 ### 3. Functions
 Functions group code into reusable blocks and can be called from different places in your program, affecting the flow of execution.
-- **Syntax:**
+
+**Syntax:**
+
 Functions in JS are created using the keyword `function` followed by function name and then in parenthesis we enter the parameters, and then in `{}` we write what that function will do.
 It is our choice to give a return value or not.
 They should always follow `camelCase` as `PascalCase` is reserved for something else!!!
@@ -86,7 +89,9 @@ add(4,6); // 10
 
 #### Arrow Function:
 We can create functions using arrow function syntax for a clean and clear understanding of the JS script,
-- **Syntax:**
+
+**Syntax:**
+
 This is done by first declaring a variable, and then assigning it Parameters followed by an arrow operator which containes the body of function!!!
 ```JS
 const addNums = (num1 = 2, num2 = 3) => {
@@ -111,9 +116,87 @@ rubber_duck@pop-os:~/Desktop/Coding/Programming languages/JavaScript$ nodejs pra
 73
 ```
 
-
 ---
 ## How Control Flow Works
 - **Top-to-bottom**: By default, JavaScript executes statements in order, from the first to the last line.
 - **Altered by control structures**: Conditionals, loops, and functions can change this order, allowing for complex logic and interactivity.
 - **Event-driven**: In web applications, code can also be triggered by events (like clicks or form submissions), further influencing control flow.
+
+# Now what do we mean when we say "functions are first-class objects in JS"
+
+## Why Functions are First-Class Objects
+
+To qualify as "first-class," an entity must be able to do these four things:
+
+### 1. Be stored in a variable
+
+You can assign a function to a variable just like you would assign the number 10.
+
+JavaScript
+
+```
+const greet = function() {
+  console.log("Hello!");
+};
+```
+
+### 2. Be passed as an argument to a function
+
+This is the foundation of **callbacks**. You can send a function into another function to be executed later.
+
+JavaScript
+
+```
+function executeTask(task) {
+  task(); // Running the function passed in
+}
+
+executeTask(greet); 
+```
+
+### 3. Be returned from a function
+
+A function can "spit out" another function as its result. This is a core part of **closures** and functional programming.
+
+JavaScript
+
+```
+function createMultiplier(multiplier) {
+  return function(num) {
+    return num * multiplier;
+  };
+}
+
+const double = createMultiplier(2);
+console.log(double(5)); // 10
+```
+
+### 4. Have properties and methods
+
+Since functions are actual objects in JavaScript, you can even attach data to them.
+
+JavaScript
+
+```
+function sayHi() {
+  console.log("Hi");
+}
+
+sayHi.description = "A simple greeting function";
+console.log(sayHi.description); 
+```
+
+---
+
+## The "Why It Matters" Factor
+
+Treating functions as first-class objects is what makes JavaScript so flexible. It allows for:
+
+- **Asynchronous programming:** Passing a function to `setTimeout` or a network request.
+    
+- **Higher-Order Functions:** Using methods like `.map()`, `.filter()`, and `.reduce()` which take functions as inputs to transform data.
+    
+- **Modular Code:** Breaking logic into tiny, portable pieces that can be moved around your application easily.
+    
+
+> **Fun Fact:** Because functions are objects, they actually have a prototype link to the global `Function.prototype` object, giving them built-in methods like `.call()`, `.apply()`, and `.bind()`.

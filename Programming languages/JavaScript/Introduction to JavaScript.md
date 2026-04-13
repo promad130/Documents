@@ -3,7 +3,7 @@
 JavaScript, often abbreviated JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS. 
 It lets us add interactivity to pages e.g. you might have seen sliders, alerts, click interactions, popups, etc on different websites -- all of that is built using JavaScript. 
 
-Apart from being used in the browser, it is also used in other non-browser environments as well such as Node.js for writing server-side code in JavaScript, Electron for writing desktop applications, React Native for mobile applications, and so on.
+Apart from being used in the browser, it is also used in other non-browser environments as well such as **Node.js** for writing server-side code in JavaScript, Electron for writing desktop applications, React Native for mobile applications, and so on.
 
 ## A History and versions
 JavaScript was initially created by Brendan Eich of NetScape and was first announced in a press release by Netscape in 1995. 
@@ -89,8 +89,7 @@ Lets start with [[Syntax of JS]].
 [[Data Structures in JS]] 
 And with those basic elements, lets have a look at [[Ways to Iterate over Array in JS]].
 
-What is TypeScript?
-
+Now, What is TypeScript?
 [[Object Oriented Programming in JS (Including TypeScript)]]
 (Add how js was initiallity ran on browsers, and introduce modules and stuff)
 You might be wondering that where is all these things done? Is it in the browser or the tab or what?
@@ -98,8 +97,10 @@ Well, there is something called Window Object, which is like the ultimate boss:
 [[Window Object in Web Browsers]]
 [[Documents in JavaScript]] 
 
-Good, now with all that, lets move onto [[Asynchronous JS]] 
+[[I O Operations in JS]]
 
+Good, now with all that, lets move onto [[Asynchronous JS and event loop]] 
+Also check out [[Event Loop in JS in Detail]]
 Now Take a look into [[Introduction to TypeScript]]
 
 ---

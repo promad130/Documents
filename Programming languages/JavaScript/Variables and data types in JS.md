@@ -26,23 +26,30 @@ y = 20;
 
 **Function scope instead of block scope** - `var` variables are accessible throughout the entire function, even outside the block where they're declared:​
 
-javascript
+```javascript
+if (true) 
+{   
+	var x = 10; 
+} 
 
-`if (true) {   var x = 10; } console.log(x); // Outputs 10 (leaks out of the block!)`
+console.log(x); // Outputs 10 (leaks out of the block!)`
+```
 
 This causes unexpected behavior where variables "leak" outside their intended scope.​
 
 **Allows re-declaration** - You can accidentally declare the same variable twice without errors:​
 
-javascript
-
-`var name = "John"; var name = "Jane"; // No error, just overwrites`
+```javascript
+var name = "John"; 
+var name = "Jane"; // No error, just overwrites
+```
 
 **Hoisting confusion** - `var` declarations get "hoisted" to the top of their scope and initialized as `undefined`, leading to bugs:​
 
-javascript
-
-`console.log(name); // Outputs undefined (should be an error!) var name = "Alice";`
+```javascript
+console.log(name); // Outputs undefined (should be an error!) 
+var name = "Alice";
+```
 
 **Adds properties to global object** - Using `var` at the top level creates properties on the `window` object, polluting the global namespace
 ## 2. `let`
@@ -175,21 +182,21 @@ Now note that the `null` is given as an `object`. This is because initially in J
 ---
 ## Types of Type Casting in JavaScript
 
-## 1. **Implicit Type Casting (Type Coercion)**
+### 1. Implicit Type Casting (Type Coercion)
 
 - JavaScript automatically converts data types when necessary, often during operations or comparisons.
 - **Examples:**
     
-    js
+    ```js
+    let result = "3" + 2;      // "32" (number 2 is converted to string) 
+    let result2 = "4" - "2";   // 2   (strings are converted to numbers) 
+    let result3 = 1 == "1";    // true (string "1" is converted to number 1)
+    ```
     
-    `let result = "3" + 2;      // "32" (number 2 is converted to string) let result2 = "4" - "2";   // 2   (strings are converted to numbers) let result3 = 1 == "1";    // true (string "1" is converted to number 1)`
-    
-- The `+` operator with a string triggers string concatenation; other arithmetic operators (`-`, `*`, `/`) trigger numeric conversion[3](https://www.programiz.com/javascript/type-conversion)[5](http://www.codepractice.io/javascript-type-casting)[6](https://www.tutorialspoint.com/explain-typecasting-in-javascript).
-    
+- The `+` operator with a string triggers string concatenation; other arithmetic operators (`-`, `*`, `/`) trigger numeric conversion.
 
----
 
-## 2. **Explicit Type Casting (Manual Conversion)**
+### 2. Explicit Type Casting (Manual Conversion)
 
 - You can manually convert data types using built-in functions:
     
@@ -203,28 +210,27 @@ Now note that the `null` is given as an `object`. This is because initially in J
     Boolean(0);          // false 
     parseInt("42");      // 42 
     parseFloat("3.14");  // 3.14
-```
+	```
 - Useful when you want to ensure a value is treated as the correct type.
 
 ---
 ## Conversion Rules and Table
 
-|Original Value|To Number|To String|To Boolean|
-|---|---|---|---|
-|false|0|"false"|false|
-|true|1|"true"|true|
-|0|0|"0"|false|
-|1|1|"1"|true|
-|"0"|0|"0"|true|
-|"1"|1|"1"|true|
-|""|0|""|false|
-|"20"|20|"20"|true|
-|"twenty"|NaN|"twenty"|true|
-|null|0|"null"|false|
-|undefined|NaN|"undefined"|false|
-|[]|0|""|true|
-|[10](https://thetechgenics.com/javascript/type-casting-in-javascript/)|NaN|"10,20"|true|
-|{}|NaN|"[object Object]"|true|
-|[1](http://www.w3schools.com/Js/js_type_conversion.asp)[3](https://www.programiz.com/javascript/type-conversion)||||
+| Original Value                                                         | To Number | To String         | To Boolean |
+| ---------------------------------------------------------------------- | --------- | ----------------- | ---------- |
+| false                                                                  | 0         | "false"           | false      |
+| true                                                                   | 1         | "true"            | true       |
+| 0                                                                      | 0         | "0"               | false      |
+| 1                                                                      | 1         | "1"               | true       |
+| "0"                                                                    | 0         | "0"               | true       |
+| "1"                                                                    | 1         | "1"               | true       |
+| ""                                                                     | 0         | ""                | false      |
+| "20"                                                                   | 20        | "20"              | true       |
+| "twenty"                                                               | NaN       | "twenty"          | true       |
+| null                                                                   | 0         | "null"            | false      |
+| undefined                                                              | NaN       | "undefined"       | false      |
+| []                                                                     | 0         | ""                | true       |
+| [10](https://thetechgenics.com/javascript/type-casting-in-javascript/) | NaN       | "10,20"           | true       |
+| {}                                                                     | NaN       | "[object Object]" | true       |
 
 >_Hence as you can see, JavaScript does not use ASCII values, it works on the basis of the logic that a number is a number, irrespective of it's type!!! Everything else is NaN(not a number), that is why the typecasting gives the given result. 

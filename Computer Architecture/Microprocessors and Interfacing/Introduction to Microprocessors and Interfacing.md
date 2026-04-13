@@ -2695,13 +2695,13 @@ The 80386SX also has a 16-bit data bus and uses the exact same banking system ($
 
 # I/O Interfacing
 
-![[29 Lecture_9.pdf]]
+![[29 Lecture_9.pdf#page=13]]
 
 ### **1. I/O Mapping Methods: Where does the device "live"?**
 
 The CPU needs a way to distinguish between a request for a memory byte and a request for data from a keyboard or sensor.
 
-#### **Isolated I/O (I/O Mapped I/O)**
+#### **Isolated I/O (Mapped I/O)**
 
 - **The Point:** Keeps the entire 1MB memory space free for software/data by putting I/O devices in a separate "shadow" map.
     
@@ -2715,11 +2715,10 @@ The CPU needs a way to distinguish between a request for a memory byte and a req
 #### **Memory-Mapped I/O**
 
 - **The Point:** Allows the CPU to use its full suite of powerful memory instructions (like `MOV`, `ADD`, `OR`) on external hardware.
-    
+
 - **How it Works:** A range of the 1MB address space is "stolen" and assigned to a device.
-    
+
 - **Trade-off:** It reduces the total RAM available to the system, but makes I/O programming more flexible.
-    
 
 ---
 
@@ -2730,11 +2729,10 @@ A **Port** is like a mailbox for a specific device.
 #### **Addressing Types**
 
 - **Fixed (Direct) Port Addressing:**
-    
-    - **Term:** The port address is a constant 8-bit number ($00\text{H}$ to $FF\text{H}$) hardcoded into the instruction.
-        
+	
+    - **Term:** The port address is a constant 8-bit number ($00\text{H}$ to $FF\text{H}$) hardcoded into the instruction.    
     - **Example:** `IN AL, 10H` — Immediately gets data from Port 10.
-        
+    
 - **Variable (Indirect) Port Addressing:**
     
     - **Term:** The port address is stored in the **DX register**, allowing for a 16-bit range.
@@ -2744,7 +2742,6 @@ A **Port** is like a mailbox for a specific device.
     - **Example:** `MOV DX, 03F8H`
         
         `IN AL, DX` — Gets data from a high-address COM port.
-        
 
 #### **Instructions: The Mechanics**
 
@@ -2757,13 +2754,13 @@ A **Port** is like a mailbox for a specific device.
 
 ---
 
-### **3. Data Transfer Modes: Coordination**
+### 3. Data Transfer Modes: Coordination
 
 The CPU is millions of times faster than a keyboard or sensor. Coordination is required to prevent data loss.
 
 - **Simple I/O (Unconditional):** The CPU just blasts data out. This is used for devices that are "always ready," like an LED display.
     
-- **Programmed I/O (Handshaking):** * **The Point:** Synchronizing a fast CPU with a slow device.
+- **Programmed I/O (Handshaking):** * The Point: Synchronizing a fast CPU with a slow device.
     
     - **Mechanism:** The CPU "polls" (repeatedly checks) a status bit from the device. It only transfers data when the device indicates it is ready.
         

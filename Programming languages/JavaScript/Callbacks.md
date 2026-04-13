@@ -60,17 +60,25 @@ Here, `processData` is called only after the simulated data fetch completes[3](h
 **Drawbacks: Callback Hell**  
 When multiple asynchronous operations depend on each other, callbacks can become deeply nested and hard to read—a situation known as "callback hell"[2](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Introducing)[5](https://www.stoman.me/articles/async-await-promises-callbacks-in-javascript). For example:
 
-javascript
-
-`doStep1(function(result1) {   doStep2(result1, function(result2) {    doStep3(result2, function(result3) {      // and so on...    });  }); });`
-
-This complexity is why modern JavaScript often uses Promises and async/await for asynchronous code[2](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Introducing)[5](https://www.stoman.me/articles/async-await-promises-callbacks-in-javascript).
+```javascript
+doStep1(function(result1) 
+	{   
+		doStep2(result1, function(result2) 
+			{    doStep3(result2, function(result3) 
+				{      
+					// and so on...    
+				});  
+			}); 
+	}
+);
+```
+This complexity is why modern JavaScript often uses Promises and async/await for asynchronous code.
 
 **Summary Table**
 
-|Term|Description|
-|---|---|
-|Callback|Function passed to another function to be executed later|
-|Usage|Asynchronous tasks (timers, network, events), modular code|
-|Drawbacks|Nested callbacks can become hard to manage ("callback hell")|
-|Alternatives|Promises, async/await (modern JavaScript)|
+| Term         | Description                                                  |
+| ------------ | ------------------------------------------------------------ |
+| Callback     | Function passed to another function to be executed later     |
+| Usage        | Asynchronous tasks (timers, network, events), modular code   |
+| Drawbacks    | Nested callbacks can become hard to manage ("callback hell") |
+| Alternatives | Promises, async/await (modern JavaScript)                    |

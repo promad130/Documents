@@ -101,38 +101,31 @@ Shorthand for if-else.
 let age = 18; 
 let status = (age >= 18) ? "adult" : "minor"; // "adult"
 ```
-## **8. Type Operators**
+### 8. Type Operators
 
 Check or assert types.
+```js
+typeof "hello"; // "string" 
+x instanceof Array; // true if x is an array
+```
 
-js
+### 9. Other Useful Operators
 
-`typeof "hello"; // "string" x instanceof Array; // true if x is an array`
-
-## **9. Other Useful Operators**
-
-- **Spread/Rest:** `let arr = [1, ...[2][3]]; // [1][2][3]`
-    
+- **Spread/Rest:** `let arr = [1, ...[2][3]]; // [1][2][3]` 
 - **Delete:** `delete obj.prop;`
-    
 - **in:** `'key' in obj; // true if obj has property 'key'`
-    
 - **void:** `void(0); // returns undefined`  
-    [2](https://www.w3schools.com/jsref/jsref_operators.asp)[6](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators)
-    
 
 ---
-
-## **Operator Precedence**
+## Operator Precedence
 
 Operator precedence determines the order in which operations are evaluated. For example, multiplication has higher precedence than addition:
 
-js
-
-`let result = 2 + 3 * 4; // result is 14, not 20`
+```js
+let result = 2 + 3 * 4; // result is 14, not 20
+```
 
 Use parentheses to override precedence:
-
-js
-
-`let result = (2 + 3) * 4; // result is 20`
+```js
+let result = (2 + 3) * 4; // result is 20
+```

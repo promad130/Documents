@@ -104,12 +104,18 @@ shoppingList.length; // 4`
 
 ---
 # Object Literals
-***(Note: this is a part of [[Object Oriented Programming]], so if you feel confused, first check that out!!!)***
+***(Note: this is a part of [[Object Oriented Programming]], so if you feel confused, first check that out!!!, and then check out [[Object Oriented Programming in JS (Including TypeScript)]])***
 **Object literals** (also called _object initializers_) are a concise way to define and create objects in JavaScript using a comma-separated list of key-value pairs wrapped in curly braces `{}`.
 ([But is the object here the same as that we saw in object oriented programming ???](Objects%20in%20JS%20vs%20that%20in%20OOPs.md))
 ## Syntax
 ```js
-const person = {   firstName: "John",  lastName: "Doe",  age: 50,  eyeColor: "blue" , MethodName(/*Parameters*/){/*What to do*/}};
+const person = {   
+	firstName: "John",  
+	lastName: "Doe",  
+	age: 50,  
+	eyeColor: "blue" , 
+	MethodName(/*Parameters*/){/*What to do*/}
+	};
 ```
 Each property consists of a key (also called a property name) and a value, separated by a colon. Properties are separated by commas.
 Object literals can be declared with var or let as well.
@@ -154,8 +160,10 @@ console.log(rectangle.area()); // 50
 ```
 
 ## Stuff we can do with object literals
+
 ### Object Destructuring in JavaScript
 **Object destructuring** is a concise syntax in JavaScript that allows you to extract properties from objects and assign them to variables in a single statement.
+
 #### Basic Syntax
 ```js
 const person = { firstName: "John", lastName: "Doe", age: 50 }; 

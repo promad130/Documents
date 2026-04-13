@@ -7946,7 +7946,6 @@ INSERT INTO StudentCourses VALUES
 (102, 'Bob', 'bob@uni.com', 'C001', 'Database', 'Dr. Smith');
 ```
 
-
 **Problems here:**
 - **Update Anomaly:** If Alice changes her email, you must update TWO rows
 - **Insertion Anomaly:** You can't add a new course (no StudentID) or a student without a course

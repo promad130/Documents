@@ -46,39 +46,44 @@ Each statement runs in the order it appears.
 - **Asynchronous code**: Uses mechanisms like `setTimeout`, Promises, or event handlers to schedule code to run later, allowing the rest of the script to continue executing.
 
 
-## **4. Event Loop and Queues**
+### 4. Event Loop and Queues
 
 - JavaScript uses an **event loop** to handle asynchronous tasks:
     
     - **Call Stack**: Executes synchronous code.
-        
     - **Job Queue / Microtask Queue**: Handles microtasks (like resolved Promises).
-        
-    - **Callback Queue / Macrotask Queue**: Handles callbacks from events, timers, etc.[1](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model)[6](https://dev.to/jahid6597/javascript-execution-context-a-deep-dive-4kno).
-        
-- Synchronous code runs first. When the call stack is empty, the event loop checks the microtask queue, then the callback queue, and processes jobs in order[1](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model)[6](https://dev.to/jahid6597/javascript-execution-context-a-deep-dive-4kno).
+    - **Callback Queue / Macrotask Queue**: Handles callbacks from events, timers, etc.
     
+- Synchronous code runs first. When the call stack is empty, the event loop checks the microtask queue, then the callback queue, and processes jobs in order.
 
-## **5. Function Calls and Execution Order**
+### 5. Function Calls and Execution Order
 
 - When a function is called, its code runs before the next statement after the call.
     
 - Example:
     
-    js
-    
-    `function sayHello() {   console.log("Hello"); } console.log("Start"); sayHello(); console.log("End");`
+    ```js
+    function sayHello() 
+    {   
+	    console.log("Hello"); 
+	} 
+	
+	console.log("Start"); 
+	
+	sayHello(); 
+	
+	console.log("End");
+    ```
     
     **Output:**
-    
-    text
-    
-    `Start Hello End`
-    
-    The function's code runs in the order it is called[3](https://demirels-organization.gitbook.io/javascript-tutorial/execution-order)[6](https://dev.to/jahid6597/javascript-execution-context-a-deep-dive-4kno).
-    
+    ```text
+    Start 
+    Hello 
+    End
+    ```
+    The function's code runs in the order it is called.
 
-## **6. Asynchronous Example**
+### 6. Asynchronous Example
 
 - Asynchronous code (like `setTimeout`) is placed in a queue and runs after synchronous code finishes:
     

@@ -3,6 +3,67 @@
 **Tags:** [[Object Oriented Programming]]
 
 The concept for [[Objects]] and the need for them is same everywhere.
+In JavaScript, almost everything is an object (or behaves like one), but they fall into different categories based on how they are built and what they are used for.
+
+Think of "Object" as the base DNA, and different types are just specialized versions of that DNA.
+
+---
+
+## 1. The Core Categories
+
+There are three main buckets that "objects" fall into:
+
+|**Category**|**Description**|**Examples**|
+|---|---|---|
+|**Standard Built-in Objects**|Objects provided by the JavaScript language itself.|`Object`, `Array`, `Date`, `RegExp`, `Map`, `Set`|
+|**Browser/Environment Objects**|Provided by the "host" (like the browser or Node.js).|`window`, `document` (DOM), `fetch`, `process`|
+|**User-Defined Objects**|Objects you create yourself in your code.|`const user = { name: "Alex" };`|
+
+---
+
+## 2. Specialized "First-Class" Objects
+
+While all of these are objects, JavaScript gives some of them special superpowers:
+
+### **Functions**
+
+As we discussed, these are "Callable Objects." They have all the properties of a regular object but include a hidden property that allows them to be executed using `()`.
+
+### **Arrays**
+
+An Array is just a special type of object designed to store ordered lists.
+
+- **Regular Object:** Uses named keys (e.g., `user.name`).
+    
+- **Array:** Uses numeric indexes (e.g., `list[0]`) and has a special `.length` property that updates automatically.
+    
+
+### **Dates & RegEx**
+
+These are objects with specialized methods for handling time or searching through text strings.
+
+---
+
+## 3. Objects vs. Primitives
+
+To understand objects, you have to know what _isn't_ an object. JavaScript has **Primitives** (simple data):
+
+- `String`, `Number`, `Boolean`, `null`, `undefined`, `Symbol`, `BigInt`.
+    
+
+**The Trick:** JavaScript uses something called "Autoboxing." When you try to access a method on a primitive (like `"hello".toUpperCase()`), JavaScript temporarily wraps that string in a **String Object** so it can use the method, then throws the object away.
+
+---
+
+## The "Everything is an Object" Hierarchy
+
+In JavaScript, almost everything inherits from the **Global Object Prototype**. This is why different "types" of objects still feel similar—they all share the same family tree.
+
+> **The Big Takeaway:** JavaScript doesn't really have "strict types" like other languages. Instead, it has **one Object type** that wears many different hats (Function hat, Array hat, Date hat).
+
+
+# Getting into the implementation of it:
+
 In JavaScript, we also saw [[Data Structures in JS#Object Literals]], so you might be wondering what is the difference?
 <blockquote>An object in JavaScript is a fundamental data type that stores collections of key-value pairs, where keys (also called properties or names) are strings (or symbols), and values can be any type—numbers, strings, functions, other objects, etc. Objects are used to represent real-world entities or structured data, and are central to how JavaScript programs are structured and interact</blockquote>
 

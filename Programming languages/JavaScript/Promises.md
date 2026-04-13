@@ -15,6 +15,7 @@ let myPromise = new Promise(function(resolve, reject)
 - **Executor function:** The constructor takes one argument, called the _executor function_. This function runs immediately and receives two parameters:
     - **resolve**: a function you call to mark the promise as fulfilled (successful).
     - **reject**: a function you call to mark the promise as rejected (failed).
+    - Think of this like this, when you are running a promise, the code itself doesn't know when the task is success and when it is a failure. If an error occurs, then that is a different and that too can be handled using try-catch phases, but still there needs to be something to tell the language that the promise is now completed, or the promise has now failed, and that is why we have the resolve and reject.
 - You can name these parameters anything (`resolve`, `reject`, `success`, `fail`, etc.), but you must use those names consistently inside your executor function.
 
 ### So, what about their parameters?
@@ -29,6 +30,7 @@ let myPromise = new Promise(function(resolve, reject)
 ### What happens when you call them?
 - The value passed to `resolve` becomes the result of the fulfilled promise and is received by the next `.then()` handler, and can be used as the parameter of the function to be executed in `.then()`
 - The value passed to `reject` becomes the reason for rejection and is received by the next `.catch()` handler
+(if u cannot grasp the concept of using this dot operator or what actually does the .then() and all mean, then I would suggest you check out [[Object Oriented Programming]])
 
 **Example:**
 ```JS

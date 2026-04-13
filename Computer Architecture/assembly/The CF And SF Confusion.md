@@ -10,10 +10,9 @@ Here is the breakdown of why this distinction is vital.
 
 Imagine the binary value `1111 1111`.
 
-- **As an Unsigned number:** It is `255`.
-    
+- **As an Unsigned number:** It is `255`.    
 - **As a Signed number (2's Complement):** It is `-1`.
-    
+
 
 If you compare this value to `0000 0001` (1), the result depends entirely on how you, the programmer, interpret those bits.
 
@@ -26,11 +25,8 @@ If you compare this value to `0000 0001` (1), the result depends entirely on how
 The Carry Flag only cares about the **magnitude** of the numbers as absolute values ($0$ to $255$ for a byte).
 
 - In a subtraction (`CMP`), the Carry Flag acts as a **Borrow Flag**.
-    
 - If you do `5 - 10`, you need to "borrow" from a non-existent higher digit.
-    
 - **CF = 1** always means the Destination was smaller than the Source in an **unsigned** sense.
-    
 
 #### 2. The Sign Flag (SF) — The "Signed" Specialist
 

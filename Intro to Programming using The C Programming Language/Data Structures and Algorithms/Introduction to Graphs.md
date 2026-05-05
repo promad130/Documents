@@ -1,25 +1,17 @@
-
 ## 1. Introduction and Motivation
-
 Think of the real world: almost everything is connected. Cities are connected by roads, people are connected by friendships, and computers are connected by the internet. **Graph theory** is the mathematical foundation we use to model, study, and solve problems involving these connections.
 
 If you want to find the shortest route on Google Maps, recommend friends on Facebook, or schedule a massive construction project, you use graphs.
 
 ## 2. What is a Graph?
-
 A graph is simply a collection of points and the lines that connect them.
-
 Mathematically, a graph is written as **G = (V, E)**.
-
-- **V (Vertices / Nodes):** The "points" or entities.
-    
+- **V (Vertices / Nodes):** The "points" or entities
 - **E (Edges):** The "lines" or connections between the points.
-    
 
 ### Undirected vs. Directed Graphs
 
 **1. Undirected Graph**
-
 The connections are two-way streets. If A is connected to B, B is equally connected to A. Edges are represented as unordered pairs: `{u, v}`.
 
 _Visual Example (Undirected):_
@@ -33,18 +25,12 @@ _Visual Example (Undirected):_
 ```
 
 - **Vertices (V):** {A, B, C, D}
-    
-- **Edges (E):** {{A,B}, {A,C}, {C,D}, {B,D}}
-    
+- **Edges (E):** {{A,B}, {A,C}, {C,D}, {B,D}} 
 
 **2. Directed Graph (Digraph)**
-
 The connections are one-way streets. Arrows indicate the direction. Edges are ordered pairs: `(u, v)`.
-
 - **u** is the _tail_ (where it starts).
-    
 - **v** is the _head_ (where it points).
-    
 
 _Visual Example (Directed):_
 
@@ -62,26 +48,17 @@ _Visual Example (Directed):_
 ## 2.1 Real-World Examples
 
 To lock this into your brain:
-
 - **Road Networks:** Vertices = Intersections. Edges = Roads. (Usually undirected, but one-way streets make it directed).
-    
 - **Social Networks:** Vertices = People. Edges = Friendships (Undirected: if I am your friend, you are mine).
-    
 - **Twitter/Instagram:** Vertices = Users. Edges = Follows (Directed: I can follow you, but you don't have to follow me back).
-    
 - **Web Graph:** Vertices = Webpages. Edges = Hyperlinks (Directed).
-    
 - **Task Scheduling:** Vertices = Tasks. Edges = Prerequisites (Directed: Task A must happen _before_ Task B).
-    
 
 ## 3. Basic Definitions
 
 ### 3.1 Adjacency (Who is your neighbor?)
-
 - **Undirected:** If there is a line between A and B, they are **adjacent**.
-    
 - **Directed:** If there is an arrow from A to B, B is **adjacent from** A. (A is adjacent _to_ B).
-    
 
 ### 3.2 Degree (How popular are you?)
 
@@ -91,29 +68,25 @@ The **degree** of a vertex is the number of lines connected to it.
 
 In the undirected visual above, vertex (B) connects to A and D.
 
-- `Degree(B) = 2`
-    
+- `Degree(B) = 2`    
 
 **In a Directed Graph, it splits into two:**
 
 - **In-degree:** Number of arrows pointing _into_ the vertex.
-    
 - **Out-degree:** Number of arrows pointing _out of_ the vertex.
-    
 
 **The Handshaking Lemma:**
 
 Imagine a party. Every time two people shake hands, two hands are involved. In a graph, every edge connects two vertices. Therefore, if you add up the degrees of _all_ vertices, the sum will always be exactly twice the number of edges.
 
 - `Sum of all degrees = 2 * (Number of Edges)`
-    
 
 ### 3.3 Paths and Cycles
 
 - **Path:** A sequence of vertices where you can walk from one to the next following the edges.
     
     - _Example:_ A → B → D is a path from A to D.
-        
+    
 - **Length of a Path:** The number of _edges_ you crossed (not the number of vertices!). The path A → B → D has a length of 2.
     
 - **Simple Path:** A path where you never visit the same vertex twice.
@@ -129,17 +102,14 @@ Imagine a party. Every time two people shake hands, two hands are involved. In a
     
 - **Directed Graph:**
     
-    - **Strongly Connected:** You can reach _every_ vertex from _every other_ vertex by strictly following the arrows.
-        
+    - **Strongly Connected:** You can reach _every_ vertex from _every other_ vertex by strictly following the arrows.    
     - **Weakly Connected:** If you ignore the arrows (pretend it's undirected), the graph is connected. But with the arrows, some vertices might be impossible to reach from others.
-        
 
 ## 3.5 Special Graphs
 
 There are specific shapes of graphs that are so common they get their own names.
 
 ### 1. Tree
-
 A connected, undirected graph with **zero cycles**.
 
 _Rule:_ A tree with `N` vertices always has exactly `N - 1` edges.

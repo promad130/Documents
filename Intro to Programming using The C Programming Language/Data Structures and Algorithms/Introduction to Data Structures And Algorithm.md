@@ -181,10 +181,8 @@ void deleteNode(Node*& head, int key) {
 1. **Singly Linked List:** Nodes point only forward. (Covered above).
     
 2. **Doubly Linked List:** Each node has a `prev` pointer and a `next` pointer. Allows traversing backward, but takes more memory.
-    
-    C++
-    
-    ```
+	
+    ```C++
     struct DoublyNode {
         int data;
         DoublyNode* next;
@@ -192,7 +190,7 @@ void deleteNode(Node*& head, int key) {
     };
     ```
     
-3. **Circular Linked List:** The `next` pointer of the last node points back to the `head`, forming a loop.
+4. **Circular Linked List:** The `next` pointer of the last node points back to the `head`, forming a loop.
     
 
 ---
@@ -262,11 +260,11 @@ A **Stack** is a linear data structure that follows the **LIFO (Last In, First O
 ```
 Push operations:          Pop operations:
 
-                         ┌─────┐
-    Push(5)              │  3  │ ← Pop() returns 3
-    ──────→              ├─────┤
-                         │  7  │
-    ┌─────┐             ├──��──┤
+                        ┌─────┐
+    Push(5)             │  3  │ ← Pop() returns 3
+    ──────→             ├─────┤
+                        │  7  │
+    ┌─────┐             ├─────┤
     │  5  │ ← Top       │  5  │ ← New Top
     └─────┘             └─────┘
 
@@ -742,433 +740,6 @@ int main() {
 
     cout << "Top: " << strStack.top() << endl;
     cout << "Size: " << strStack.size() << endl;
-
-    return 0;
-}
-```
-
-### Real-World Applications
-
-#### 1. Function Call Stack (Recursion)
-
-```cpp name=function_call_stack.cpp
-#include <iostream>
-using namespace std;
-
-// Recursive function demonstrating call stack
-int factorial(int n) {
-    cout << "Called factorial(" << n << ")" << endl;
-
-    if (n <= 1) {
-        cout << "Base case reached, returning 1" << endl;
-        return 1;
-    }
-
-    int result = n * factorial(n - 1);
-    cout << "Returning " << n << " * factorial(" << (n-1) << ") = " << result << endl;
-
-    return result;
-}
-
-int main() {
-    cout << "=== Function Call Stack Example ===" << endl;
-    cout << "\nCalculating 5!" << endl;
-    cout << "\nCall Stack Visualization:" << endl;
-
-    int result = factorial(5);
-
-    cout << "\nFinal result: " << result << endl;
-
-    /*
-    Call Stack grows like this:
-
-    factorial(5)
-    ├─ factorial(4)
-    │  ├─ factorial(3)
-    │  │  ├─ factorial(2)
-    │  │  │  ├─ factorial(1)  ← Base case
-    │  │  │  └─ returns 1
-    │  │  └─ returns 2
-    │  └─ returns 6
-    └─ returns 24
-    
-    Returns 120
-    */
-
-    return 0;
-}
-```
-
-#### 2. Expression Evaluation
-
-```cpp name=expression_evaluation.cpp
-#include <iostream>
-#include <stack>
-#include <string>
-#include <cctype>
-using namespace std;
-
-// Check if character is operator
-bool isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/';
-}
-
-// Get precedence of operator
-int precedence(char op) {
-    if (op == '+' || op == '-') return 1;
-    if (op == '*' || op == '/') return 2;
-    return 0;
-}
-
-// Convert infix to postfix notation
-string infixToPostfix(const string& infix) {
-    stack<char> s;
-    string postfix = "";
-
-    for (char c : infix) {
-        // If operand, add to output
-        if (isalnum(c)) {
-            postfix += c;
-        }
-        // If '(', push to stack
-        else if (c == '(') {
-            s.push(c);
-        }
-        // If ')', pop until '('
-        else if (c == ')') {
-            while (!s.empty() && s.top() != '(') {
-                postfix += s.top();
-                s.pop();
-            }
-            if (!s.empty()) s.pop();  // Remove '('
-        }
-        // If operator
-        else if (isOperator(c)) {
-            while (!s.empty() && s.top() != '(' &&
-                   precedence(s.top()) >= precedence(c)) {
-                postfix += s.top();
-                s.pop();
-            }
-            s.push(c);
-        }
-    }
-
-    // Pop remaining operators
-    while (!s.empty()) {
-        postfix += s.top();
-        s.pop();
-    }
-
-    return postfix;
-}
-
-// Evaluate postfix expression
-int evaluatePostfix(const string& postfix) {
-    stack<int> s;
-
-    for (char c : postfix) {
-        // If operand, push to stack
-        if (isdigit(c)) {
-            s.push(c - '0');
-        }
-        // If operator, pop two operands and apply operator
-        else if (isOperator(c)) {
-            int val2 = s.top(); s.pop();
-            int val1 = s.top(); s.pop();
-
-            switch (c) {
-                case '+': s.push(val1 + val2); break;
-                case '-': s.push(val1 - val2); break;
-                case '*': s.push(val1 * val2); break;
-                case '/': s.push(val1 / val2); break;
-            }
-        }
-    }
-
-    return s.top();
-}
-
-int main() {
-    cout << "=== Expression Evaluation Using Stack ===" << endl;
-
-    // Test cases
-    string expressions[] = {
-        "2+3*4",
-        "(2+3)*4",
-        "2+3+4*5",
-        "((2+3)*4)/5"
-    };
-
-    for (const string& infix : expressions) {
-        cout << "\nInfix:    " << infix << endl;
-
-        string postfix = infixToPostfix(infix);
-        cout << "Postfix:  " << postfix << endl;
-
-        // For simple evaluation with single digits
-        if (infix.find_first_not_of("0123456789+-*/()") == string::npos) {
-            int result = evaluatePostfix(postfix);
-            cout << "Result:   " << result << endl;
-        }
-    }
-
-    return 0;
-}
-```
-
-#### 3. Balanced Parentheses Checker
-
-```cpp name=balanced_parentheses.cpp
-#include <iostream>
-#include <stack>
-#include <string>
-using namespace std;
-
-bool isMatchingPair(char open, char close) {
-    return (open == '(' && close == ')') ||
-           (open == '{' && close == '}') ||
-           (open == '[' && close == ']');
-}
-
-bool areParenthesesBalanced(const string& expr) {
-    stack<char> s;
-
-    for (char c : expr) {
-        // If opening bracket, push to stack
-        if (c == '(' || c == '{' || c == '[') {
-            s.push(c);
-        }
-        // If closing bracket
-        else if (c == ')' || c == '}' || c == ']') {
-            // Stack empty or brackets don't match
-            if (s.empty() || !isMatchingPair(s.top(), c)) {
-                return false;
-            }
-            s.pop();
-        }
-    }
-
-    // Stack should be empty if balanced
-    return s.empty();
-}
-
-int main() {
-    cout << "=== Balanced Parentheses Checker ===" << endl;
-
-    string testCases[] = {
-        "{[()]}",           // Balanced
-        "{[(])}",           // Not balanced
-        "((()))",           // Balanced
-        "((())",            // Not balanced
-        "{[}]",             // Not balanced
-        "",                 // Balanced (empty)
-        "(){}[]",           // Balanced
-        "((()()()))",       // Balanced
-        "{[(())]}()",       // Balanced
-        "([)]"              // Not balanced
-    };
-
-    for (const string& test : testCases) {
-        bool balanced = areParenthesesBalanced(test);
-        cout << "\nExpression: \"" << test << "\"" << endl;
-        cout << "Result: " << (balanced ? "Balanced ✓" : "Not Balanced ✗") << endl;
-    }
-
-    return 0;
-}
-```
-
-#### 4. Undo/Redo Functionality
-
-```cpp name=undo_redo.cpp
-#include <iostream>
-#include <stack>
-#include <string>
-using namespace std;
-
-class TextEditor {
-private:
-    string text;
-    stack<string> undoStack;
-    stack<string> redoStack;
-
-public:
-    TextEditor() : text("") {}
-
-    void write(const string& newText) {
-        undoStack.push(text);  // Save current state
-        text += newText;
-        
-        // Clear redo stack on new action
-        while (!redoStack.empty()) {
-            redoStack.pop();
-        }
-
-        cout << "Written: \"" << newText << "\"" << endl;
-    }
-
-    void undo() {
-        if (undoStack.empty()) {
-            cout << "Nothing to undo!" << endl;
-            return;
-        }
-
-        redoStack.push(text);  // Save current state for redo
-        text = undoStack.top();
-        undoStack.pop();
-
-        cout << "Undo performed" << endl;
-    }
-
-    void redo() {
-        if (redoStack.empty()) {
-            cout << "Nothing to redo!" << endl;
-            return;
-        }
-
-        undoStack.push(text);  // Save current state
-        text = redoStack.top();
-        redoStack.pop();
-
-        cout << "Redo performed" << endl;
-    }
-
-    void display() const {
-        cout << "Current text: \"" << text << "\"" << endl;
-    }
-};
-
-int main() {
-    cout << "=== Text Editor with Undo/Redo ===" << endl;
-
-    TextEditor editor;
-
-    editor.display();
-
-    cout << "\n--- Writing text ---" << endl;
-    editor.write("Hello");
-    editor.display();
-
-    editor.write(" World");
-    editor.display();
-
-    editor.write("!");
-    editor.display();
-
-    cout << "\n--- Performing undo ---" << endl;
-    editor.undo();
-    editor.display();
-
-    editor.undo();
-    editor.display();
-
-    cout << "\n--- Performing redo ---" << endl;
-    editor.redo();
-    editor.display();
-
-    cout << "\n--- Writing new text ---" << endl;
-    editor.write(" C++");
-    editor.display();
-
-    cout << "\n--- Attempting redo (should fail) ---" << endl;
-    editor.redo();
-
-    return 0;
-}
-```
-
-#### 5. Browser History (Back/Forward)
-
-```cpp name=browser_history.cpp
-#include <iostream>
-#include <stack>
-#include <string>
-using namespace std;
-
-class Browser {
-private:
-    stack<string> backStack;
-    stack<string> forwardStack;
-    string currentPage;
-
-public:
-    Browser() : currentPage("Homepage") {
-        cout << "Browser started at: " << currentPage << endl;
-    }
-
-    void visit(const string& url) {
-        if (!currentPage.empty()) {
-            backStack.push(currentPage);
-        }
-
-        currentPage = url;
-
-        // Clear forward history on new visit
-        while (!forwardStack.empty()) {
-            forwardStack.pop();
-        }
-
-        cout << "Visited: " << url << endl;
-    }
-
-    void back() {
-        if (backStack.empty()) {
-            cout << "No previous page!" << endl;
-            return;
-        }
-
-        forwardStack.push(currentPage);
-        currentPage = backStack.top();
-        backStack.pop();
-
-        cout << "Back to: " << currentPage << endl;
-    }
-
-    void forward() {
-        if (forwardStack.empty()) {
-            cout << "No forward page!" << endl;
-            return;
-        }
-
-        backStack.push(currentPage);
-        currentPage = forwardStack.top();
-        forwardStack.pop();
-
-        cout << "Forward to: " << currentPage << endl;
-    }
-
-    void displayCurrent() const {
-        cout << "Current page: " << currentPage << endl;
-    }
-};
-
-int main() {
-    cout << "=== Browser History Simulation ===" << endl;
-    
-    Browser browser;
-
-    cout << "\n--- Visiting pages ---" << endl;
-    browser.visit("google.com");
-    browser.visit("github.com");
-    browser.visit("stackoverflow.com");
-
-    cout << "\n--- Going back ---" << endl;
-    browser.back();
-    browser.displayCurrent();
-
-    browser.back();
-    browser.displayCurrent();
-
-    cout << "\n--- Going forward ---" << endl;
-    browser.forward();
-    browser.displayCurrent();
-
-    cout << "\n--- Visiting new page ---" << endl;
-    browser.visit("youtube.com");
-    browser.displayCurrent();
-
-    cout << "\n--- Trying to go forward (should fail) ---" << endl;
-    browser.forward();
 
     return 0;
 }
@@ -2133,448 +1704,6 @@ int main() {
 }
 ```
 
-### Real-World Applications
-
-#### 1. CPU Task Scheduling
-
-```cpp name=cpu_scheduling.cpp
-#include <iostream>
-#include <queue>
-#include <string>
-using namespace std;
-
-struct Process {
-    int id;
-    string name;
-    int burstTime;
-
-    Process(int i, string n, int bt) : id(i), name(n), burstTime(bt) {}
-};
-
-void roundRobinScheduling(queue<Process>& processQueue, int timeQuantum) {
-    cout << "=== Round Robin CPU Scheduling ===" << endl;
-    cout << "Time Quantum: " << timeQuantum << " units\n" << endl;
-
-    int currentTime = 0;
-
-    while (!processQueue.empty()) {
-        Process p = processQueue.front();
-        processQueue.pop();
-
-        cout << "Time " << currentTime << ": Running " << p.name 
-             << " (PID: " << p.id << ")" << endl;
-
-        if (p.burstTime > timeQuantum) {
-            // Process not finished, use time quantum
-            currentTime += timeQuantum;
-            p.burstTime -= timeQuantum;
-
-            cout << "  -> Not finished. Remaining time: " << p.burstTime 
-                 << ". Re-queuing..." << endl;
-
-            // Re-add to queue
-            processQueue.push(p);
-        } else {
-            // Process finished
-            currentTime += p.burstTime;
-            cout << "  -> Completed!" << endl;
-        }
-
-        cout << endl;
-    }
-
-    cout << "All processes completed at time " << currentTime << endl;
-}
-
-int main() {
-    queue<Process> processQueue;
-
-    processQueue.push(Process(1, "Chrome", 10));
-    processQueue.push(Process(2, "VSCode", 5));
-    processQueue.push(Process(3, "Spotify", 8));
-    processQueue.push(Process(4, "Terminal", 3));
-
-    roundRobinScheduling(processQueue, 3);
-
-    return 0;
-}
-```
-
-#### 2. Breadth-First Search (BFS)
-
-```cpp name=bfs_queue.cpp
-#include <iostream>
-#include <queue>
-#include <vector>
-#include <unordered_set>
-using namespace std;
-
-class Graph {
-private:
-    int vertices;
-    vector<vector<int>> adjList;
-
-public:
-    Graph(int v) : vertices(v), adjList(v) {}
-
-    void addEdge(int u, int v) {
-        adjList[u].push_back(v);
-        adjList[v].push_back(u);  // Undirected graph
-    }
-
-    void BFS(int start) {
-        cout << "BFS traversal starting from vertex " << start << ":" << endl;
-
-        vector<bool> visited(vertices, false);
-        queue<int> q;
-
-        visited[start] = true;
-        q.push(start);
-
-        while (!q.empty()) {
-            int current = q.front();
-            q.pop();
-
-            cout << current << " ";
-
-            // Enqueue all unvisited neighbors
-            for (int neighbor : adjList[current]) {
-                if (!visited[neighbor]) {
-                    visited[neighbor] = true;
-                    q.push(neighbor);
-                }
-            }
-        }
-
-        cout << endl;
-    }
-
-    void displayGraph() {
-        cout << "\nGraph adjacency list:" << endl;
-        for (int i = 0; i < vertices; i++) {
-            cout << i << ": ";
-            for (int neighbor : adjList[i]) {
-                cout << neighbor << " ";
-            }
-            cout << endl;
-        }
-    }
-};
-
-int main() {
-    cout << "=== BFS using Queue ===" << endl;
-
-    Graph g(6);
-
-    g.addEdge(0, 1);
-    g.addEdge(0, 2);
-    g.addEdge(1, 3);
-    g.addEdge(1, 4);
-    g.addEdge(2, 4);
-    g.addEdge(3, 5);
-    g.addEdge(4, 5);
-
-    g.displayGraph();
-
-    cout << endl;
-    g.BFS(0);
-
-    /*
-    Graph visualization:
-        0
-       / \
-      1   2
-     /|   |
-    3 4---+
-     \|
-      5
-    */
-
-    return 0;
-}
-```
-
-### 3. Print Queue Management
-
-```cpp name=print_queue.cpp
-#include <iostream>
-#include <queue>
-#include <string>
-#include <thread>
-#include <chrono>
-using namespace std;
-
-struct PrintJob {
-    int id;
-    string document;
-    int pages;
-
-    PrintJob(int i, string doc, int p) : id(i), document(doc), pages(p) {}
-};
-
-class Printer {
-private:
-    queue<PrintJob> jobQueue;
-    int jobIdCounter;
-
-public:
-    Printer() : jobIdCounter(1) {}
-
-    void addJob(const string& document, int pages) {
-        PrintJob job(jobIdCounter++, document, pages);
-        jobQueue.push(job);
-        cout << "Added to queue: Job #" << job.id << " - \"" << job.document 
-             << "\" (" << job.pages << " pages)" << endl;
-    }
-
-    void processQueue() {
-        if (jobQueue.empty()) {
-            cout << "\nNo jobs in queue!" << endl;
-            return;
-        }
-
-        cout << "\n=== Processing Print Queue ===" << endl;
-        cout << "Jobs in queue: " << jobQueue.size() << "\n" << endl;
-
-        while (!jobQueue.empty()) {
-            PrintJob job = jobQueue.front();
-            jobQueue.pop();
-
-            cout << "Printing Job #" << job.id << ": \"" << job.document << "\"" << endl;
-
-            // Simulate printing time (1 second per page)
-            for (int i = 1; i <= job.pages; i++) {
-                cout << "  Page " << i << "/" << job.pages << "..." << endl;
-                this_thread::sleep_for(chrono::milliseconds(500));
-            }
-
-            cout << "  ✓ Job #" << job.id << " completed!\n" << endl;
-        }
-
-        cout << "All jobs processed!" << endl;
-    }
-
-    int queueSize() const {
-        return jobQueue.size();
-    }
-};
-
-int main() {
-    cout << "=== Print Queue Management System ===" << endl;
-
-    Printer printer;
-
-    // Add print jobs
-    printer.addJob("Report.pdf", 3);
-    printer.addJob("Presentation.pptx", 2);
-    printer.addJob("Invoice.docx", 1);
-    printer.addJob("Manual.pdf", 4);
-
-    // Process all jobs
-    printer.processQueue();
-
-    return 0;
-}
-```
-
-### 4. Customer Service Queue
-
-```cpp name=customer_service_queue.cpp
-#include <iostream>
-#include <queue>
-#include <string>
-using namespace std;
-
-struct Customer {
-    int ticketNumber;
-    string name;
-    string issue;
-
-    Customer(int ticket, string n, string i) 
-        : ticketNumber(ticket), name(n), issue(i) {}
-};
-
-class ServiceCenter {
-private:
-    queue<Customer> waitingQueue;
-    int nextTicket;
-
-public:
-    ServiceCenter() : nextTicket(1) {}
-
-    void addCustomer(const string& name, const string& issue) {
-        Customer customer(nextTicket++, name, issue);
-        waitingQueue.push(customer);
-
-        cout << "Customer added: " << customer.name 
-             << " (Ticket #" << customer.ticketNumber << ")" << endl;
-        cout << "Issue: " << customer.issue << endl;
-        cout << "Position in queue: " << waitingQueue.size() << "\n" << endl;
-    }
-
-    void serveNext() {
-        if (waitingQueue.empty()) {
-            cout << "No customers waiting!" << endl;
-            return;
-        }
-
-        Customer customer = waitingQueue.front();
-        waitingQueue.pop();
-
-        cout << "\n=== Now Serving ===" << endl;
-        cout << "Ticket #" << customer.ticketNumber << endl;
-        cout << "Customer: " << customer.name << endl;
-        cout << "Issue: " << customer.issue << endl;
-        cout << "Customers remaining: " << waitingQueue.size() << "\n" << endl;
-    }
-
-    void displayQueue() const {
-        if (waitingQueue.empty()) {
-            cout << "Queue is empty!" << endl;
-            return;
-        }
-
-        cout << "\n--- Current Queue ---" << endl;
-        queue<Customer> temp = waitingQueue;
-        int position = 1;
-
-        while (!temp.empty()) {
-            Customer c = temp.front();
-            temp.pop();
-
-            cout << position++ << ". Ticket #" << c.ticketNumber 
-                 << " - " << c.name << " (" << c.issue << ")" << endl;
-        }
-        cout << endl;
-    }
-
-    int queueLength() const {
-        return waitingQueue.size();
-    }
-};
-
-int main() {
-    cout << "=== Customer Service Queue System ===" << endl;
-
-    ServiceCenter center;
-
-    // Customers arrive
-    center.addCustomer("Alice", "Account inquiry");
-    center.addCustomer("Bob", "Technical support");
-    center.addCustomer("Charlie", "Billing question");
-    center.addCustomer("Diana", "Product return");
-
-    // Display queue
-    center.displayQueue();
-
-    // Serve customers
-    center.serveNext();
-    center.serveNext();
-
-    // More customers arrive
-    center.addCustomer("Eve", "New account");
-
-    center.displayQueue();
-
-    // Serve remaining customers
-    center.serveNext();
-    center.serveNext();
-    center.serveNext();
-
-    return 0;
-}
-```
-
-### 5. Cache Implementation (LRU Cache)
-
-```cpp name=lru_cache_queue.cpp
-#include <iostream>
-#include <unordered_map>
-#include <list>
-using namespace std;
-
-class LRUCache {
-private:
-    int capacity;
-    list<pair<int, int>> cacheList;  // Stores (key, value) pairs
-    unordered_map<int, list<pair<int, int>>::iterator> cacheMap;  // Maps key to iterator
-
-public:
-    LRUCache(int cap) : capacity(cap) {}
-
-    int get(int key) {
-        if (cacheMap.find(key) == cacheMap.end()) {
-            cout << "Cache MISS for key " << key << endl;
-            return -1;  // Key not found
-        }
-
-        // Move accessed item to front (most recently used)
-        auto it = cacheMap[key];
-        int value = it->second;
-        cacheList.erase(it);
-        cacheList.push_front({key, value});
-        cacheMap[key] = cacheList.begin();
-
-        cout << "Cache HIT for key " << key << " -> " << value << endl;
-        return value;
-    }
-
-    void put(int key, int value) {
-        // If key exists, update it
-        if (cacheMap.find(key) != cacheMap.end()) {
-            auto it = cacheMap[key];
-            cacheList.erase(it);
-        } else if (cacheList.size() >= capacity) {
-            // Cache is full, remove least recently used
-            auto lru = cacheList.back();
-            cacheMap.erase(lru.first);
-            cacheList.pop_back();
-            cout << "Evicted key " << lru.first << " (LRU)" << endl;
-        }
-
-        // Add new item to front
-        cacheList.push_front({key, value});
-        cacheMap[key] = cacheList.begin();
-
-        cout << "Put key " << key << " -> " << value << endl;
-    }
-
-    void display() const {
-        cout << "\nCache contents (MRU to LRU): ";
-        for (auto& p : cacheList) {
-            cout << "[" << p.first << ":" << p.second << "] ";
-        }
-        cout << endl;
-    }
-};
-
-int main() {
-    cout << "=== LRU Cache Implementation ===" << endl;
-
-    LRUCache cache(3);  // Capacity of 3
-
-    cout << "\n--- Adding items ---" << endl;
-    cache.put(1, 10);
-    cache.put(2, 20);
-    cache.put(3, 30);
-    cache.display();
-
-    cout << "\n--- Accessing item ---" << endl;
-    cache.get(1);
-    cache.display();
-
-    cout << "\n--- Adding new item (causes eviction) ---" << endl;
-    cache.put(4, 40);
-    cache.display();
-
-    cout << "\n--- Accessing items ---" << endl;
-    cache.get(2);  // Cache miss
-    cache.get(3);  // Cache hit
-    cache.display();
-
-    return 0;
-}
-```
 
 ### Time Complexity Analysis
 
@@ -4808,21 +3937,6 @@ void bubbleSort(std::vector<int>& A) {
 }
 ```
 
-
----
-# 2. **[[Recursion]]**
-   - **Definition:** A function calling itself to solve a problem by breaking it into smaller subproblems.
-   - **Use Case:** When a problem can be divided into smaller, similar subproblems (e.g., tree traversal, factorial calculation).
-   - **Example:**
-     ```c
-     int factorial(int n) {
-         if (n == 0) return 1;
-         return n * factorial(n - 1);
-     }
-     ```
-
-# Algorithms in Recursion
-
 ## Insertion Sort
 
 ### 1. Conceptual Breakdown
@@ -4831,9 +3945,7 @@ void bubbleSort(std::vector<int>& A) {
 
 **Pseudocode (CLRS 4th Edition, Page 19):**
 
-Plaintext
-
-```
+```Plaintext
 INSERTION-SORT(A, n)
 1  for j = 2 to n
 2      key = A[j]
@@ -4921,6 +4033,22 @@ void insertionSort(std::vector<int>& A) {
 	}
 }
 ```
+
+
+---
+# 2. **[[Recursion]]**
+   - **Definition:** A function calling itself to solve a problem by breaking it into smaller subproblems.
+   - **Use Case:** When a problem can be divided into smaller, similar subproblems (e.g., tree traversal, factorial calculation).
+   - **Example:**
+     ```c
+     int factorial(int n) {
+         if (n == 0) return 1;
+         return n * factorial(n - 1);
+     }
+     ```
+
+# Algorithms in Recursion
+
 
 # [[HASHING]]
 ## What is Hashing?
@@ -5320,7 +4448,7 @@ Instead of each array index holding just one value, each index holds a **Linked 
 
 ### 1. Conceptual Framework
 
-In standard analysis, we assume an adversary provides the worst possible input (e.g., a reverse-sorted array for Insertion Sort). In this chapter, we introduce two distinct but related approaches:
+In standard analysis, we assume an adversary provides the worst possible input (e.g., a reverse-sorted array for Insertion Sort). In this chapter, we introduce two distinct but related approaches:h
 
 - **Probabilistic Analysis:** We analyze the **average-case** running time by making assumptions about the distribution of inputs (e.g., assuming all $n!$ permutations of an input are equally likely).
     
@@ -6323,13 +5451,13 @@ Compare to Quick Sort: O(n log n) = 10⁶ × log₂(10⁶) ≈ 20 million operat
 
 ## Advantages & Disadvantages
 
-### ✅ Advantages
+### Advantages
 - **Fast**: O(n) for fixed-length keys
 - **Stable**: Preserves relative order
 - **Predictable**: Performance doesn't depend on input distribution
 - **Parallel**: Can be parallelized easily
 
-### ❌ Disadvantages
+### Disadvantages
 - **Limited use**: Only works for integers, fixed-length strings
 - **Space**: Requires O(n) extra space
 - **Not adaptive**: Doesn't benefit from partially sorted data
@@ -6337,14 +5465,14 @@ Compare to Quick Sort: O(n log n) = 10⁶ × log₂(10⁶) ≈ 20 million operat
 
 ## When to Use Radix Sort
 
-✅ **Use when:**
+**Use when:**
 - Sorting integers with limited range
 - Sorting strings of similar length
 - You need O(n) time complexity
 - Stability is required
 - Working with fixed-length keys (SSN, phone numbers, zip codes)
 
-❌ **Don't use when:**
+**Don't use when:**
 - Floating-point numbers
 - Variable-length data
 - Very large ranges (many digits)
@@ -9185,15 +8313,11 @@ Each isolated subgraph is a connected component.
 
 ---
 
-## 
-
-I'll teach you both algorithms in detail, following your structure: Theory → Implementation for each.
-
 ---
 
-# **DIJKSTRA'S ALGORITHM**
+# DIJKSTRA'S ALGORITHM
 
-## **DIJKSTRA - THEORY**
+## DIJKSTRA - THEORY
 
 ### **The Problem**
 
@@ -10229,3 +9353,4 @@ Speedup: 90.8x
 | **Use Case** | GPS, routing | Currency arbitrage, feedback loops |
 | **Correctness** | Greedy works | Relaxation guarantees optimality |
 | **Key Insight** | Pick closest unvisited | Relax all edges repeatedly |
+

@@ -114,11 +114,8 @@ A **Binary Search Tree** is a specific type of binary tree that enforces a stric
 **The BST Rule:**
 
 1. The left subtree of a node contains only nodes with keys **less than** the node's key.
-    
 2. The right subtree of a node contains only nodes with keys **greater than** the node's key.
-    
 3. Left and right subtrees must also be binary search trees.
-    
 
 **Visualization:**
 

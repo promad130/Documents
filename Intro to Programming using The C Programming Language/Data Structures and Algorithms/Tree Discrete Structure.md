@@ -16,44 +16,34 @@ Here is a visual representation of a basic tree:
 ## Key Terminology
 
 - **Node:** An entity containing data and pointers to its child nodes (e.g., A, B, C).
-    
 - **Root:** The topmost node of the tree. It has no parent (e.g., A).
-    
 - **Edge:** The connecting link between any two nodes.
-    
 - **Parent:** A node that has child nodes (e.g., B is the parent of D and E).
-    
 - **Child:** A node extending from another node (e.g., D and E are children of B).
-    
 - **Leaf:** A node with no children. Also called an external node (e.g., D, E, F).
-    
 - **Subtree:** A tree consisting of a node and all of its descendants (e.g., Node B, D, and E form a subtree).
-    
 
 ## Real-World Examples
 
 1. **File Systems:** Your computer's directory structure is a tree.
     
     - _Root:_ `C:\` (Windows) or `/` (Mac/Linux)
-        
     - _Parents:_ Folders (`Documents`, `Downloads`)
-        
     - _Leaves:_ Individual files (`resume.pdf`, `photo.jpg`)
-        
+    
 2. **HTML DOM:** Web pages are structured as trees.
     
     - `<html>` is the root, containing `<head>` and `<body>` as children. `<body>` might contain `<div>` and `<p>` leaves.
-        
+    
 3. **Organization Charts:** A company's hierarchy.
     
-    - CEO (Root) -> VPs (Parents) -> Managers -> Employees (Leaves).
-        
+    - CEO (Root) -> VPs (Parents) -> Managers -> Employees (Leaves).    
 
 ## Code Example: A Basic Tree in C++
 
 Here is how you can define and build the tree visualized above using C++ and standard vectors:
 
-```
+```C++
 #include <iostream>
 #include <vector>
 #include <string>

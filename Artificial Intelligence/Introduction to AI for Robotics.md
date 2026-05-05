@@ -8,11 +8,8 @@ The word "robot" comes from the Czech word _robota_, which literally means **sla
 A robot isn't just a computer; it's a bridge between the digital and physical worlds. It requires three distinct fields working together:
 
 1. **Mechanical Engineering:** The "body" (gears, wheels, chassis).
-    
 2. **Electronics:** The "nervous system" (sensors to see, wires to carry signals, batteries for energy).
-    
 3. **Computer Programming:** The "brain" (AI that decides what to do with sensor data).
-    
 
 ### The Modern Definition
 
@@ -39,11 +36,8 @@ We don't go from a remote-controlled car to a Terminator overnight. Automation h
 Robots process information using different "paradigms." Think of these like human reactions:
 
 - **Reflexive (Hardwired):** Stimulus $\rightarrow$ Response. There is no "thinking." If a sensor hits a wall, the motor stops instantly.
-    
 - **Reactive (Learned):** Like "muscle memory." You’ve practiced it so much you don't think about it.
-    
 - **Conscious (Deliberative):** Planning. "If I turn left here, will I reach the door faster?".
-    
 
 ### Python Example: The "Timid" Robot
 
@@ -91,8 +85,6 @@ This is the hardest part of robotics. Imagine being dropped in a dark, unfamilia
 Sensors are "noisy." A GPS might say you are at Point A, but it’s actually 2 meters off. A **Kalman Filter** is a mathematical tool that uses probability to "guess" your true location more accurately than the raw sensor data.
 
 ---
-
-
 # The Robot Motion Model
 
 It handles the physics of moving. If you tell your legs to take three steps forward and turn left, where do you end up?
@@ -212,13 +204,9 @@ Because it isn't moving, its true position should just be a flat constant number
 **The Math Vocabulary:**
 
 - $x_k^*$: The _actual_, noisy measurement from the sensor at time $k$.
-    
 - $\hat{x}_k$: Our _estimated_, clean guess of where the robot is.
-    
 - $a_0$: The constant number we are trying to find (the best guess of the stationary position).
-    
 - $R$: The "Residual" or total error. We want to make this number as small as possible.
-    
 
 The formula tries to minimize this error: $R = \sum_{k=1}^n (a_0 - x_k^*)^2$.
 
@@ -496,9 +484,7 @@ The standard Kalman Filter (KF) only works if your math is perfectly linear (str
 The hardest part of building a robot is tuning the $Q$ (Process Noise) and $R$ (Measurement Noise) matrices. Let's see how they affect the tracking!
 
 - Increase **Measurement Noise ($R$)** if you think your sensor is terrible. You will see the Kalman Estimate ignore the noisy dots and smooth out the line.
-    
 - Increase **Process Noise ($Q$)** if you think your wheels are slipping wildly. You will see the Kalman Estimate nervously jump around to follow the sensor dots, because it no longer trusts its own math.
-    
 
 
 
@@ -828,9 +814,7 @@ These algorithms have a compass. They use a **Heuristic** (a mathematically educ
 
 Let's write a simple "Uninformed" BFS in Python. We will represent the robot's map as a **Graph** using a Python Dictionary.
 
-Python
-
-```
+```Python
 from collections import deque
 
 # 1. Define the Map (The Visibility Graph)

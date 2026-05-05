@@ -394,9 +394,7 @@ The **substitution method** is a formal way to solve recurrences by "guessing" t
 It is a two-step process:
 
 1. **Guess** the form of the solution (often based on experience or a recursion tree).
-    
 2. **Prove** it using induction to find the specific constants $c$ and $n_0$.
-    
 
 ---
 

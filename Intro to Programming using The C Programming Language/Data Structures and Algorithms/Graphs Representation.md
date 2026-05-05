@@ -9,13 +9,9 @@ A graph $G = (V, E)$ consists of a set of vertices (nodes) $V$ and edges (connec
 Think of this as a **"Who are my friends?"** list for every person in a room.
 
 - **Structure:** An array `Adj` of $|V|$ lists. `Adj[u]` contains all vertices $v$ such that $(u, v) \in E$.
-    
 - **Space:** $\Theta(V + E)$. You only store what exists.
-    
 - **Time to check edge** $(u, v)$**:** $O(\text{deg}(u))$.
-    
 - **Best For:** **Sparse graphs** ($|E| \ll |V|^2$).
-    
 
 **Pseudocode:**
 
@@ -29,35 +25,25 @@ FOR each v IN Adj[u]:
 
 Think of this as a **spreadsheet** where rows and columns are vertices.
 
-- **Structure:** A $|V| \times |V|$ grid $A$. $A[u][v] = 1$ if $(u, v) \in E$, else $0$.
-    
+- **Structure:** A $|V| \times |V|$ grid $A$. $A[u][v] = 1$ if $(u, v) \in E$, else $0$.    
 - **Symmetry:** For **undirected** graphs, the matrix is symmetric ($A[u][v] = A[v][u]$).
-    
 - **Time to check edge** $(u, v)$**:** $\Theta(1)$ (instant lookup).
-    
 - **Space:** $\Theta(V^2)$.
-    
 - **Best For:** **Dense graphs** or fast edge lookups.
-    
 
 ### 1.3 Incidence Matrix
 
 This focuses on the relationship between **vertices** and **edges**.
 
-- **Structure:** A $|V| \times |E|$ matrix $B$.
-    
+- **Structure:** A $|V| \times |E|$ matrix $B$.    
 - **Undirected Graphs:** $B[v][e] = 1$ if vertex $v$ is an endpoint of edge $e$, else $0$.
-    
 - **Directed Graphs:**
     
     - $B[v][e] = -1$ if edge $e$ **leaves** vertex $v$.
-        
     - $B[v][e] = +1$ if edge $e$ **enters** vertex $v$.
-        
     - $B[v][e] = 0$ otherwise.
-        
-- **Space:** $\Theta(V \cdot E)$.
     
+- **Space:** $\Theta(V \cdot E)$.
 
 ### 1.4 Summary Table
 
@@ -75,22 +61,16 @@ This focuses on the relationship between **vertices** and **edges**.
 Edges are determined by distances between points $P \subset \mathbb{R}^d$.
 
 - **Euclidean Graph:** $V = P$, edge $\{p, q\}$ has weight $= ||p - q||_2$.
-    
 - **Unit Disk Graph:** Connect $p$ and $q$ iff $||p - q|| \le r$. (Used for wireless range modeling).
-    
 - $k$**-Nearest Neighbor (kNN):** Connect each point to its $k$ closest points. (Used in ML/clustering).
-    
 
 ### 2.2 Intersection Graphs
 
 Vertices are objects; edges exist if objects overlap.
 
 - **Interval Graphs:** Each vertex is an interval $[s_i, f_i]$. Edge exists if $[s_i, f_i] \cap [s_j, f_j] \neq \emptyset$.
-    
     - **Max Independent Set:** To find the most non-conflicting jobs, use a Greedy approach: sort by finish time $f_i$ and pick greedily.
-        
 - **Disk/Rectangle Intersection:** Vertices are 2D shapes. Models frequency assignment or map labeling.
-    
 
 ## 3. The $k$-Clique Problem
 

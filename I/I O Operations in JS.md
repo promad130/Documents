@@ -126,7 +126,7 @@ TIME 0ms: "Before readFile" prints
 ┌──────────────────────────────────┐
 │ Call Stack (JavaScript)          │
 ├──────────────────────────────────┤
-│ console.log('1. Before...')       │ ✅ executes immediately
+│ console.log('1. Before...')      │ ✅ executes immediately
 └──────────────────────────────────┘
 
 TIME 1ms: fs.readFile is called
@@ -146,10 +146,10 @@ TIME 1ms: fs.readFile is called
 └──────────────────────────────────┘
 
 TIME 2ms: "After readFile" prints
-┌──────────────────────────��───────┐
+┌──────────────────────────────────┐
 │ Call Stack (JavaScript)          │
 ├──────────────────────────────────┤
-│ console.log('2. After...')        │ ✅ executes immediately
+│ console.log('2. After...')       │ ✅ executes immediately
 └──────────────────────────────────┘
 
 (Main JavaScript thread is FREE now)
@@ -167,7 +167,7 @@ TIME 10-15ms: Event loop executes the callback
 ┌──────────────────────────────────┐
 │ Call Stack (JavaScript)          │
 ├──────────────────────────────────┤
-│ console.log('3. File read...')    │ ✅ callback executes
+│ console.log('3. File read...')   │ ✅ callback executes
 └──────────────────────────────────┘
 ```
 

@@ -1,5 +1,13 @@
 MACROECONOMICS NOTES (FORMULAS + DERIVATIONS + THEORY + IMPORTANT POINTERS)
 
+Notation and conventions used in this document:
+- e is in direct quotation: domestic currency per unit of foreign currency.
+- pi denotes inflation rate and pi^e denotes expected inflation.
+- Time subscripts use parentheses, e.g., X(t), X(t-1).
+- beta denotes Phillips-curve sensitivity of inflation to the unemployment gap.
+- alpha_K denotes capital share in production-function growth accounting.
+- Asterisk (*) on a variable denotes the foreign-economy counterpart (e.g., P*).
+
 ========================================================================
 PART A: COMPREHENSIVE FORMULA NOTES WITH DERIVATIONS
 ========================================================================
@@ -24,7 +32,7 @@ Formula:
 GDP = Wages + Rent + Interest + Profit + Indirect Taxes - Subsidies + Depreciation
 
 Derivation idea:
-Every rupee of output sold becomes someone’s income. Summing factor incomes and adjusting for taxes/subsidies and depreciation gives GDP at market prices.
+Every unit of output sold becomes someone’s income. Summing factor incomes and adjusting for taxes/subsidies and depreciation gives GDP at market prices.
 
 1.3 Value Added Method
 Formula:
@@ -76,7 +84,7 @@ CPI = (Cost of current basket at current prices / Cost of same basket at base-ye
 
 2.3 Inflation Rate
 Formula:
-Inflation_t = [(Price Index_t - Price Index_{t-1}) / Price Index_{t-1}] × 100
+Inflation(t) = [(Price Index(t) - Price Index(t-1)) / Price Index(t-1)] × 100
 
 ========================================================================
 3) KEYNESIAN GOODS MARKET (CROSS MODEL)
@@ -108,8 +116,9 @@ Income multiplier:
 k = 1 / (1 - MPC) = 1 / MPS
 
 Derivation:
+Delta A = change in autonomous spending
 If autonomous spending rises by Delta A, then:
-Delta Y = Delta A + cDelta A + c^2Delta A + ...
+Delta Y = Delta A + c * Delta A + c^2 * Delta A + ...
 Geometric sum gives Delta Y = Delta A / (1 - c)
 So k = Delta Y / Delta A = 1 / (1 - c).
 
@@ -151,13 +160,13 @@ Money supply:
 M = m × H
 where H = high-powered money (monetary base)
 
-With currency-deposit ratio c and excess reserve ratio e:
-m = (1 + c) / (c + rr + e)
+With currency-deposit ratio cdr and excess reserve ratio e:
+m = (1 + cdr) / (cdr + rr + e)
 
 Derivation:
-M = C + D = (1 + c)D
-H = C + R = cD + (rr + e)D = (c + rr + e)D
-So m = M/H = (1 + c)/(c + rr + e)
+M = C + D = (1 + cdr)D
+H = C + R = cdrD + (rr + e)D = (cdr + rr + e)D
+So m = M/H = (1 + cdr)/(cdr + rr + e)
 
 ========================================================================
 5) IS-LM FRAMEWORK (SHORT RUN)
@@ -191,7 +200,7 @@ S - I = NX  (in simplified setup)
 If NX > 0, country lends abroad; if NX < 0, borrows from abroad.
 
 6.4 Real Exchange Rate (q)
-q = e(P* / P)
+q = e * (P* / P)
 where:
 e = nominal exchange rate (domestic currency per foreign currency),
 P* = foreign price level, P = domestic price level.
@@ -207,9 +216,10 @@ u = (Number of Unemployed / Labor Force) × 100
 LFPR = (Labor Force / Working-age Population) × 100
 
 7.3 Expectations-Augmented Phillips Curve
-pi = pi^e - alpha(u - un) + v
+pi = pi^e - beta(u - un) + v
 where:
-pi = actual inflation, pi^e = expected inflation
+pi = actual inflation rate, pi^e = expected inflation rate
+beta = sensitivity of inflation to unemployment gap (beta > 0)
 un = natural rate of unemployment
 v = supply shock
 
@@ -224,7 +234,7 @@ When u < un, inflation tends to exceed expected inflation.
 y = Y/N
 
 8.2 Growth Rate Approximation
-gY ≈ gA + alpha gK + (1 - alpha) gL   (Cobb-Douglas context)
+gY ≈ gA + alpha_K gK + (1 - alpha_K) gL   (Cobb-Douglas context)
 
 8.3 Rule of 70
 Doubling time (years) ≈ 70 / annual growth rate (%)

@@ -1,0 +1,390 @@
+MACROECONOMICS NOTES (FORMULAS + DERIVATIONS + THEORY + IMPORTANT POINTERS)
+
+========================================================================
+PART A: COMPREHENSIVE FORMULA NOTES WITH DERIVATIONS
+========================================================================
+
+1) NATIONAL INCOME ACCOUNTING
+-----------------------------
+
+1.1 GDP (Expenditure Method)
+Formula:
+GDP = C + I + G + (X - M)
+
+Derivation idea:
+Total output produced domestically is purchased by:
+- Households (C)
+- Firms (I)
+- Government (G)
+- Foreign sector through net exports (X - M)
+Adding all spending on final goods/services gives GDP.
+
+1.2 GDP (Income Method)
+Formula:
+GDP = Wages + Rent + Interest + Profit + Indirect Taxes - Subsidies + Depreciation
+
+Derivation idea:
+Every rupee of output sold becomes someone’s income. Summing factor incomes and adjusting for taxes/subsidies and depreciation gives GDP at market prices.
+
+1.3 Value Added Method
+Formula:
+GDP = Sum of value added at each production stage
+where Value Added = Value of Output - Intermediate Consumption
+
+Derivation idea:
+Adding gross output across firms double-counts intermediates. Value added removes this double counting.
+
+1.4 GNP / NNP Relations
+Formulas:
+GNP = GDP + NFIA
+NNP = GNP - Depreciation
+NDP = GDP - Depreciation
+NNP at FC = NNP at MP - Net Indirect Taxes
+
+where:
+NFIA = Net Factor Income from Abroad
+Net Indirect Taxes (NIT) = Indirect Taxes - Subsidies
+
+Derivation chain:
+Domestic output (GDP) + net foreign factor income = national output (GNP).
+Subtract capital consumption (depreciation) to get net concepts.
+Convert MP to FC by removing net indirect taxes.
+
+1.5 Personal Income and Disposable Income
+Formulas:
+PI = NI - Undistributed Profits - Corporate Tax - Social Security Contributions + Transfer Payments
+DI = PI - Personal Direct Taxes
+
+Derivation idea:
+Not all national income reaches households as personal income. Adjust for retained earnings/taxes/contributions/transfers, then subtract personal taxes.
+
+========================================================================
+2) PRICE INDICES, INFLATION, REAL VS NOMINAL
+========================================================================
+
+2.1 GDP Deflator
+Formula:
+GDP Deflator = (Nominal GDP / Real GDP) × 100
+
+Derivation idea:
+Nominal GDP uses current prices; real GDP uses base-year prices.
+Their ratio isolates price-level change.
+
+2.2 Consumer Price Index (CPI)
+Formula:
+CPI = (Cost of current basket at current prices / Cost of same basket at base-year prices) × 100
+
+2.3 Inflation Rate
+Formula:
+Inflation_t = [(Price Index_t - Price Index_{t-1}) / Price Index_{t-1}] × 100
+
+========================================================================
+3) KEYNESIAN GOODS MARKET (CROSS MODEL)
+========================================================================
+
+3.1 Consumption Function
+Formula:
+C = C0 + cYd
+where:
+C0 = autonomous consumption
+c = MPC (0 < c < 1)
+Yd = disposable income
+
+3.2 Saving Function
+From Yd = C + S:
+S = Yd - C = Yd - (C0 + cYd) = -C0 + (1 - c)Yd
+Hence MPS = 1 - c
+
+3.3 Equilibrium Income (Two-Sector Closed Economy)
+Condition:
+Y = C + I
+Y = C0 + cY + I
+Y(1 - c) = C0 + I
+Equilibrium:
+Y* = (1 / (1 - c)) (C0 + I)
+
+3.4 Multiplier
+Income multiplier:
+k = 1 / (1 - MPC) = 1 / MPS
+
+Derivation:
+If autonomous spending rises by Delta A, then:
+Delta Y = Delta A + cDelta A + c^2Delta A + ...
+Geometric sum gives Delta Y = Delta A / (1 - c)
+So k = Delta Y / Delta A = 1 / (1 - c).
+
+3.5 Government Sector (Lump-Sum Taxes)
+If:
+C = C0 + c(Y - T)
+and equilibrium:
+Y = C + I + G
+then:
+Y = C0 + c(Y - T) + I + G
+Y(1 - c) = C0 - cT + I + G
+Y* = (1 / (1 - c))(C0 - cT + I + G)
+
+Government expenditure multiplier:
+kG = 1 / (1 - c)
+Tax multiplier:
+kT = -c / (1 - c)
+Balanced budget multiplier:
+kBB = kG + kT = 1
+
+========================================================================
+4) MONEY, BANKING, AND MONETARY FORMULAS
+========================================================================
+
+4.1 Quantity Theory (Simple)
+MV = PY
+If V is stable and Y near potential, growth in M largely affects P.
+
+4.2 Demand for Money (Liquidity Preference Form)
+Md = L(Y, i)
+Common linear form:
+Md = kY - hi
+where k > 0, h > 0
+
+4.3 Money Multiplier (Basic)
+If reserve ratio = rr and no leakages:
+m = 1 / rr
+Money supply:
+M = m × H
+where H = high-powered money (monetary base)
+
+With currency-deposit ratio c and excess reserve ratio e:
+m = (1 + c) / (c + rr + e)
+
+Derivation:
+M = C + D = (1 + c)D
+H = C + R = cD + (rr + e)D = (c + rr + e)D
+So m = M/H = (1 + c)/(c + rr + e)
+
+========================================================================
+5) IS-LM FRAMEWORK (SHORT RUN)
+========================================================================
+
+5.1 IS Curve (Goods Market Equilibrium)
+Y = C(Y - T) + I(i) + G
+Downward slope in (Y, i): higher i lowers I, reducing equilibrium Y.
+
+5.2 LM Curve (Money Market Equilibrium)
+M/P = L(Y, i)
+Upward slope in (Y, i): higher Y raises money demand, requiring higher i for equilibrium given M/P.
+
+5.3 Policy in IS-LM
+- Fiscal expansion (↑G or ↓T): IS shifts right.
+- Monetary expansion (↑M or ↓money demand): LM shifts right/down.
+
+========================================================================
+6) OPEN ECONOMY BASICS
+========================================================================
+
+6.1 Net Exports
+NX = X - M
+
+6.2 National Income Identity (Open Economy)
+Y = C + I + G + NX
+
+6.3 Savings-Investment Relation
+From identity:
+S - I = NX  (in simplified setup)
+If NX > 0, country lends abroad; if NX < 0, borrows from abroad.
+
+6.4 Real Exchange Rate (q)
+q = e(P* / P)
+where:
+e = nominal exchange rate (domestic currency per foreign currency),
+P* = foreign price level, P = domestic price level.
+
+========================================================================
+7) UNEMPLOYMENT AND PHILLIPS CURVE
+========================================================================
+
+7.1 Unemployment Rate
+u = (Number of Unemployed / Labor Force) × 100
+
+7.2 Labor Force Participation Rate
+LFPR = (Labor Force / Working-age Population) × 100
+
+7.3 Expectations-Augmented Phillips Curve
+pi = pi^e - alpha(u - un) + v
+where:
+pi = actual inflation, pi^e = expected inflation
+un = natural rate of unemployment
+v = supply shock
+
+Interpretation:
+When u < un, inflation tends to exceed expected inflation.
+
+========================================================================
+8) GROWTH BASICS
+========================================================================
+
+8.1 Per Capita Output
+y = Y/N
+
+8.2 Growth Rate Approximation
+gY ≈ gA + alpha gK + (1 - alpha) gL   (Cobb-Douglas context)
+
+8.3 Rule of 70
+Doubling time (years) ≈ 70 / annual growth rate (%)
+
+========================================================================
+PART B: COMPREHENSIVE THEORY NOTES + IMPORTANT POINTERS
+========================================================================
+
+1) CORE MACRO QUESTIONS
+-----------------------
+Macroeconomics studies economy-wide outcomes:
+- Output/income (GDP, GNP)
+- Inflation
+- Unemployment
+- Interest rates
+- Growth over time
+- External balance (trade and capital flows)
+
+IMPORTANT POINTER:
+Always identify whether the question is:
+- short run vs long run,
+- closed vs open economy,
+- nominal vs real variable.
+
+2) CIRCULAR FLOW AND NATIONAL ACCOUNTS
+--------------------------------------
+- Households supply factors; firms pay incomes and produce goods.
+- Government taxes/spends; foreign sector trades goods/services/factors.
+- Three GDP approaches (expenditure/income/value-added) should match in principle.
+
+IMPORTANT POINTER:
+Avoid double counting by using final goods or value added only.
+
+3) NOMINAL VS REAL DISTINCTION
+------------------------------
+- Nominal values use current prices.
+- Real values remove price effects (constant prices).
+- Inflation is sustained rise in general price level.
+
+IMPORTANT POINTER:
+For welfare and growth comparisons, prefer real per-capita variables.
+
+4) KEYNESIAN SHORT-RUN DEMAND DETERMINATION
+-------------------------------------------
+- In short run, output can be demand-constrained.
+- Autonomous spending drives induced spending through multiplier.
+- MPC high => larger multiplier => stronger demand effects.
+
+IMPORTANT POINTER:
+Multiplier works strongly only when idle capacity exists and leakages are limited.
+
+5) FISCAL POLICY
+----------------
+Tools:
+- Government spending
+- Taxation
+- Transfers
+
+Effects:
+- Expansionary fiscal policy raises aggregate demand.
+- Contractionary policy lowers demand/inflation pressure.
+
+IMPORTANT POINTERS:
+- Crowding out can reduce fiscal impact when interest rates rise.
+- Balanced-budget change can still raise output (multiplier = 1 in simple model).
+- Fiscal sustainability depends on debt dynamics, growth, and interest rates.
+
+6) MONEY AND MONETARY POLICY
+----------------------------
+- Central bank controls policy rate and influences liquidity.
+- Transmission channels: interest rate, credit, expectations, exchange rate, asset prices.
+- Tight policy controls inflation but can slow growth in short run.
+
+IMPORTANT POINTERS:
+- Distinguish policy rate changes from money supply changes.
+- Real interest rate (approximately i - pi^e) is key for spending decisions.
+- Time lags in monetary transmission are significant.
+
+7) IS-LM INTUITION
+------------------
+- IS: goods-market combinations of Y and i.
+- LM: money-market combinations of Y and i.
+- Intersection gives short-run equilibrium.
+
+IMPORTANT POINTER:
+Policy effect size depends on curve slopes:
+- Flat LM => fiscal policy strong
+- Flat IS => monetary policy strong
+
+8) AGGREGATE DEMAND-AGGREGATE SUPPLY (AD-AS)
+--------------------------------------------
+- AD slopes downward due to real balances, interest rate, and exchange rate channels.
+- SRAS upward sloping; LRAS vertical at potential output.
+- Demand shocks move output and prices in short run.
+- Supply shocks can create inflation + output loss (stagflation).
+
+IMPORTANT POINTER:
+Do not treat inflation from demand shocks and supply shocks as identical; policy trade-offs differ.
+
+9) UNEMPLOYMENT TYPES
+---------------------
+- Frictional: search/matching time
+- Structural: skill/location mismatch
+- Cyclical: due to low aggregate demand
+
+IMPORTANT POINTER:
+Only cyclical unemployment is directly targeted by demand stabilization policy.
+
+10) INFLATION: SOURCES AND COSTS
+--------------------------------
+Sources:
+- Demand-pull
+- Cost-push
+- Built-in (expectations/wage-price dynamics)
+
+Costs:
+- Menu/shoe-leather effects
+- Arbitrary redistribution
+- Uncertainty and planning distortions
+
+IMPORTANT POINTER:
+Expected and unexpected inflation have different real effects.
+
+11) OPEN ECONOMY LOGIC
+----------------------
+- Trade balance linked to savings-investment gap.
+- Exchange-rate regime (fixed/floating) alters policy autonomy.
+- Capital mobility changes fiscal/monetary effectiveness.
+
+IMPORTANT POINTER:
+Always track whether appreciation/depreciation is nominal or real.
+
+12) LONG-RUN GROWTH THEMES
+--------------------------
+- Capital accumulation, labor growth, and productivity (TFP) drive output.
+- Technology, institutions, human capital, and openness strongly affect TFP.
+- Convergence may occur conditionally (not automatically).
+
+IMPORTANT POINTERS:
+- Sustained long-run growth is mainly productivity-led, not only demand-led.
+- Per-capita growth matters more for living standards than total GDP growth.
+
+13) BUSINESS CYCLES AND STABILIZATION
+-------------------------------------
+- Economies fluctuate around trend (expansion, peak, contraction, trough).
+- Countercyclical policy aims to reduce volatility.
+
+IMPORTANT POINTER:
+Policy design must consider lags:
+- Recognition lag
+- Decision lag
+- Implementation lag
+- Impact lag
+
+14) EXAM/REVISION QUICK POINTERS
+--------------------------------
+- Start every problem by writing the relevant identity first.
+- Check units: level vs growth rate vs percentage point change.
+- In derivations, state assumptions explicitly (closed/open economy, fixed prices, lump-sum tax, etc.).
+- For diagrams: label axes, initial equilibrium, curve shifts, and new equilibrium.
+- For policy answers: include side effects, limits, and time horizon.
+
+END OF NOTES

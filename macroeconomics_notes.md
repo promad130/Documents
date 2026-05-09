@@ -6,9 +6,9 @@
 ## Notation and Conventions
 - \(e\): nominal exchange rate in **direct quotation** (domestic currency per unit of foreign currency)
 - \(P^*\): foreign price level (asterisk = foreign variable)
-- \(pi\): actual inflation rate, \(pi^e\): expected inflation rate
-- \(beta\): Phillips-curve sensitivity parameter
-- \(alpha_K\): capital share in growth accounting
+- \(\pi\): actual inflation rate, \(\pi^e\): expected inflation rate
+- \(\beta\): Phillips-curve sensitivity parameter
+- \(\alpha_K\): capital share in growth accounting
 - Time indexing: \(X(t)\), \(X(t-1)\)
 
 ---
@@ -149,9 +149,9 @@ Y(1-c)=C_0+I\Rightarrow Y^*=\frac{1}{1-c}(C_0+I)
 \[
 k=\frac{1}{1-c}
 \]
-If \(Delta A\) is change in autonomous spending:
+If \(\Delta A\) is change in autonomous spending:
 \[
-Delta Y = Delta A + cDelta A + c^2Delta A + ... = \frac{Delta A}{1-c}
+\Delta Y = \Delta A + c\Delta A + c^2\Delta A + ... = \frac{\Delta A}{1-c}
 \]
 
 **Crucial example**  
@@ -171,7 +171,7 @@ k_G=\frac{1}{1-c},\quad k_T=-\frac{c}{1-c},\quad k_{BB}=1
 
 **Crucial example**  
 If \(c=0.75\), then \(k_G=4\), \(k_T=-3\).  
-Increase \(G\) by 10 and \(T\) by 10: net \(Delta Y=40-30=10\).
+Increase \(G\) by 10 and \(T\) by 10: net \(\Delta Y=40-30=10\).
 
 ---
 
@@ -230,8 +230,8 @@ Higher \(i\) lowers investment, so equilibrium \(Y\) falls.
 Higher \(Y\) increases money demand; for fixed \(M/P\), \(i\) must rise.
 
 ### 5.3 Policy Direction
-- Fiscal expansion (\(G\uparrow\), \(T\downarrow\)) shifts IS right  
-- Monetary expansion (\(M\uparrow\)) shifts LM right/down
+- Fiscal expansion (\(G \uparrow\), \(T \downarrow\)) shifts IS right  
+- Monetary expansion (\(M \uparrow\)) shifts LM right/down
 
 **Crucial example**  
 In a recession with low output, increasing \(G\) shifts IS right; if the central bank also raises \(M\), LM shifts right, giving larger output rise with less interest-rate pressure.
@@ -261,16 +261,16 @@ If \(S-I=-50\), then \(NX=-50\): trade deficit with net foreign borrowing.
 u=\frac{Unemployed}{Labor\ Force}\times100,\quad LFPR=\frac{Labor\ Force}{Working\ Age\ Population}\times100
 \]
 \[
-pi = pi^e - beta(u-u_n)+v
+\pi = \pi^e - \beta(u-u_n)+v
 \]
 
 **Interpretation**  
 When unemployment is below natural rate, inflation tends to exceed expected inflation.
 
 **Crucial example**  
-If \(pi^e=4\%\), \(beta=0.5\), \(u_n=6\%\), \(u=4\%\), \(v=0\):  
+If \(\pi^e=4\%\), \(\beta=0.5\), \(u_n=6\%\), \(u=4\%\), \(v=0\):  
 \[
-pi=4-0.5(4-6)=5\%
+\pi=4-0.5(4-6)=5\%
 \]
 
 ---
@@ -281,10 +281,10 @@ pi=4-0.5(4-6)=5\%
 y=\frac{Y}{N}
 \]
 \[
-g_Y \approx g_A + alpha_K g_K + (1-alpha_K)g_L
+g_Y \approx g_A + \alpha_K g_K + (1-\alpha_K)g_L
 \]
 \[
-Doubling\ time \approx \frac{70}{growth\ rate(\%)}
+\text{Doubling time} \approx \frac{70}{\text{growth rate}(\%)}
 \]
 
 **Crucial example**  
@@ -395,7 +395,7 @@ Credible policy can lower expected inflation, reducing disinflation cost.
 ## Example 1: Recession Stabilization (Keynesian + Multiplier)
 A closed economy has \(c=0.8\), output gap = -120.  
 Multiplier \(k=5\). Required autonomous demand increase \(\approx 24\) to close gap (\(5\times24=120\)).  
-If government chooses fiscal stimulus via \(G\), \(Delta G=24\) can close gap in the simple model.
+If government chooses fiscal stimulus via \(G\), \(\Delta G=24\) can close gap in the simple model.
 
 ## Example 2: Inflation Decomposition (Demand vs Supply)
 Inflation rose from 4% to 8% while output fell. This pattern is inconsistent with pure demand pull; likely a supply shock (e.g., oil).  
@@ -464,4 +464,3 @@ Use this document in three passes:
 1. Formula recall  
 2. Theory explanation in your own words  
 3. Case-based application (policy reasoning and trade-offs)
-

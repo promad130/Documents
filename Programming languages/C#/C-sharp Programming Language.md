@@ -447,9 +447,16 @@ Some additional things:
 - [[Inheritance#inheritance is Everywhere!]]
 
 ## Interfaces in C#:
+![[Interfaces]]
 
 ## Abstract Classes in C#:
 ![[Interfaces]]
+
+## Delegates in C#:
+![[Methods in c-sharp#Delegates]]
+
+## Events in C#:
+![[Methods in c-sharp#EVENTS]]
 
 ---
 # Libraries 

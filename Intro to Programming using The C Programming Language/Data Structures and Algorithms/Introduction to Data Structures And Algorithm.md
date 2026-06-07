@@ -50,8 +50,8 @@ We will prioritize the **Standard Template Library (STL)** for practical efficie
 While `std::list` handles pointers for you, manually building a linked list requires you to understand the `new` and `delete` operators in C++ to prevent memory leaks—a critical skill for your Labs (25%) and Exams.
 
 # Table of content:
-- [[#Algorithms]]
 - [[#Data Structures]]
+- [[#Algorithms]]
 - [[#Time Complexity And Optimization]]
 - [[#Graphs]]
 
@@ -3845,37 +3845,39 @@ Parent ≥ Children               Left < Parent < Right
 ## BubbleSort
 
 ### 1. Conceptual Overview & Pseudocode
-
 Bubblesort is a popular, albeit inefficient, sorting algorithm that operates by repeatedly swapping adjacent elements that are out of order. The name comes from the way smaller elements "bubble" up to the beginning of the list (or larger elements sink to the end).
 
 **Pseudocode (based on CLRS Problem 2-2):**
 
-Plaintext
-
-```
-BUBBLESORT(A, n)
-1  for i = 1 to n - 1
-2      for j = n downto i + 1
-3          if A[j] < A[j - 1]
-4              exchange A[j] with A[j - 1]
+```Plaintext
+procedure bubbleSort(array: list of sortable items)      // 1. START OF THE PROCEDURE
+    n = length(array)
+    
+    repeat                                               // 2. START OF OUTER LOOP
+        swapped = false
+        
+        for i = 0 to n - 2 do                            // 3. START OF INNER LOOP
+            
+            if array[i] > array[i + 1] then              // 4. START OF IF STATEMENT
+                swap(array[i], array[i + 1])
+                swapped = true
+            end if                                       // 5. END OF IF STATEMENT
+            
+        end for                                          // 6. END OF INNER LOOP
+        
+        n = n - 1                                        // 7. AFTER INNER LOOP FINISHES
+        
+    until not swapped                                    // 8. END OF OUTER LOOP
+    
+end procedure                                            // 9. END OF THE PROCEDURE
 ```
 
 ### 2. Flowchart (Directed Graph)
 
 A directed graph representation of the logic:
-
 - **Start** $\rightarrow$ **Initialize $i = 1$**.
-    
-- **Outer Loop Condition ($i < n$):** If false, **End**. If true, proceed.
-    
-- **Initialize $j = n$**.
-    
-- **Inner Loop Condition ($j > i$):** If false, **Increment $i$** and return to Outer Loop.
-    
-- **Swap Check ($A[j] < A[j-1]$):** If true, **Swap elements**.
-    
-- **Decrement $j$** $\rightarrow$ Return to Inner Loop Condition.
-    
+- **Outer Loop Condition: isSwapped is true, keep doing the process**
+- **Inner Loop:** for the whole array, keep exchanging the elements if they are unsorted
 
 ### 3. Proof of Correctness
 
@@ -3886,29 +3888,22 @@ To prove that `BUBBLESORT` is correct, we use the method of **Loop Invariants**,
 **Invariant:** At the start of each iteration of the inner `for` loop, $A[j]$ is the smallest element in the subarray $A[j:n]$.
 
 - **Initialization:** When $j = n$, the subarray $A[n:n]$ has only one element, so $A[n]$ is trivially the smallest.
-    
 - **Maintenance:** If $A[j] < A[j-1]$, they are swapped; otherwise, they stay. After the swap (or lack thereof), the new $A[j-1]$ is the minimum of the original $A[j]$ and $A[j-1]$. Since the invariant held for $A[j]$, the new $A[j-1]$ is now the smallest in $A[j-1:n]$.
-    
 - **Termination:** The loop terminates when $j = i$. By the invariant, $A[i]$ now contains the smallest element of the subarray $A[i:n]$.
-    
 
 #### Part B: Outer Loop Invariant (Lines 1-4)
 
 **Invariant:** At the start of each iteration of the outer `for` loop, the subarray $A[1:i-1]$ contains the $i-1$ smallest elements of the original array in sorted order.
 
 - **Termination:** The loop terminates when $i = n$. Substituting $n$ into the invariant, $A[1:n-1]$ contains the $n-1$ smallest elements in sorted order. This implies the $n$-th element is the largest and is in its correct place, meaning the entire array $A[1:n]$ is sorted.
-    
 
 ### 4. Worst-Case Time Complexity Analysis
 
 In the RAM model, we assume each comparison and swap takes a constant amount of time.
 
 - **Number of Comparisons:** The outer loop runs $n-1$ times. For a given $i$, the inner loop runs $n-i$ times.
-    
-- **Total Comparisons:** $\sum_{i=1}^{n-1} (n - i) = (n-1) + (n-2) + \dots + 1 = \frac{n(n-1)}{2}$.
-    
+- **Total Comparisons:** $\sum_{i=1}^{n-1} (n - i) = (n-1) + (n-2) + \dots + 1 = \frac{n(n-1)}{2}$.    
 - **Asymptotic Bound:** This is a quadratic function: $\frac{1}{2}n^2 - \frac{1}{2}n$. Dropping lower-order terms and constant coefficients, the worst-case running time is $\Theta(n^2)$.
-    
 
 ### 5. C++ Implementation
 
@@ -3937,6 +3932,31 @@ void bubbleSort(std::vector<int>& A) {
 }
 ```
 
+Or we can implement it like this:
+```C++
+#include <bits/stdc++.h>
+using namespace std;
+
+void bubbleSort(vector<int>& A)
+{
+	if(A.size() <= 1)
+		return;
+		
+	bool isSwapped = false;
+	do
+	{
+		isSwapped = false;
+		for(int i = 0; i < A.size(); i++)
+		{
+			if(A[i] > A[i+1])
+			{
+				swap(A[i], A[i+1]);
+				isSwapped = true;
+			}
+		}
+	}while(isSwapped)
+}
+```
 ## Insertion Sort
 
 ### 1. Conceptual Breakdown
@@ -4037,18 +4057,789 @@ void insertionSort(std::vector<int>& A) {
 
 ---
 # 2. **[[Recursion]]**
-   - **Definition:** A function calling itself to solve a problem by breaking it into smaller subproblems.
-   - **Use Case:** When a problem can be divided into smaller, similar subproblems (e.g., tree traversal, factorial calculation).
-   - **Example:**
-     ```c
-     int factorial(int n) {
-         if (n == 0) return 1;
-         return n * factorial(n - 1);
-     }
-     ```
+
+## Table of Contents
+
+1. [Introduction to Recursion](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#introduction-to-recursion)
+2. [Recursion Stack](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#recursion-stack)
+3. [Recursion Tree](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#recursion-tree)
+4. [Time Complexity Analysis](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#time-complexity-analysis)
+5. [Space Complexity](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#space-complexity)
+6. [Common Patterns](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#common-patterns)
+7. [Examples and Illustrations](https://claude.ai/chat/98eef980-bc26-4efe-95d9-a5971dae45a5#examples-and-illustrations)
+
+---
+
+## Introduction to Recursion
+
+**Recursion** is a programming technique where a function calls itself to solve smaller instances of the same problem until reaching a base case.
+
+### Key Components:
+
+1. **Base Case**: The condition that stops recursion
+2. **Recursive Case**: The function calling itself with modified parameters
+3. **Progress Toward Base Case**: Each recursive call must move closer to the base case
+
+### Basic Structure:
+
+```python
+def recursive_function(parameters):
+    # Base case - termination condition
+    if base_condition:
+        return base_value
+    
+    # Recursive case - function calls itself
+    return recursive_function(modified_parameters)
+```
+
+---
+
+## Recursion Stack
+
+### What is the Recursion Stack?
+
+The **recursion stack** (also called the **call stack**) is the runtime memory structure that tracks active function calls. Each time a function is called, a new **stack frame** is created and pushed onto the stack.
+
+### Stack Frame Contents:
+
+Each stack frame contains:
+
+- **Local variables** of the function
+- **Parameters** passed to the function
+- **Return address** (where to continue after function completes)
+- **Intermediate results** and computation state
+
+### How the Recursion Stack Works:
+
+```
+Stack grows downward ↓
+
+┌─────────────────────────┐
+│ factorial(3)            │  ← Current execution
+│ n=3, waiting for (2)    │
+├─────────────────────────┤
+│ factorial(2)            │
+│ n=2, waiting for (1)    │
+├─────────────────────────┤
+│ factorial(1)            │
+│ n=1, waiting for (0)    │
+├─────────────────────────┤
+│ factorial(0)            │  ← Executing (base case)
+│ n=0, returns 1          │
+└─────────────────────────┘
+```
+
+### Stack Operations:
+
+#### 1. **Push (Function Call)**
+
+When a function is called:
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n-1)  # New stack frame pushed here
+```
+
+#### 2. **Pop (Function Return)**
+
+When a function completes:
+
+- Stack frame is removed
+- Control returns to the calling function
+- Return value is used by caller
+
+### Example: Factorial Stack Trace
+
+```python
+factorial(3)
+```
+
+**Step-by-step stack evolution:**
+
+```
+Step 1: Call factorial(3)
+┌─────────────────┐
+│ factorial(3)    │
+│ n=3             │
+└─────────────────┘
+
+Step 2: Call factorial(2)
+┌─────────────────┐
+│ factorial(3)    │  waiting for factorial(2)
+├─────────────────┤
+│ factorial(2)    │
+│ n=2             │
+└─────────────────┘
+
+Step 3: Call factorial(1)
+┌─────────────────┐
+│ factorial(3)    │  waiting for factorial(2)
+├─────────────────┤
+│ factorial(2)    │  waiting for factorial(1)
+├─────────────────┤
+│ factorial(1)    │
+│ n=1             │
+└─────────────────┘
+
+Step 4: Call factorial(0) - BASE CASE
+┌─────────────────┐
+│ factorial(3)    │  waiting for factorial(2)
+├─────────────────┤
+│ factorial(2)    │  waiting for factorial(1)
+├─────────────────┤
+│ factorial(1)    │  waiting for factorial(0)
+├─────────────────┤
+│ factorial(0)    │  ← Returns 1 (base case)
+│ n=0, return 1   │
+└─────────────────┘
+
+Step 5: Unwinding - factorial(1) completes
+┌─────────────────┐
+│ factorial(3)    │  waiting for factorial(2)
+├─────────────────┤
+│ factorial(2)    │  waiting for factorial(1)
+├─────────────────┤
+│ factorial(1)    │  ← Returns 1 * 1 = 1
+│ return 1*1      │
+└─────────────────┘
+
+Step 6: factorial(2) completes
+┌─────────────────┐
+│ factorial(3)    │  waiting for factorial(2)
+├─────────────────┤
+│ factorial(2)    │  ← Returns 2 * 1 = 2
+│ return 2*1      │
+└─────────────────┘
+
+Step 7: factorial(3) completes
+┌─────────────────┐
+│ factorial(3)    │  ← Returns 3 * 2 = 6
+│ return 3*2      │
+└─────────────────┘
+
+Final result: 6
+```
+
+### Stack Overflow
+
+**Stack overflow** occurs when recursion depth exceeds the maximum stack size:
+
+```python
+def infinite_recursion(n):
+    return infinite_recursion(n+1)  # No base case!
+
+# This will cause: RecursionError: maximum recursion depth exceeded
+```
+
+**Typical stack limits:**
+
+- Python: ~1000 recursive calls (default)
+- Java: ~10,000-20,000 calls
+- C++: Varies by system (typically larger)
+
+---
+
+## Recursion Tree
+
+### What is a Recursion Tree?
+
+A **recursion tree** is a visual representation showing all recursive calls made during execution. Each node represents a function call, and edges represent the recursive relationships.
+
+### Recursion Tree Structure:
+
+```
+                    Root
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+     Child1       Child2       Child3
+        │            │
+    ┌───┴───┐    ┌──┴──┐
+  Leaf   Leaf  Leaf  Leaf
+```
+
+### Components:
+
+1. **Root**: Initial function call
+2. **Internal Nodes**: Recursive calls that make further calls
+3. **Leaf Nodes**: Base cases (no further recursion)
+4. **Edges**: Represent recursive calls from parent to child
+
+### Example 1: Fibonacci Recursion Tree
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+```
+
+**Recursion tree for fib(5):**
+
+```
+                        fib(5)
+                       /      \
+                   fib(4)      fib(3)
+                  /     \      /     \
+              fib(3)   fib(2) fib(2) fib(1)
+              /   \    /   \   /   \    |
+          fib(2) fib(1) fib(1) fib(0) fib(1) fib(0)  1
+          /   \    |     |      |       |      |
+      fib(1) fib(0) 1    1      0       1      0
+        |      |
+        1      0
+
+Level 0: 1 node
+Level 1: 2 nodes
+Level 2: 4 nodes
+Level 3: 8 nodes (but some are base cases)
+```
+
+**Observations:**
+
+- Each non-leaf node has 2 children
+- Many subproblems are **recomputed** (inefficiency!)
+- fib(3) is calculated 2 times
+- fib(2) is calculated 3 times
+- This demonstrates why naive Fibonacci is inefficient
+
+### Example 2: Merge Sort Recursion Tree
+
+```python
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+```
+
+**Tree for [8, 3, 5, 1, 9, 6, 2, 7]:**
+
+```
+                    [8,3,5,1,9,6,2,7]              Level 0: n
+                    /              \
+            [8,3,5,1]              [9,6,2,7]       Level 1: n/2
+            /      \                /      \
+        [8,3]    [5,1]          [9,6]    [2,7]     Level 2: n/4
+        /  \      /  \          /  \      /  \
+      [8] [3]   [5] [1]       [9] [6]   [2] [7]    Level 3: 1 (base)
+
+Merge up:
+      [3,8]   [1,5]           [6,9]   [2,7]
+         \      /                \      /
+        [1,3,5,8]              [2,6,7,9]
+              \                  /
+            [1,2,3,5,6,7,8,9]
+```
+
+**Observations:**
+
+- Binary tree structure
+- Height = log₂(n)
+- Each level processes n elements total
+- Work at each level: O(n)
+
+### Tree Properties and Patterns:
+
+|Pattern|Branching|Height|Total Nodes|Example|
+|---|---|---|---|---|
+|Linear|1 child|n|n|factorial(n)|
+|Binary|2 children|log n (balanced)|2^h - 1|merge_sort|
+|Binary|2 children|n (unbalanced)|2^n - 1|fib(n)|
+|k-ary|k children|varies|varies|k-way merge|
+
+---
+
+## Time Complexity Analysis
+
+### Using Recursion Trees for Complexity
+
+The recursion tree method visualizes the **cost at each level** and **number of levels** to determine total complexity.
+
+### General Approach:
+
+```
+Time Complexity = (Cost per level) × (Number of levels) + (Overhead)
+```
+
+Or for varying costs:
+
+```
+Time Complexity = Σ (Cost at level i)  for i = 0 to height
+```
+
+When we write `T(n) = 2T(n/2) + O(n)`, we're separating:
+
+1. **`2T(n/2)`** = The recursive calls (creating the tree structure)
+2. **`O(n)`** = The **overhead** = work done at this node BESIDES making recursive calls
+
+### Method 1: Counting Nodes
+
+**Total work = Number of nodes × Work per node**
+
+#### Example: Fibonacci
+
+```python
+def fib(n):
+    if n <= 1: return n
+    return fib(n-1) + fib(n-2)
+```
+
+**Analysis:**
+
+- Tree height: n (worst case path)
+- Each node does O(1) work
+- Number of nodes: approximately 2^n (grows exponentially)
+- **Time Complexity: O(2^n)**
+
+**Proof:**
+
+```
+T(n) = T(n-1) + T(n-2) + O(1)
+```
+
+Solving this recurrence:
+
+- Lower bound: T(n) ≥ 2×T(n-2) → T(n) ≥ 2^(n/2)
+- Upper bound: T(n) ≤ 2×T(n-1) → T(n) ≤ 2^n
+- Therefore: **T(n) = O(2^n)**
+
+#### Example: Factorial
+
+```python
+def factorial(n):
+    if n == 0: return 1
+    return n * factorial(n-1)
+```
+
+**Analysis:**
+
+- Tree is linear (one child per node)
+- Height: n
+- Nodes: n + 1
+- Work per node: O(1)
+- **Time Complexity: O(n)**
+
+### Method 2: Level-by-Level Analysis
+
+**Sum the work done at each level of the tree.**
+
+#### Example: Binary Tree Traversal
+
+```python
+def inorder(node):
+    if node is None: return
+    inorder(node.left)
+    print(node.val)  # O(1) work
+    inorder(node.right)
+```
+
+**Analysis:**
+
+```
+Level 0:     1 node  → 1 × O(1) = O(1)
+Level 1:     2 nodes → 2 × O(1) = O(2)
+Level 2:     4 nodes → 4 × O(1) = O(4)
+...
+Level h:     2^h nodes → 2^h × O(1)
+
+Total nodes = 1 + 2 + 4 + ... + 2^h = 2^(h+1) - 1 = n
+```
+
+**Time Complexity: O(n)** where n is number of nodes
+
+#### Example: Merge Sort
+
+```python
+def merge_sort(arr):
+    if len(arr) <= 1: return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)  # O(n) work
+```
+
+**Analysis:**
+
+```
+Level 0:     1 call with n elements     → O(n)
+Level 1:     2 calls with n/2 each      → 2 × O(n/2) = O(n)
+Level 2:     4 calls with n/4 each      → 4 × O(n/4) = O(n)
+...
+Level log n: n calls with 1 element     → n × O(1) = O(n)
+
+Total levels: log₂(n)
+Work per level: O(n)
+```
+
+**Time Complexity: O(n log n)**
+
+### Method 3: Master Theorem
+
+For recurrences of the form:
+
+```
+T(n) = a·T(n/b) + f(n)
+```
+
+Where:
+
+- `a` = number of subproblems
+- `b` = factor by which problem size reduces
+- `f(n)` = cost of work outside recursive calls
+
+**Three Cases:**
+
+1. **Case 1**: If f(n) = O(n^c) where c < log_b(a)
+    
+    - **T(n) = Θ(n^(log_b(a)))**
+    - Tree is dominated by leaves
+2. **Case 2**: If f(n) = Θ(n^c × log^k(n)) where c = log_b(a)
+    
+    - **T(n) = Θ(n^c × log^(k+1)(n))**
+    - Work is evenly distributed
+3. **Case 3**: If f(n) = Ω(n^c) where c > log_b(a)
+    
+    - **T(n) = Θ(f(n))**
+    - Tree is dominated by root work
+
+#### Examples:
+
+**Binary Search:**
+
+```
+T(n) = T(n/2) + O(1)
+a=1, b=2, f(n)=O(1)
+log_b(a) = log_2(1) = 0
+f(n) = O(n^0) → Case 2
+T(n) = O(log n)
+```
+
+**Merge Sort:**
+
+```
+T(n) = 2T(n/2) + O(n)
+a=2, b=2, f(n)=O(n)
+log_b(a) = log_2(2) = 1
+f(n) = O(n^1) → Case 2
+T(n) = O(n log n)
+```
+
+**Karatsuba Multiplication:**
+
+```
+T(n) = 3T(n/2) + O(n)
+a=3, b=2, f(n)=O(n)
+log_b(a) = log_2(3) ≈ 1.585
+f(n) = O(n^1) < O(n^1.585) → Case 1
+T(n) = O(n^1.585)
+```
+
+### Common Recurrence Patterns:
+
+|Recurrence|Example|Complexity|
+|---|---|---|
+|T(n) = T(n-1) + O(1)|factorial, linear search|O(n)|
+|T(n) = T(n-1) + O(n)|selection sort|O(n²)|
+|T(n) = 2T(n-1) + O(1)|fibonacci (naive)|O(2^n)|
+|T(n) = T(n/2) + O(1)|binary search|O(log n)|
+|T(n) = 2T(n/2) + O(n)|merge sort|O(n log n)|
+|T(n) = 2T(n/2) + O(1)|tree height|O(n)|
+|T(n) = T(n-1) + T(n-2) + O(1)|fibonacci|O(2^n)|
+
+---
+
+## Space Complexity
+
+### Stack Space Analysis
+
+**Space complexity** of recursion = Maximum depth of recursion stack × Space per call
+
+### Formula:
+
+```
+Space Complexity = O(maximum stack depth)
+```
+
+(Assuming constant space per function call)
+
+### Examples:
+
+#### 1. Linear Recursion
+
+```python
+def factorial(n):
+    if n == 0: return 1
+    return n * factorial(n-1)
+```
+
+- Maximum stack depth: n
+- **Space Complexity: O(n)**
+
+#### 2. Tail Recursion (Optimizable)
+
+```python
+def factorial_tail(n, acc=1):
+    if n == 0: return acc
+    return factorial_tail(n-1, n*acc)
+```
+
+- Maximum stack depth: n (but can be optimized to O(1) by compiler)
+- **Space Complexity: O(n)** in Python (no tail call optimization)
+- **Space Complexity: O(1)** in languages with TCO
+
+#### 3. Binary Recursion (Balanced)
+
+```python
+def merge_sort(arr):
+    if len(arr) <= 1: return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+```
+
+- Maximum stack depth: log n (only one branch active at a time)
+- **Space Complexity: O(log n)** for stack
+- Additional O(n) for array copies
+
+#### 4. Multiple Recursion (Fibonacci)
+
+```python
+def fib(n):
+    if n <= 1: return n
+    return fib(n-1) + fib(n-2)
+```
+
+- Stack only keeps active path
+- Maximum depth: n (longest path is fib(n) → fib(n-1) → ... → fib(0))
+- **Space Complexity: O(n)** despite O(2^n) calls
+
+### Space Optimization Techniques:
+
+1. **Memoization** (Top-Down DP)
+
+```python
+def fib_memo(n, memo={}):
+    if n in memo: return memo[n]
+    if n <= 1: return n
+    memo[n] = fib_memo(n-1) + fib_memo(n-2)
+    return memo[n]
+```
+
+- Time: O(n)
+- Space: O(n) for memo + O(n) for stack = O(n)
+
+2. **Iteration** (Bottom-Up DP)
+
+```python
+def fib_iter(n):
+    if n <= 1: return n
+    a, b = 0, 1
+    for _ in range(2, n+1):
+        a, b = b, a+b
+    return b
+```
+
+- Time: O(n)
+- Space: O(1) (no recursion!)
+
+---
+
+## Common Patterns
+
+### 1. Decrease and Conquer (Linear)
+
+```python
+def power(x, n):
+    if n == 0: return 1
+    return x * power(x, n-1)
+```
+
+- Pattern: T(n) = T(n-1) + O(1)
+- Time: O(n)
+- Space: O(n)
+
+### 2. Divide and Conquer (Logarithmic)
+
+```python
+def binary_search(arr, target, left, right):
+    if left > right: return -1
+    mid = (left + right) // 2
+    if arr[mid] == target: return mid
+    if arr[mid] > target:
+        return binary_search(arr, target, left, mid-1)
+    return binary_search(arr, target, mid+1, right)
+```
+
+- Pattern: T(n) = T(n/2) + O(1)
+- Time: O(log n)
+- Space: O(log n)
+
+### 3. Multiple Branches (Exponential)
+
+```python
+def subset_sum(arr, index, target):
+    if target == 0: return True
+    if index >= len(arr): return False
+    # Include current element or exclude it
+    return (subset_sum(arr, index+1, target-arr[index]) or 
+            subset_sum(arr, index+1, target))
+```
+
+- Pattern: T(n) = 2T(n-1) + O(1)
+- Time: O(2^n)
+- Space: O(n)
+
+### 4. Balanced Divide (n log n)
+
+```python
+def merge_sort(arr):
+    if len(arr) <= 1: return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)  # O(n)
+```
+
+- Pattern: T(n) = 2T(n/2) + O(n)
+- Time: O(n log n)
+- Space: O(n log n) with array copies, O(log n) for stack
+
+---
+
+## Examples and Illustrations
+
+### Complete Example: Tower of Hanoi
+
+```python
+def hanoi(n, source, target, auxiliary):
+    """
+    Move n disks from source to target using auxiliary.
+    """
+    if n == 1:
+        print(f"Move disk 1 from {source} to {target}")
+        return
+    
+    # Move n-1 disks from source to auxiliary
+    hanoi(n-1, source, auxiliary, target)
+    
+    # Move the largest disk from source to target
+    print(f"Move disk {n} from {source} to {target}")
+    
+    # Move n-1 disks from auxiliary to target
+    hanoi(n-1, auxiliary, target, source)
+```
+
+#### Recursion Tree for n=3:
+
+```
+                        hanoi(3, A, C, B)
+                              |
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+  hanoi(2,A,B,C)      Move 3: A→C         hanoi(2,B,C,A)
+        |                                           |
+    ┌───┼───┐                                   ┌───┼───┐
+    │   │   │                                   │   │   │
+ h(1) M2 h(1)                                 h(1) M2 h(1)
+ A→C A→B C→B                                  B→A B→C A→C
+```
+
+#### Complexity Analysis:
+
+**Recurrence:**
+
+```
+T(n) = 2T(n-1) + 1
+```
+
+**Solving:**
+
+```
+T(n) = 2T(n-1) + 1
+     = 2(2T(n-2) + 1) + 1 = 4T(n-2) + 2 + 1
+     = 4(2T(n-3) + 1) + 3 = 8T(n-3) + 4 + 2 + 1
+     = 2^k × T(n-k) + (2^(k-1) + ... + 4 + 2 + 1)
+     
+When k = n: T(0) = 0
+     = 2^n × 0 + (2^(n-1) + ... + 2 + 1)
+     = 2^n - 1
+```
+
+**Time Complexity: O(2^n)** **Space Complexity: O(n)** (maximum stack depth)
+
+**Total moves for n disks: 2^n - 1**
+
+### Visual Analysis Comparison:
+
+|Problem|Tree Type|Height|Nodes|Time|Space|
+|---|---|---|---|---|---|
+|factorial(n)|Linear|n|n|O(n)|O(n)|
+|binary_search(n)|Linear|log n|log n|O(log n)|O(log n)|
+|fib(n) - naive|Binary|n|~2^n|O(2^n)|O(n)|
+|merge_sort(n)|Binary|log n|n|O(n log n)|O(n)|
+|hanoi(n)|Ternary|n|2^n-1|O(2^n)|O(n)|
+|quicksort(n) avg|Binary|log n|n|O(n log n)|O(log n)|
+|quicksort(n) worst|Linear|n|n|O(n²)|O(n)|
+
+---
+
+## Summary and Key Takeaways
+
+### Recursion Stack:
+
+- ✅ Tracks active function calls
+- ✅ Each call adds a frame (parameters, local vars, return address)
+- ✅ Stack depth = space complexity
+- ✅ Stack overflow when depth exceeds limit
+
+### Recursion Tree:
+
+- ✅ Visualizes all recursive calls
+- ✅ Nodes = function calls, Edges = recursive relationships
+- ✅ Leaves = base cases
+- ✅ Used to analyze time complexity
+
+### Time Complexity Analysis:
+
+- ✅ Count total nodes × work per node
+- ✅ Sum work at each level
+- ✅ Use Master Theorem for divide-and-conquer
+- ✅ Watch for repeated subproblems (memoization opportunity)
+
+### Space Complexity:
+
+- ✅ Maximum stack depth (not total calls)
+- ✅ Plus any auxiliary space
+- ✅ Can differ significantly from time complexity
+
+### Optimization Strategies:
+
+1. **Memoization**: Cache results to avoid recomputation
+2. **Iteration**: Convert to loops when possible
+3. **Tail Recursion**: Enable compiler optimization
+4. **Dynamic Programming**: Bottom-up approach
+
+---
+
+## Practice Problems
+
+To solidify understanding, analyze these problems:
+
+1. **Sum of array** - T(n) = T(n-1) + O(1)
+2. **Binary tree height** - T(n) = 2T(n/2) + O(1)
+3. **All permutations** - T(n) = n × T(n-1) + O(n)
+4. **Quick sort** - T(n) = 2T(n/2) + O(n) average
+5. **Subset generation** - T(n) = 2T(n-1) + O(1)
+
+Draw the recursion tree and analyze both time and space complexity for each!
 
 # Algorithms in Recursion
-
 
 # [[HASHING]]
 ## What is Hashing?
@@ -8764,8 +9555,6 @@ Final: 0→0:0, 0→1:2, 0→2:4, 0→3:3
 
 # **BELLMAN-FORD ALGORITHM**
 
-## **BELLMAN-FORD - THEORY**
-
 ### **The Problem**
 
 **Single-Source Shortest Path with Negative Weights:** Find shortest paths from source to all vertices, handling negative edge weights (but no negative cycles reachable from source).
@@ -9353,4 +10142,3 @@ Speedup: 90.8x
 | **Use Case** | GPS, routing | Currency arbitrage, feedback loops |
 | **Correctness** | Greedy works | Relaxation guarantees optimality |
 | **Key Insight** | Pick closest unvisited | Relax all edges repeatedly |
-

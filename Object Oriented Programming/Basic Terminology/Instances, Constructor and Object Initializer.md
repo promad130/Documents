@@ -370,7 +370,6 @@ The compiler can infer that you are creating an instance of the Score class beca
 This feature is most valuable when our type name is long and complex.
 
 # Copy Constructor
-## Copy Constructors in Object-Oriented Programming
 
 A copy constructor is a special constructor that creates a new object by copying an existing object of the same class. 
 It takes a single parameter—an object of the same class type—and initializes the new instance with the values from the existing object.
@@ -464,7 +463,7 @@ Understanding the difference between shallow and deep copies is critical when im
 When your class contains reference types (arrays, lists, or other objects), implement deep copying to avoid unintended side effects where modifications to one object affect another.
 
 # Constructor Chaining
-## Constructor Chaining
+
 Constructor chaining is calling one constructor from another constructor within the same class or from a parent class. It reduces code duplication and centralizes initialization logic.​
 
 ## Two Types

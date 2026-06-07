@@ -1,5 +1,6 @@
 ***We will use C# and java in order to understand this topic of Object Oriented Programming***
-***Pre-requisite: Should know C# from [[C-sharp Programming Language]] till [[C-sharp Programming Language#A BOSS BATTLE]].***
+***Pre-requisite: Should know C# from [[C-sharp Programming Language]] till [[C-sharp Programming Language#A BOSS BATTLE]].
+Should also check out [[Introduction to Java]]***
 *(For other languages, they have their own separate Object Oriented Programming file.)* 
 # Introduction to Object Oriented Programming
 Suppose we want to make a game, a asteroid game that looks like this:
@@ -154,7 +155,9 @@ Methods that retrieve a field’s current value are called **getters**. Methods 
 While we have intentionally put public or private on all our class members, this is not strictly necessary. We could leave it off entirely. If you don’t specify an accessibility level, members of a class will be private.
 
 ## [[Abstraction]]
-A magical thing happens when the principles of encapsulation and information hiding are followed. The inner workings of a class are not visible to the outside world. It is like a cell phone’s insides: as long as the phone’s buttons and screen work, we don’t care how the circuitry on the inside works. The human body is like this, as well. We don’t need to know how the nerves and tendons connect, as long as things are working correctly.
+A magical thing happens when the principles of encapsulation and information hiding are followed. 
+The inner workings of a class are not visible to the outside world. It is like a cell phone’s insides: as long as the phone’s buttons and screen work, we don’t care how the circuitry on the inside works. The human body is like this, as well. We don’t need to know how the nerves and tendons connect, as long as things are working correctly.
+
 With the clear boundary provided by encapsulation and the inner workings kept secret through information hiding, those inner workings can change entirely without any visible effect on the outside world. This ability is called **abstraction**.
 
 We can and should provide accessibility on the types we define in C# (like classes).
@@ -239,6 +242,13 @@ public class Score
 If a static field is public, it can be used outside the class through the class name(`Score.PointThreshold`, for example).
 The static members should be given `PascalCase` only.
 
+The `readonly` keyword means exactly what it sounds like: once this variable is given a value, it becomes **read-only and cannot be changed** anywhere else in the code.
+
+Here is a breakdown of what that entire line is doing:
+
+- **`private`**: This variable is a secret to the class it lives in. Other parts of your program can't see it or mess with it.
+- **`static`**: This variable belongs to the class itself, not to individual objects created from the class. There is only ever one copy of `PointThreshold` in memory, no matter how many objects you create.
+- **`readonly`**: The value is locked in. It can only be assigned right here where it is declared (`= 4000`), or inside the class's constructor (the setup method). If you try to write code later that says `PointThreshold = 5000;`, the compiler will throw an error and refuse to build the app.
 
 ## [[Inheritance]]
 Sometimes a class is a specialization of another class, i..e, there is a broader category which has multiple specializations.A few exmaples:
@@ -288,7 +298,6 @@ But the issue here is that now each piece's class will have their custom version
 This is where Polymorphism comes in play.
 
 
-teach me the relationships ion OOPS, like for exmaple, has-a. is-a. etc
 ---
 # Quick Summary Of Pillars in Object Oriented Programming
 
@@ -334,6 +343,9 @@ Check:
 ---
 # Interface
 ![[Interfaces]]
+
+# Delegates
+(**Although one might argue that this is a part of Functional Prpgramming, as this heavily relies on the use and implemenatation in terms of functions, but we will cover this here for the sake of events, which is a heavy OOPs Topic**)
 
 
 

@@ -98,3 +98,4 @@ int main() {
 - [[Binary Search Tree (BST)]]: A Binary Tree where the left child's value is less than the parent, and the right child's value is greater. Highly efficient for searching.
 - [[Red-Black Tree (RBT)]]: This is a self-balancing tree that makes sure that the BST is complete, optimizing the time complexity
 - Trie (Prefix Tree): Used heavily in auto-complete features and spell checkers.
+- [[Minimum Spanning Tree]]

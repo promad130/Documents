@@ -1,3 +1,4 @@
+***(Check out [[Introduction to Database Migrations]], then [[Introduction to ORMs]] after this.)***
 A **database** is just an organized place in a computer where related data is stored so it can be found, changed, and used efficiently later.[^5]
 
 ## What is data?
@@ -64,7 +65,7 @@ This is working, changing and managing the defination of the data in the databas
 
 ### [[CREATE TABLE;]]
 
-### [[DESC / DESCRIBE;]]
+### [[DESCRIBE]]
 
 ### [[ALTER TABLE Commands]]
 
@@ -2207,3 +2208,7 @@ VALUES ('Auto Movie', 6.50);
 ```
 
 **MySQL updates its counter to the highest ID it sees.**
+
+
+Next, more to [[Introduction to PostgreSQL]]
+

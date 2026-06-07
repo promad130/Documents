@@ -1,0 +1,145 @@
+- inputActionMapAsset got a script, and we using that script to acess the inputActionMap called Player and all, 
+We used this inputActionMap script to accesss stuff and read values:
+
+```
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class GameInput : MonoBehaviour
+{
+    public event EventHandler OnInteractAction;
+    [SerializeField] private PlayerInputAction playerInputAction;
+    private void Awake()
+    {
+        playerInputAction = new PlayerInputAction();
+        playerInputAction.Player.Enable();
+
+        playerInputAction.Player.Interact.performed += Interact_performed;
+    }
+
+    private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public Vector2 GetMovementVectorNormalized()
+    {
+        Vector2 inputVector = playerInputAction.Player.Move.ReadValue<Vector2>();   
+
+        inputVector = inputVector.normalized;
+        return inputVector;
+    }
+}
+```
+
+- Physics Raycast 3D and 2D, and their parameteres: layerMask 
+- Physics.CapsuleCast
+- Vectors in Unity 2d and 3D
+- Vector3.lerp
+- Animator in Unity 3d and 2d
+- animator methods
+- animations and all
+- TryGetComponent()
+- RaycastAll
+- layerMask
+- eventHandler Delegate in Unity
+- Action delegate in Unity
+- Extending Delegates in Unity
+https://gemini.google.com/share/729dec11c8b6
+- SingletonPattern and Singletons 
+- Syntax : 
+	if(raycastHit.transform.TryGetComponent<ClearCounter>(out ClearCounter clearCounter))
+AND
+	OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+        {
+            clearCounter = clearCounter
+            // OR
+            // selectedCounter = selectedCounter;
+        });
+        
+- URP in 2D and 3D
+- CancellationTokenSource in .NET and threding in .NET / C# and how it is used in unity:
+How it works: you create a CancellationTokenSource, get its Token property, and pass that CancellationToken into async methods or any work that supports cancellation. When you want to stop the operation you call Cancel() on the source; the code observing the token can then stop early (by checking token.IsCancellationRequested or calling token.ThrowIfCancellationRequested()), and many awaitable helpers will throw OperationCanceledException when cancellation occurs.
+
+Key members:
+
+.Token — the CancellationToken to pass to operations.
+.Cancel() — requests cancellation immediately.
+.CancelAfter(int ms) / .CancelAfter(TimeSpan) — request cancellation after a delay.
+.Dispose() — release resources (call after canceling).
+In your code: PressureValveManager stores a _beatCts (CancellationTokenSource). When selecting a new zone or ending a round it does _beatCts?.Cancel(); _beatCts?.Dispose(); and passes _beatCts.Token into RunBeatSequence(...). That lets RunBeatSequence (and Awaitable.WaitForSecondsAsync) be interrupted cleanly; the catch (OperationCanceledException) in RunBeatSequence is the normal cancellation path.
+
+Best practice summary: pass the token to cancellable work, call Cancel() to request stop, then Dispose() to avoid leaks, and handle OperationCanceledException if the awaited code throws when cancelled. Example usage: var cts = new CancellationTokenSource(); var token = cts.Token; /* pass token */ cts.Cancel(); cts.Dispose();
+
+- async methods in C# and Unity provided methods for this C# async feature
+	- In Async: Awaitables and its Mehtods
+- Time Class in unity
+- AudioClip and AudioSource iun Unity
+- RectTransform in Unity:
+	It belongs to UnityEngine and is used instead of Transform for UI objects like buttons, images, panels, text, and other Canvas elements.
+
+What it does:
+
+stores position, size, anchors, pivot, and rotation for UI elements
+lets UI scale and adapt to different screen sizes
+controls where an element sits inside its parent UI layout
+How it differs from Transform:
+
+Transform is for normal scene objects like characters, cameras, and props
+RectTransform is for UI objects inside a Canvas
+RectTransform adds UI-specific layout features such as:
+anchoredPosition
+sizeDelta
+anchorMin and anchorMax
+pivot
+In your PressureValveVisualController, pressureTrack, beatMarker, and pressureMark are RectTransforms because they are UI elements being moved around on a track.
+
+Common uses:
+
+moving UI markers
+resizing panels
+aligning elements to screen edges
+making responsive interfaces
+In short: RectTransform is Unity’s UI version of Transform.
+
+- Instantiate Method of Unity
+- Scriptable Objects in Unity
+- How the input is handled by instantiating the Input Action Asset in Script form and doing things like:
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class GameInput : MonoBehaviour
+{
+    public event EventHandler OnInteractAction;
+    [SerializeField] private PlayerInputAction playerInputAction;
+    private void Awake()
+    {
+        playerInputAction = new PlayerInputAction();
+        playerInputAction.Player.Enable();
+
+        playerInputAction.Player.Interact.performed += Interact_performed;
+    }
+
+    private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public Vector2 GetMovementVectorNormalized()
+    {
+        Vector2 inputVector = playerInputAction.Player.Move.ReadValue<Vector2>();   
+
+        inputVector = inputVector.normalized;
+        return inputVector;
+    }
+}
+Where the PlayerInputAction is the name of the input action map which we got a C# script of
+
+- CreateAssetMenu
+- Sprite in 2D and 3D

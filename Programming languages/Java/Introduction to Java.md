@@ -1650,7 +1650,7 @@ CLASSPATH=bin    # ✅ Correct
 ## [The Math class](The%20Math%20class%20in%20Java)
 ## [Thread class](Threads%20in%20Java.md)
 
-## [[Java GUI Classes and Their Basic Functions]]
+## [[Java GUI Classes and Their Basic Functions (JFrame)]]
 
 ## [JFrame](JFrame%20in%20Java)
 ## [Canvas](Canvas%20in%20Java)

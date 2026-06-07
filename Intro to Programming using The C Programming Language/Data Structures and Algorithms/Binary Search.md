@@ -85,6 +85,44 @@ To prove correctness formally (required for Endsems), we define a **Loop Invaria
 > _At the start of each iteration of the while loop, if the target value $v$ exists in the array, it must be located in the subarray $A[low \dots high]$._
 > 
 
+**Recursive binary search**:
+
+```
+function binarySearch(array, target, left, right):
+    // Base case: element not found
+    if left > right:
+        return -1
+    
+    // Calculate middle index
+    mid = left + (right - left) / 2
+    
+    // Base case: element found
+    if array[mid] == target:
+        return mid
+    
+    // Recursive case: search left half
+    if array[mid] > target:
+        return binarySearch(array, target, left, mid - 1)
+    
+    // Recursive case: search right half
+    else:
+        return binarySearch(array, target, mid + 1, right)
+```
+
+**Key points:**
+
+- **Base cases**:
+    - If `left > right`, the search space is empty → return -1
+    - If `array[mid] == target`, we found it → return the index
+- **Recursive cases**:
+    - If target is smaller than middle element, search left half
+    - If target is larger, search right half
+- **Initial call**: `binarySearch(array, target, 0, array.length - 1)`
+- **Time complexity**: O(log n)
+- **Space complexity**: O(log n) due to recursive call stack
+
+**Precondition**: The array must be sorted.
+
 
 ---
 

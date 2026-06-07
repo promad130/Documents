@@ -780,11 +780,6 @@ z.infer<typeof schema>
 ---
 
 # Nested Objects in Zod
-
-# 🎁 **Nested Objects in Zod - Complete Guide**
-
----
-
 ## **What Are Nested Objects?**
 
 A **nested object** is an object inside another object. In Zod, it means defining a schema that contains other schemas.

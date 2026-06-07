@@ -93,9 +93,9 @@ C# data types specify what kind of data a variable can hold. They are mainly cat
 | Reference Types | string, object, arrays, classes | string name = "Alice"; |
 
 ---
-## **Control Structures**
+## Control Structures
 
-### **Conditional Statements:**
+### Conditional Statements:
 
 ```csharp
 if (age >= 18) 
@@ -107,7 +107,7 @@ if (age >= 18)
 ```
 `if`, `else`, and `switch` are used for decision-making.
 
-### **Loops:**
+### Loops:
 
 ```csharp
 for (int i = 0; i < 5; i++) 

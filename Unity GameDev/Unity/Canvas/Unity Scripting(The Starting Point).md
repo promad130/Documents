@@ -585,6 +585,50 @@ public bool CompareTag(string tag)
 ```
 `CompareTag` returns `true` if the GameObject has the specified tag, `false` otherwise. It's the recommended way to check tags instead of using string comparison.
 
+## Events in Unity
+
+Events are a **communication system** in Unity that allows different game objects and scripts to notify each other when something happens, without directly depending on one another.
+
+---
+
+## **What Are Events?**
+
+Events follow the **Observer Pattern**:
+
+- **Publisher**: Fires/raises the event when something happens
+- **Subscribers**: Listen for the event and execute their own code in response
+
+This creates **decoupled architecture** — components don't need to know about each other directly.
+
+---
+
+## **Unity Hierarchy Context**
+
+Before diving into events, understand where they fit in Unity's structure:
+
+Code
+
+```
+GameObject
+├── Transform
+├── Components (Scripts, Collider, Renderer, etc.)
+│   └── Events are defined and raised WITHIN components/scripts
+├── Child Objects
+└── ...
+```
+
+**Key Points:**
+
+- **Objects/GameObjects**: Containers that hold components
+- **Components**: Scripts attached to GameObjects that contain logic (including events)
+- **Events**: Communication mechanism between components
+
+When a component raises an event, **other components (on the same or different GameObjects) can respond**.
+
+## Built-In Delegates in Unity
+
+### 1) Action
+
 
 # Object
 

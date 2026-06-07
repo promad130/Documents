@@ -159,7 +159,7 @@ helo                                              : Is the Name B
 ---
 ### Escape Characters
 **(These are same as that in The C Programming Language)**
-Now what if we want to include a `"` in our string? We can't do something like `"""`, so this is when we use escape characters(\). (refer [[Character Type#Escape Sequence]] for more info)
+Now what if we want to include a `"` in our string? We can't do something like `"""`, so this is when we use escape characters(`\`). (refer [[Character Type#Escape Sequence]] for more info)
 ```csharp
 string A = "\"";
 ```

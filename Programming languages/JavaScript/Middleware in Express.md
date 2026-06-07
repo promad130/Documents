@@ -1,6 +1,3 @@
-# 🔥 **Middleware Deep Dive: How They Work + Event Loop Interaction**
-
----
 
 ## **1. What is Middleware? (Simple Definition)**
 

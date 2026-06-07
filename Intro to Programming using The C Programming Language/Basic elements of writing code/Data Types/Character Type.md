@@ -48,3 +48,13 @@ An **escape sequence** is a combination of characters, typically starting with
 | \xhh            | Hexadecimal Number | It represents the hexadecimal number.                                                  |
 | \0              | NULL               | It represents the NULL character.                                                      |
 Out of all these escape sequences, \n and \0 are used the most. In fact, escape sequences like \f, \a,  are not even used by programmers nowadays.
+
+The backslash (`\`) is known as the **escape character** in C# and many other languages (like Java, C++, Python, and JavaScript).
+
+Its sole job is to trigger the escape sequence. It acts as a warning sign to the compiler that says: **"Do not treat the next character normally."**
+
+- **To insert reserved characters:** If you type a double quote (`"`), the compiler thinks you are ending the string. If you type `\"`, the backslash tells the compiler, "Don't end the string; just print a literal quote mark."
+    
+- **To insert control characters:** The letter `n` is just a letter. But if you put a backslash in front of it (`\n`), it turns into a command that hits the "Enter" key (a new line).
+    
+- **To insert itself:** Because the backslash is a special trigger, if you actually just want to print a backslash in your text (like in a file path), you have to escape the escape character itself by typing two of them (`\\`).

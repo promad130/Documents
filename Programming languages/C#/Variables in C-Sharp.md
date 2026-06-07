@@ -21,9 +21,9 @@ The rules for identifiers are generalized.
 
 However, there is a common practice used in C# by the developers when naming things, seems useless but might be helpful to recall a lot of syntax in C# when one knows a lot of languages!
 ## Variables
-For variables, we use something called *Camel case*, i.e., each variable's name starts with a small letter, and all the words that follows it starts with CAPITAL letter.
+For variables, we use something called *camelCase*, i.e., each variable's name starts with a small letter, and all the words that follows it starts with CAPITAL letter.
 ## Constants
-For constants, we use something called *Pascal case* in which all the words start with a capital letter(including the first one).
+For constants, we use something called *PascalCase* in which all the words start with a capital letter(including the first one).
 
 ---
 # Accessing the Variables

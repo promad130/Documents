@@ -43,7 +43,38 @@ _Visual Example (Directed):_
 ```
 
 - **Edges (E):** {(A,B), (B,D), (D,C), (C,A)}
-    
+
+## Weighted Graphs
+
+A **weighted graph** assigns a numerical value (weight) to each edge.
+
+**What does weight represent?**
+
+- Distance between cities
+- Cost of connecting two points
+- Time to travel
+- Network bandwidth
+- Cost to install a cable
+
+**Visual Example with Weights:**
+
+```Code
+        5
+    A ---- B
+    |      |
+    3      2
+    |      |
+    C ---- D
+        1
+
+This means:
+- Edge A-B has weight 5
+- Edge A-C has weight 3
+- Edge B-D has weight 2
+- Edge C-D has weight 1
+```
+
+**How to Read Weights:** Each number on an edge tells you the "cost" or "distance" of that edge.
 
 ## 2.1 Real-World Examples
 

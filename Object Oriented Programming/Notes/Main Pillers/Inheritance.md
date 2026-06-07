@@ -14,7 +14,7 @@ The class that inherits the original class is called ***derived class***, someti
 People will say that the derived class derives from the base class or that the derived class extends the base class.
 
 # inheritance is Everywhere!
-This might be suprising, but we have been using, slthough unkowingly, inhertence all this time.
+This might be surprising, but we have been using, although unknowingly, inheritance all this time.
 Everything that we defined had been inheriting an class called `object` by default.
 `object`  is like the superclass, the ultimate class.
 
@@ -69,7 +69,7 @@ Hence one can say that the functions performed by this method are the same as th
 Hence, it is advisable to override this function as that was the one of the main purpose of this function, as it is a virtual function.
 
 # But wait a minute, what is a virtual functions?
-Before jumping into the virtual functions, letys have a look at actually how to use inheritance in C#?
+Before jumping into the virtual functions, lets have a look at actually how to use inheritance in C#?
 
 ```csharp
 class GameObject
@@ -293,7 +293,7 @@ public class Asteroid : GameObject
 
 This pattern provides flexibility while ensuring proper base class initialization in all scenarios.
 
-# casting and downcasting
+# upcasting and downcasting
 
 ## Inheritance Revision
 
@@ -332,7 +332,8 @@ You can store a **mixed collection** of objects (`Asteroid`, `Bullet`, `Ship`) b
     - Unsafe if the type doesn’t match → runtime crash.
     - Example:
 ```csharp
-GameObject gameObject = new Asteroid(); Asteroid asteroid = (Asteroid)gameObject; // Valid
+GameObject gameObject = new Asteroid(); 
+Asteroid asteroid = (Asteroid)gameObject; // Valid
 ```
 ```csharp
 Asteroid badCast = (Asteroid)CreateAGameObject(); // Risky, might crash
@@ -350,7 +351,7 @@ if (gameObject.GetType() == typeof(Asteroid)) { ... }`
         
 2. **`as` keyword**
 ```csharp
-Asteroid? asteroid = gameObject as Asteroid; 
+Asteroid? asteroid = gameObject as Asteroid; // should be invalid, but if the gameObject object instance is of anything that is not valid, null will be returned.
 if (asteroid != null) { ... }`
 ```    
 - Returns reference if cast is valid, otherwise returns `null`.

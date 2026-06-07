@@ -1,4 +1,5 @@
-The `Type` class in C# represents type declarations—such as classes, interfaces, arrays, value types, enumerations, and more. It is a core part of the .NET type system and is foundational for reflection, allowing code to examine metadata about types at runtime.[learn.microsoft+2](https://learn.microsoft.com/en-us/dotnet/api/system.type?view=net-9.0)
+The `Type` class in C# represents type declarations, such as classes, interfaces, arrays, value types, enumerations, and more. 
+It is a core part of the .NET type system and is foundational for reflection, allowing code to examine metadata about types at runtime.
 
 ---
 
@@ -35,23 +36,17 @@ The `Type` class in C# represents type declarations—such as classes, interface
 
 ## Example Usage
 
-csharp
+```csharp
+Type t = typeof(string);         // Using typeof with a known type 
+object obj = new List<int>(); 
+Type t2 = obj.GetType();         // Using GetType() on an instance 
 
-``Type t = typeof(string);         // Using typeof with a known type object obj = new List<int>(); Type t2 = obj.GetType();         // Using GetType() on an instance Console.WriteLine(t.Name);       // Outputs: String Console.WriteLine(t2.FullName);  // Outputs: System.Collections.Generic.List`1[System.Int32]``
-
-Using a `Type` object, you can enumerate through its methods, properties, and other members, or analyze its base type and interfaces for advanced scenarios such as serialization or custom object inspection.[columbia+3](http://www1.cs.columbia.edu/~lok/csharp/refdocs/System/types/Type.html)
+Console.WriteLine(t.Name);       // Outputs: String 
+Console.WriteLine(t2.FullName);  // Outputs: System.Collections.Generic.List`1[System.Int32]
+```
+Using a `Type` object, you can enumerate through its methods, properties, and other members, or analyze its base type and interfaces for advanced scenarios such as serialization or custom object inspection.
 
 ---
 
 **In summary:**  
-The `System.Type` class allows code to interact with type metadata at runtime, making it a foundational part of C# reflection and introspection.[learn.microsoft+2](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-type)
-
-1. [https://learn.microsoft.com/en-us/dotnet/api/system.type?view=net-9.0](https://learn.microsoft.com/en-us/dotnet/api/system.type?view=net-9.0)
-2. [https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-type](https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-type)
-3. [http://www1.cs.columbia.edu/~lok/csharp/refdocs/System/types/Type.html](http://www1.cs.columbia.edu/~lok/csharp/refdocs/System/types/Type.html)
-4. [https://pvs-studio.com/en/blog/terms/6527/](https://pvs-studio.com/en/blog/terms/6527/)
-5. [https://www.gnu.org/projects/dotgnu/pnetlib-doc/System/Type.html](https://www.gnu.org/projects/dotgnu/pnetlib-doc/System/Type.html)
-6. [https://stackoverflow.com/questions/983030/type-checking-typeof-gettype-or-is](https://stackoverflow.com/questions/983030/type-checking-typeof-gettype-or-is)
-7. [https://stackify.com/what-is-c-reflection/](https://stackify.com/what-is-c-reflection/)
-8. [https://exceptionnotfound.net/csharp-in-simple-terms-1-the-type-system/](https://exceptionnotfound.net/csharp-in-simple-terms-1-the-type-system/)
-9. [https://stackoverflow.com/questions/18153937/how-does-c-sharp-system-type-type-have-a-name-property](https://stackoverflow.com/questions/18153937/how-does-c-sharp-system-type-type-have-a-name-property)
+The `System.Type` class allows code to interact with type metadata at runtime, making it a foundational part of C# reflection and introspection.

@@ -67,6 +67,51 @@ Before heading ahead, I would say look into [[URLs and Parameters in Express]].
 
 ---
 
+## Express `app` Methods:
+Here is the breakdown of the core Express `app` methods, categorized by what they do.
+
+## 1. HTTP Routing Methods (The Verbs)
+
+These methods map directly to standard HTTP methods. They define what happens when a client requests a specific URL with a specific action.
+
+|**Method**|**Typical Use Case (CRUD)**|**Example**|
+|---|---|---|
+|**`app.get()`**|**Read:** Fetching data or a webpage.|`app.get('/users', (req, res) => {...})`|
+|**`app.post()`**|**Create:** Submitting new data (like a form).|`app.post('/users', (req, res) => {...})`|
+|**`app.put()`**|**Update (Complete):** Replacing an entire existing record.|`app.put('/users/:id', (req, res) => {...})`|
+|**`app.patch()`**|**Update (Partial):** Modifying specific fields of a record.|`app.patch('/users/:id', (req, res) => {...})`|
+|**`app.delete()`**|**Delete:** Removing a record.|`app.delete('/users/:id', (req, res) => {...})`|
+|**`app.options()`**|**Pre-flight:** Checking permitted communication options (CORS).|`app.options('/api', cors())`|
+
+## 2. Middleware & Flow Control
+
+These methods manage the request pipeline, determining how requests are intercepted or organized before they hit their final destination.
+
+|**Method**|**Purpose**|**Example**|
+|---|---|---|
+|**`app.use()`**|Mounts middleware for all requests, or requests starting with a specific path.|`app.use(express.json())`|
+|**`app.all()`**|Applies a handler to a specific path for **all** HTTP methods (GET, POST, PUT, etc.). Useful for path-specific validation.|`app.all('/admin/*', requireAuth)`|
+|**`app.route()`**|Returns a single route object so you can chain multiple HTTP methods to the same URL without repeating the path.|`app.route('/users').get(getUsers).post(createUser)`|
+
+## 3. Application Settings & Configuration
+
+Express uses a hidden key-value store to manage application-level settings (like which template engine to use).
+
+> **Important:** `app.get()` has a split personality. If you pass it two arguments (`path`, `callback`), it handles HTTP GET requests. If you pass it one argument (`name`), it retrieves a configuration setting.
+
+|**Method**|**Purpose**|**Example**|
+|---|---|---|
+|**`app.set()`**|Assigns a setting name to a value.|`app.set('view engine', 'ejs')`|
+|**`app.get()`**|Retrieves the value of a setting.|`app.get('view engine')` _(Returns 'ejs')_|
+|**`app.enable()`**|Sets a boolean setting to `true`.|`app.enable('trust proxy')`|
+|**`app.disable()`**|Sets a boolean setting to `false`.|`app.disable('x-powered-by')`|
+
+## 4. Server Initialization
+
+| **Method**         | **Purpose**                                                                                           | **Example**                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| **`app.listen()`** | Binds the Express application to a specific network port so it can start accepting incoming requests. | `app.listen(3000, () => console.log('Running!'))` |
+
 ## **3. The `req` (Request) Object**
 
 The `req` object contains all information about the HTTP request from the client. It's inherited from Node.js's `http.IncomingMessage`.

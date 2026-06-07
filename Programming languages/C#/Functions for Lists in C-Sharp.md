@@ -19,8 +19,6 @@ List<string> animalsList = new List<string>(animals); // Copy from array
 ```
 
 ---
-**Functions Covered:**
-	**
 # Functions
 
 Lets have a look at some basic functions first:

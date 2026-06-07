@@ -1,0 +1,660 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+:root {
+  --amber50: #FAEEDA; --amber100: #FAC775; --amber200: #EF9F27; --amber600: #854F0B; --amber800: #633806;
+  --teal50: #E1F5EE; --teal100: #9FE1CB; --teal200: #5DCAA5; --teal600: #0F6E56; --teal800: #085041;
+  --purple50: #EEEDFE; --purple100: #CECBF6; --purple200: #AFA9EC; --purple600: #534AB7; --purple800: #3C3489;
+  --coral50: #FAECE7; --coral100: #F5C4B3; --coral200: #F0997B; --coral600: #993C1D; --coral800: #712B13;
+  --blue50: #E6F1FB; --blue100: #B5D4F4; --blue200: #85B7EB; --blue600: #185FA5; --blue800: #0C447C;
+  --green50: #EAF3DE; --green100: #C0DD97; --green600: #3B6D11; --green800: #27500A;
+  --gray50: #F1EFE8; --gray100: #D3D1C7; --gray600: #5F5E5A; --gray800: #444441;
+}
+.container { padding: 1.5rem 0; max-width: 680px; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 5px 14px; font-size: 13px; border: 0.5px solid var(--color-border-secondary);
+  border-radius: 99px; background: transparent; cursor: pointer;
+  color: var(--color-text-secondary); font-family: var(--font-sans); transition: all .15s;
+}
+.nav-btn:hover { background: var(--color-background-secondary); }
+.nav-btn.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+
+/* Code blocks */
+.code-wrap { border-radius: var(--border-radius-lg); overflow: hidden; margin: 12px 0; border: 0.5px solid var(--color-border-tertiary); }
+.code-header { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: var(--color-background-secondary); font-size: 12px; color: var(--color-text-secondary); }
+.code-lang { font-family: var(--font-mono); font-weight: 500; color: var(--color-text-primary); font-size: 11px; }
+.code-body { padding: 14px 16px; background: var(--color-background-primary); overflow-x: auto; }
+pre { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; color: var(--color-text-primary); white-space: pre; }
+.kw { color: #7c55e0; } .str { color: #2d9a6a; } .cmt { color: var(--color-text-secondary); font-style: italic; }
+.type { color: #c06a1f; } .fn { color: #185fa5; } .num { color: #c44f3e; }
+@media (prefers-color-scheme: dark) {
+  .kw { color: #b89aff; } .str { color: #6ed9a6; } .type { color: #f2a857; }
+  .fn { color: #85b7eb; } .num { color: #f09595; }
+}
+
+/* Concept cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 10px; margin: 12px 0; }
+.card { padding: 14px 16px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); }
+.card-icon { font-size: 20px; margin-bottom: 8px; }
+.card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.card-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Relation diagrams */
+.rel-wrap { margin: 12px 0; }
+.rel-diagram { display: flex; align-items: center; gap: 0; margin: 10px 0; }
+.rel-box { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; min-width: 120px; text-align: center; }
+.rel-arrow { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0 8px; }
+.rel-line { height: 2px; width: 100%; }
+.rel-label { font-size: 11px; font-weight: 500; white-space: nowrap; }
+.arrow-sym { font-size: 18px; line-height: 1; }
+
+/* Steps */
+.steps { margin: 12px 0; }
+.step { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+.step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; margin-top: 1px; }
+.step-body { flex: 1; }
+.step-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.step-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Badge */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; margin-right: 4px; }
+
+/* Tabs within section */
+.inner-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+.inner-tab { padding: 4px 12px; font-size: 12px; border-radius: 6px; border: 0.5px solid var(--color-border-tertiary); cursor: pointer; background: transparent; color: var(--color-text-secondary); font-family: var(--font-sans); }
+.inner-tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.inner-panel { display: none; }
+.inner-panel.active { display: block; }
+
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 18px 0; }
+</style>
+
+<div class="container">
+  <h2 style="margin-bottom: 6px;">Prisma ORM</h2>
+  <p class="subtitle">Complete guide — schema, models, migrations & relationships</p>
+
+  <div class="nav" id="nav">
+    <button class="nav-btn active" onclick="show('concepts')">Concepts</button>
+    <button class="nav-btn" onclick="show('schema')">Schema & Models</button>
+    <button class="nav-btn" onclick="show('migrations')">Migrations</button>
+    <button class="nav-btn" onclick="show('client')">Client queries</button>
+    <button class="nav-btn" onclick="show('relations')">Relationships</button>
+  </div>
+
+  <!-- CONCEPTS -->
+  <div class="section active" id="s-concepts">
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Prisma Schema</div>
+        <div class="card-desc">Single source of truth. One <code>schema.prisma</code> file describes your data models, relations, and DB connection.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Prisma Migrate</div>
+        <div class="card-desc">Turns schema changes into versioned SQL migration files, applying them safely in dev and production.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Prisma Client</div>
+        <div class="card-desc">Auto-generated, fully type-safe query builder. Knows your schema shapes at compile-time — no more guessing field names.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title">Prisma Studio</div>
+        <div class="card-desc">Visual browser-based GUI to view, edit and manage your database records. Run with <code>npx prisma studio</code>.</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--purple50);color:var(--purple800);">1</div>
+        <div class="step-body"><div class="step-title">Install</div><div class="step-desc"><code>npm install prisma @prisma/client</code> then <code>npx prisma init</code></div></div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--teal50);color:var(--teal800);">2</div>
+        <div class="step-body"><div class="step-title">Define schema</div><div class="step-desc">Write models in <code>prisma/schema.prisma</code>. Set your <code>provider</code> (PostgreSQL, MySQL, SQLite…)</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--amber50);color:var(--amber800);">3</div>
+        <div class="step-body"><div class="step-title">Migrate</div><div class="step-desc"><code>npx prisma migrate dev --name init</code> — creates SQL and applies it to your DB</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--coral50);color:var(--coral800);">4</div>
+        <div class="step-body"><div class="step-title">Generate client</div><div class="step-desc"><code>npx prisma generate</code> — builds the type-safe client from your schema</div></div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background:var(--blue50);color:var(--blue800);">5</div>
+        <div class="step-body"><div class="step-title">Query</div><div class="step-desc">Import <code>PrismaClient</code> and start querying: <code>prisma.user.findMany()</code></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMA & MODELS -->
+  <div class="section" id="s-schema">
+    <h2>Schema & models</h2>
+    <p class="subtitle">Everything lives in <code>prisma/schema.prisma</code></p>
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">schema.prisma</span><span>Anatomy of a schema file</span></div>
+      <div class="code-body"><pre><span class="cmt">// 1. Generator — what to generate</span>
+<span class="kw">generator</span> client {
+  provider = <span class="str">"prisma-client-js"</span>
+}
+
+<span class="cmt">// 2. Datasource — your database</span>
+<span class="kw">datasource</span> db {
+  provider = <span class="str">"postgresql"</span>          <span class="cmt">// or "mysql" | "sqlite"</span>
+  url      = <span class="fn">env</span>(<span class="str">"DATABASE_URL"</span>)
+}
+
+<span class="cmt">// 3. Model — maps to a DB table</span>
+<span class="kw">model</span> <span class="type">User</span> {
+  id        <span class="type">Int</span>       <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  email     <span class="type">String</span>    <span class="kw">@unique</span>
+  name      <span class="type">String</span>?              <span class="cmt">// ? = optional field</span>
+  createdAt <span class="type">DateTime</span>  <span class="kw">@default</span>(<span class="fn">now</span>())
+  role      <span class="type">Role</span>      <span class="kw">@default</span>(<span class="type">USER</span>)
+  posts     <span class="type">Post</span>[]               <span class="cmt">// relation field</span>
+}
+
+<span class="cmt">// 4. Enum — constrained string values</span>
+<span class="kw">enum</span> <span class="type">Role</span> {
+  <span class="type">USER</span>
+  <span class="type">ADMIN</span>
+}</pre></div>
+    </div>
+    <div class="divider"></div>
+    <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(185px,1fr))">
+      <div class="card">
+        <div class="card-title">Field types</div>
+        <div class="card-desc" style="margin-top:6px">
+          <span class="badge" style="background:var(--purple50);color:var(--purple800)">String</span>
+          <span class="badge" style="background:var(--teal50);color:var(--teal800)">Int</span>
+          <span class="badge" style="background:var(--amber50);color:var(--amber800)">Float</span>
+          <span class="badge" style="background:var(--coral50);color:var(--coral800)">Boolean</span>
+          <span class="badge" style="background:var(--blue50);color:var(--blue800)">DateTime</span>
+          <span class="badge" style="background:var(--gray50);color:var(--gray800)">Json</span>
+          <br><br>Append <code>?</code> for optional, <code>[]</code> for list.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Key attributes</div>
+        <div class="card-desc" style="margin-top:6px;line-height:2">
+          <code>@id</code> — primary key<br>
+          <code>@unique</code> — unique constraint<br>
+          <code>@default()</code> — default value<br>
+          <code>@relation()</code> — foreign key link<br>
+          <code>@@index([])</code> — composite index<br>
+          <code>@map()</code> — custom column name
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Model example</div>
+        <div class="card-desc" style="margin-top:6px;font-family:var(--font-mono);font-size:11.5px;line-height:1.9">
+          <span class="kw">model</span> <span class="type">Post</span> {<br>
+          &nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;<span class="type">Int</span> <span class="kw">@id</span> ...<br>
+          &nbsp;&nbsp;title <span class="type">String</span><br>
+          &nbsp;&nbsp;body &nbsp;<span class="type">String</span>?<br>
+          &nbsp;&nbsp;userId <span class="type">Int</span><br>
+          &nbsp;&nbsp;user &nbsp;<span class="type">User</span> <span class="kw">@relation</span>(...)<br>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIGRATIONS -->
+  <div class="section" id="s-migrations">
+    <h2>Database migrations</h2>
+    <p class="subtitle">Prisma Migrate tracks every schema change as a versioned SQL file</p>
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="innerTab('mig','dev')">Dev workflow</button>
+      <button class="inner-tab" onclick="innerTab('mig','prod')">Production</button>
+      <button class="inner-tab" onclick="innerTab('mig','reset')">Useful commands</button>
+    </div>
+    <div class="inner-panel active" id="mig-dev">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--teal50);color:var(--teal800);">1</div>
+          <div class="step-body"><div class="step-title">Edit your schema</div><div class="step-desc">Add a model, a field, or change a type in <code>schema.prisma</code>.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--teal50);color:var(--teal800);">2</div>
+          <div class="step-body"><div class="step-title">Run dev migrate</div>
+          <div class="code-wrap" style="margin-top:6px"><div class="code-body"><pre><span class="fn">npx</span> prisma migrate dev <span class="kw">--name</span> add_post_table</pre></div></div>
+          <div class="step-desc">Creates <code>prisma/migrations/…/migration.sql</code>, applies it to dev DB, regenerates client.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:var(--teal50);color:var(--teal800);">3</div>
+          <div class="step-body"><div class="step-title">Commit migration files</div><div class="step-desc">Migration SQL files go into version control — they're your DB change history.</div></div>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">generated migration.sql</span></div>
+        <div class="code-body"><pre><span class="cmt">-- CreateTable</span>
+<span class="kw">CREATE TABLE</span> <span class="str">"Post"</span> (
+    <span class="str">"id"</span>     <span class="type">SERIAL</span>  <span class="kw">NOT NULL</span>,
+    <span class="str">"title"</span>  <span class="type">TEXT</span>    <span class="kw">NOT NULL</span>,
+    <span class="str">"userId"</span> <span class="type">INTEGER</span> <span class="kw">NOT NULL</span>,
+    <span class="kw">CONSTRAINT</span> <span class="str">"Post_pkey"</span> <span class="kw">PRIMARY KEY</span> (<span class="str">"id"</span>)
+);
+<span class="kw">ALTER TABLE</span> <span class="str">"Post"</span> <span class="kw">ADD CONSTRAINT</span> <span class="str">"Post_userId_fkey"</span>
+    <span class="kw">FOREIGN KEY</span> (<span class="str">"userId"</span>) <span class="kw">REFERENCES</span> <span class="str">"User"</span>(<span class="str">"id"</span>);</pre></div>
+      </div>
+    </div>
+    <div class="inner-panel" id="mig-prod">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num" style="background:var(--coral50);color:var(--coral800);">!</div>
+          <div class="step-body"><div class="step-title">Never use <code>migrate dev</code> in production</div><div class="step-desc">It can reset the database. Use <code>migrate deploy</code> instead — it applies only the pending migrations safely.</div></div>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">CLI</span><span>Production deploy</span></div>
+        <div class="code-body"><pre><span class="cmt"># Apply all pending migrations (safe, no reset)</span>
+<span class="fn">npx</span> prisma migrate deploy
+
+<span class="cmt"># Then regenerate the client</span>
+<span class="fn">npx</span> prisma generate</pre></div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:var(--color-border-tertiary)">
+        <div class="card-title">Typical CI/CD step</div>
+        <div class="card-desc" style="margin-top:6px">Run <code>prisma migrate deploy</code> as part of your deployment pipeline before starting the app server. The command is idempotent — already-applied migrations are skipped.</div>
+      </div>
+    </div>
+    <div class="inner-panel" id="mig-reset">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">CLI</span><span>Common commands</span></div>
+        <div class="code-body"><pre><span class="cmt"># Check migration status</span>
+<span class="fn">npx</span> prisma migrate status
+
+<span class="cmt"># Reset dev DB (drops + re-applies all migrations)</span>
+<span class="fn">npx</span> prisma migrate reset
+
+<span class="cmt"># Push schema directly (no migration file) — prototyping</span>
+<span class="fn">npx</span> prisma db push
+
+<span class="cmt"># Introspect existing DB → generate schema.prisma</span>
+<span class="fn">npx</span> prisma db pull
+
+<span class="cmt"># Open Prisma Studio GUI</span>
+<span class="fn">npx</span> prisma studio</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT QUERIES -->
+  <div class="section" id="s-client">
+    <h2>Prisma Client queries</h2>
+    <p class="subtitle">Type-safe query API — auto-generated from your schema</p>
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="innerTab('q','crud')">CRUD</button>
+      <button class="inner-tab" onclick="innerTab('q','filter')">Filtering</button>
+      <button class="inner-tab" onclick="innerTab('q','include')">Relations</button>
+      <button class="inner-tab" onclick="innerTab('q','adv')">Advanced</button>
+    </div>
+
+    <div class="inner-panel active" id="q-crud">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Create · Read · Update · Delete</span></div>
+        <div class="code-body"><pre><span class="kw">import</span> { PrismaClient } <span class="kw">from</span> <span class="str">'@prisma/client'</span>
+<span class="kw">const</span> prisma = <span class="kw">new</span> <span class="type">PrismaClient</span>()
+
+<span class="cmt">// CREATE — returns the created record</span>
+<span class="kw">const</span> user = <span class="kw">await</span> prisma.user.<span class="fn">create</span>({
+  data: { email: <span class="str">'alice@prisma.io'</span>, name: <span class="str">'Alice'</span> }
+})
+
+<span class="cmt">// READ — find one</span>
+<span class="kw">const</span> found = <span class="kw">await</span> prisma.user.<span class="fn">findUnique</span>({
+  where: { id: <span class="num">1</span> }
+})
+
+<span class="cmt">// READ — find many</span>
+<span class="kw">const</span> all = <span class="kw">await</span> prisma.user.<span class="fn">findMany</span>()
+
+<span class="cmt">// UPDATE</span>
+<span class="kw">const</span> updated = <span class="kw">await</span> prisma.user.<span class="fn">update</span>({
+  where: { id: <span class="num">1</span> },
+  data:  { name: <span class="str">'Alice B.'</span> }
+})
+
+<span class="cmt">// DELETE</span>
+<span class="kw">await</span> prisma.user.<span class="fn">delete</span>({ where: { id: <span class="num">1</span> } })
+
+<span class="cmt">// UPSERT — create OR update</span>
+<span class="kw">const</span> upserted = <span class="kw">await</span> prisma.user.<span class="fn">upsert</span>({
+  where:  { email: <span class="str">'alice@prisma.io'</span> },
+  update: { name: <span class="str">'Alice Updated'</span> },
+  create: { email: <span class="str">'alice@prisma.io'</span>, name: <span class="str">'Alice'</span> }
+})</pre></div>
+      </div>
+    </div>
+
+    <div class="inner-panel" id="q-filter">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Filtering, sorting & pagination</span></div>
+        <div class="code-body"><pre><span class="cmt">// WHERE operators</span>
+prisma.user.<span class="fn">findMany</span>({
+  where: {
+    email: { <span class="fn">contains</span>: <span class="str">'@prisma.io'</span> },
+    name:  { <span class="fn">startsWith</span>: <span class="str">'A'</span> },
+    age:   { <span class="fn">gte</span>: <span class="num">18</span>, <span class="fn">lt</span>: <span class="num">65</span> },
+    active: <span class="kw">true</span>
+  }
+})
+
+<span class="cmt">// AND / OR / NOT</span>
+prisma.user.<span class="fn">findMany</span>({
+  where: {
+    <span class="fn">OR</span>: [
+      { email: { <span class="fn">endsWith</span>: <span class="str">'@gmail.com'</span> } },
+      { email: { <span class="fn">endsWith</span>: <span class="str">'@outlook.com'</span> } }
+    ]
+  }
+})
+
+<span class="cmt">// SORT</span>
+prisma.post.<span class="fn">findMany</span>({
+  orderBy: { createdAt: <span class="str">'desc'</span> }
+})
+
+<span class="cmt">// PAGINATION — cursor-based (efficient)</span>
+prisma.post.<span class="fn">findMany</span>({ skip: <span class="num">0</span>, take: <span class="num">10</span> })
+
+<span class="cmt">// SELECT — only specific fields</span>
+prisma.user.<span class="fn">findMany</span>({
+  select: { id: <span class="kw">true</span>, email: <span class="kw">true</span> }
+})</pre></div>
+      </div>
+    </div>
+
+    <div class="inner-panel" id="q-include">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Including & nesting relations</span></div>
+        <div class="code-body"><pre><span class="cmt">// Include related records</span>
+<span class="kw">const</span> user = <span class="kw">await</span> prisma.user.<span class="fn">findUnique</span>({
+  where:   { id: <span class="num">1</span> },
+  include: { posts: <span class="kw">true</span> }   <span class="cmt">// fetches all posts</span>
+})
+<span class="cmt">// user.posts → Post[]</span>
+
+<span class="cmt">// Filter the included relation</span>
+prisma.user.<span class="fn">findUnique</span>({
+  where:   { id: <span class="num">1</span> },
+  include: {
+    posts: {
+      where:   { published: <span class="kw">true</span> },
+      orderBy: { createdAt: <span class="str">'desc'</span> },
+      take: <span class="num">5</span>
+    }
+  }
+})
+
+<span class="cmt">// Nested create (User + Post in one query)</span>
+prisma.user.<span class="fn">create</span>({
+  data: {
+    email: <span class="str">'bob@example.com'</span>,
+    posts: {
+      create: [{ title: <span class="str">'Hello world'</span> }]
+    }
+  }
+})
+
+<span class="cmt">// Select specific nested fields</span>
+prisma.user.<span class="fn">findMany</span>({
+  select: {
+    name: <span class="kw">true</span>,
+    posts: { select: { title: <span class="kw">true</span> } }
+  }
+})</pre></div>
+      </div>
+    </div>
+
+    <div class="inner-panel" id="q-adv">
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Transactions, aggregates, raw</span></div>
+        <div class="code-body"><pre><span class="cmt">// TRANSACTION — all-or-nothing</span>
+<span class="kw">await</span> prisma.<span class="fn">$transaction</span>([
+  prisma.user.<span class="fn">create</span>({ data: { email: <span class="str">'x@y.com'</span> } }),
+  prisma.post.<span class="fn">create</span>({ data: { title: <span class="str">'First'</span>, userId: <span class="num">1</span> } })
+])
+
+<span class="cmt">// Interactive transaction (use result of step 1 in step 2)</span>
+<span class="kw">await</span> prisma.<span class="fn">$transaction</span>(<span class="kw">async</span> (tx) => {
+  <span class="kw">const</span> user = <span class="kw">await</span> tx.user.<span class="fn">create</span>({ data: { email: <span class="str">'z@y.com'</span> } })
+  <span class="kw">return</span> tx.post.<span class="fn">create</span>({ data: { title: <span class="str">'Hi'</span>, userId: user.id } })
+})
+
+<span class="cmt">// AGGREGATES</span>
+<span class="kw">const</span> stats = <span class="kw">await</span> prisma.post.<span class="fn">aggregate</span>({
+  _count: <span class="kw">true</span>,
+  _avg:   { views: <span class="kw">true</span> },
+  _max:   { views: <span class="kw">true</span> }
+})
+
+<span class="cmt">// RAW SQL (escape hatch)</span>
+<span class="kw">const</span> rows = <span class="kw">await</span> prisma.<span class="fn">$queryRaw</span><span class="kw">`</span>
+  <span class="fn">SELECT</span> * <span class="fn">FROM</span> <span class="str">"User"</span> <span class="fn">WHERE</span> id = ${<span class="num">1</span>}
+<span class="kw">`</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATIONSHIPS -->
+  <div class="section" id="s-relations">
+    <h2>Relationships</h2>
+    <p class="subtitle">Three patterns — each with schema & query examples</p>
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="innerTab('r','o2m')">One-to-Many</button>
+      <button class="inner-tab" onclick="innerTab('r','m2m')">Many-to-Many</button>
+      <button class="inner-tab" onclick="innerTab('r','o2o')">One-to-One</button>
+    </div>
+
+    <!-- ONE TO MANY -->
+    <div class="inner-panel active" id="r-o2m">
+      <div class="rel-diagram">
+        <div class="rel-box" style="background:var(--blue50);color:var(--blue800);">User</div>
+        <div class="rel-arrow">
+          <div class="rel-line" style="background:var(--color-border-secondary)"></div>
+          <div class="rel-label" style="color:var(--color-text-secondary)">1 &nbsp;→&nbsp; many</div>
+        </div>
+        <div class="rel-box" style="background:var(--teal50);color:var(--teal800);">Post</div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-desc">One <strong>User</strong> can author many <strong>Posts</strong>. Each Post has exactly one author. The foreign key (<code>userId</code>) lives on the "many" side (Post).</div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">schema.prisma</span></div>
+        <div class="code-body"><pre><span class="kw">model</span> <span class="type">User</span> {
+  id    <span class="type">Int</span>    <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  email <span class="type">String</span> <span class="kw">@unique</span>
+  posts <span class="type">Post</span>[]  <span class="cmt">// ← 1-to-many: list of Posts</span>
+}
+
+<span class="kw">model</span> <span class="type">Post</span> {
+  id     <span class="type">Int</span>    <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  title  <span class="type">String</span>
+  userId <span class="type">Int</span>          <span class="cmt">// foreign key column</span>
+  user   <span class="type">User</span>   <span class="kw">@relation</span>(fields: [userId], references: [id])
+}</pre></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Queries</span></div>
+        <div class="code-body"><pre><span class="cmt">// User with all their posts</span>
+prisma.user.<span class="fn">findUnique</span>({
+  where: { id: <span class="num">1</span> },
+  include: { posts: <span class="kw">true</span> }
+})
+
+<span class="cmt">// Create post and connect to user</span>
+prisma.post.<span class="fn">create</span>({
+  data: { title: <span class="str">'Hello'</span>, user: { connect: { id: <span class="num">1</span> } } }
+})
+
+<span class="cmt">// Count a user's posts</span>
+prisma.user.<span class="fn">findUnique</span>({
+  where: { id: <span class="num">1</span> },
+  include: { _count: { select: { posts: <span class="kw">true</span> } } }
+})</pre></div>
+      </div>
+    </div>
+
+    <!-- MANY TO MANY -->
+    <div class="inner-panel" id="r-m2m">
+      <div class="rel-diagram">
+        <div class="rel-box" style="background:var(--purple50);color:var(--purple800);">Post</div>
+        <div class="rel-arrow">
+          <div class="rel-line" style="background:var(--color-border-secondary)"></div>
+          <div class="rel-label" style="color:var(--color-text-secondary)">many ↔ many</div>
+        </div>
+        <div class="rel-box" style="background:var(--amber50);color:var(--amber800);">Tag</div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-desc">A <strong>Post</strong> can have many <strong>Tags</strong>, and a Tag can belong to many Posts. Prisma auto-creates a hidden join table <code>_PostToTag</code>. Use an explicit join model when you need extra fields on the relation.</div>
+      </div>
+      <div class="inner-tabs" style="margin-top:0">
+        <button class="inner-tab active" onclick="innerTab('m2m','implicit')">Implicit</button>
+        <button class="inner-tab" onclick="innerTab('m2m','explicit')">Explicit join model</button>
+      </div>
+      <div class="inner-panel active" id="m2m-implicit">
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">schema.prisma</span><span>Auto join table</span></div>
+          <div class="code-body"><pre><span class="kw">model</span> <span class="type">Post</span> {
+  id   <span class="type">Int</span>   <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  tags <span class="type">Tag</span>[] <span class="cmt">// implicit many-to-many</span>
+}
+
+<span class="kw">model</span> <span class="type">Tag</span> {
+  id    <span class="type">Int</span>    <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  name  <span class="type">String</span> <span class="kw">@unique</span>
+  posts <span class="type">Post</span>[] <span class="cmt">// Prisma creates _PostToTag table</span>
+}</pre></div>
+        </div>
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">TypeScript</span></div>
+          <div class="code-body"><pre><span class="cmt">// Post with its tags</span>
+prisma.post.<span class="fn">findUnique</span>({
+  where: { id: <span class="num">1</span> },
+  include: { tags: <span class="kw">true</span> }
+})
+
+<span class="cmt">// Connect existing tags to a post</span>
+prisma.post.<span class="fn">update</span>({
+  where: { id: <span class="num">1</span> },
+  data: {
+    tags: { connect: [{ id: <span class="num">2</span> }, { id: <span class="num">5</span> }] }
+  }
+})</pre></div>
+        </div>
+      </div>
+      <div class="inner-panel" id="m2m-explicit">
+        <div class="code-wrap">
+          <div class="code-header"><span class="code-lang">schema.prisma</span><span>With extra fields on the relation</span></div>
+          <div class="code-body"><pre><span class="kw">model</span> <span class="type">Post</span> {
+  id       <span class="type">Int</span>         <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  postTags <span class="type">PostTag</span>[]
+}
+
+<span class="kw">model</span> <span class="type">Tag</span> {
+  id       <span class="type">Int</span>         <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  name     <span class="type">String</span>      <span class="kw">@unique</span>
+  postTags <span class="type">PostTag</span>[]
+}
+
+<span class="cmt">// Explicit join model — can carry extra fields</span>
+<span class="kw">model</span> <span class="type">PostTag</span> {
+  postId    <span class="type">Int</span>
+  tagId     <span class="type">Int</span>
+  addedAt   <span class="type">DateTime</span> <span class="kw">@default</span>(<span class="fn">now</span>())  <span class="cmt">// extra field</span>
+  post      <span class="type">Post</span>     <span class="kw">@relation</span>(fields: [postId], references: [id])
+  tag       <span class="type">Tag</span>      <span class="kw">@relation</span>(fields: [tagId], references: [id])
+  <span class="kw">@@id</span>([postId, tagId])  <span class="cmt">// composite PK</span>
+}</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONE TO ONE -->
+    <div class="inner-panel" id="r-o2o">
+      <div class="rel-diagram">
+        <div class="rel-box" style="background:var(--coral50);color:var(--coral800);">User</div>
+        <div class="rel-arrow">
+          <div class="rel-line" style="background:var(--color-border-secondary)"></div>
+          <div class="rel-label" style="color:var(--color-text-secondary)">1 ↔ 1</div>
+        </div>
+        <div class="rel-box" style="background:var(--green50);color:var(--green800);">Profile</div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-desc">Each <strong>User</strong> has at most one <strong>Profile</strong>. The foreign key goes on the child model (Profile). The field is marked <code>@unique</code> to enforce the one-to-one constraint.</div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">schema.prisma</span></div>
+        <div class="code-body"><pre><span class="kw">model</span> <span class="type">User</span> {
+  id      <span class="type">Int</span>      <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  email   <span class="type">String</span>   <span class="kw">@unique</span>
+  profile <span class="type">Profile</span>? <span class="cmt">// optional — user may have no profile</span>
+}
+
+<span class="kw">model</span> <span class="type">Profile</span> {
+  id     <span class="type">Int</span>    <span class="kw">@id</span> <span class="kw">@default</span>(<span class="fn">autoincrement</span>())
+  bio    <span class="type">String</span>?
+  userId <span class="type">Int</span>    <span class="kw">@unique</span>  <span class="cmt">// @unique enforces 1-to-1</span>
+  user   <span class="type">User</span>   <span class="kw">@relation</span>(fields: [userId], references: [id])
+}</pre></div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header"><span class="code-lang">TypeScript</span><span>Queries</span></div>
+        <div class="code-body"><pre><span class="cmt">// Create user + profile together</span>
+prisma.user.<span class="fn">create</span>({
+  data: {
+    email: <span class="str">'alice@example.com'</span>,
+    profile: {
+      create: { bio: <span class="str">'Engineer & cat lover'</span> }
+    }
+  }
+})
+
+<span class="cmt">// Fetch user with their profile</span>
+prisma.user.<span class="fn">findUnique</span>({
+  where:   { id: <span class="num">1</span> },
+  include: { profile: <span class="kw">true</span> }
+})
+
+<span class="cmt">// Update profile via user</span>
+prisma.user.<span class="fn">update</span>({
+  where: { id: <span class="num">1</span> },
+  data:  {
+    profile: { update: { bio: <span class="str">'Updated bio'</span> } }
+  }
+})</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+function innerTab(group, id) {
+  const panels = document.querySelectorAll('[id^="' + group + '-"]');
+  panels.forEach(p => p.classList.remove('active'));
+  const tabs = event.target.closest('.inner-tabs').querySelectorAll('.inner-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  document.getElementById(group + '-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

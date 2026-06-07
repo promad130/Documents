@@ -64,6 +64,107 @@ Used for bit-level operations.
 | `>>`     | Right shift | `5 >> 1 // 0101 >> 1 = 0010 (2)`  |
 used in low-level Programming
 
+#### BITWISE XOR / Any Bitwise operators implemented on integers follow this logic:
+Lets say I have this:
+![[Pasted image 20260527044323.png]]
+
+Now how does the XOR of integers work and what does it store and all?
+To see exactly how it works under the hood—and what happens when you do `1 ^ 2`—we have to look at the numbers the way the computer does: in **binary (bits)**.
+
+##### What happens when you do `1 ^ 2`?
+
+XOR stands for **Exclusive OR**. The rule for individual bits is simple:
+- If the bits are the **same**, the result is `0`.
+- If the bits are **different**, the result is `1`.
+
+Let's look at `1 ^ 2` in binary:
+
+- `1` in binary is `0 1`
+- `2` in binary is `1 0`
+
+```Plaintext
+  0 1  (Decimal 1)
+^ 1 0  (Decimal 2)
+------
+  1 1  (Decimal 3)
+```
+
+Because the bits in each position are different, they both turn into `1`. `1 1` in binary is **3**. So, `1 ^ 2 = 3`.
+
+##### How is it "storing and canceling"?
+
+Let's take that `3` we just calculated and continue the chain. What happens if we XOR that result with `2` again? (`1 ^ 2 ^ 2`)
+
+We already know `1 ^ 2 = 3` (binary `1 1`). Now let's XOR that with `2` (binary `1 0`):
+
+```Plaintext
+  1 1  (Result of 1 ^ 2)
+^ 1 0  (Decimal 2)
+------
+  0 1  (Decimal 1)
+```
+
+Look at that: the `2` completely canceled itself out, and we are right back to `1`.
+
+##### Visualizing the whole process
+
+Think of every bit position like a light switch.
+
+- XORing a number into a variable is like flipping the switches corresponding to that number's binary digits.
+- If you flip a switch **once** (because the number appeared in `xor1`), the light stays **ON**.
+- If you flip that exact same switch a **second time** (because the number also appeared in `xor2`), the light goes back **OFF** (`0`).
+
+Because the array is only missing _one_ number, every single number that is present gets its switches flipped exactly **twice** (once in `xor1` and once in `xor2`), turning those lights off.
+
+The missing number only gets its switches flipped **once** (inside `xor1`), so its lights stay ON at the very end. When you do `xor1 ^ xor2`, you are reading which lights are still standing!
+
+##### How the Code Applies This
+
+The problem asks you to find a missing number in the range $1$ to $N$. The code sets up a game of elimination using two variables:
+
+- **`xor1`**: This calculates the XOR of **all expected numbers** from $1$ to $N$.
+    
+- **`xor2`**: This calculates the XOR of **all actual numbers** present inside the array `a`.
+    
+
+Let’s dry-run the code using the exact example from your image:
+
+**`A = [1, 2, 4, 5]`** and **`N = 5`** (meaning the missing number is **3**).
+
+##### Inside the loop (from `i = 0` to `n - 1`):
+
+The loop runs for the indices of the array (which has a size of $N-1$, stored in variable `n`).
+
+- **`xor2` collects the array elements:** `1 ^ 2 ^ 4 ^ 5`
+    
+- **`xor1` collects the range values up to $N-1$:** `1 ^ 2 ^ 3 ^ 4`
+    
+
+##### Line 8 (After the loop):
+
+`xor1 = xor1 ^ N;`
+
+The loop only went up to $N-1$ (which was 4). This line manually tacks on the final number $N$ (which is 5) to `xor1`.
+
+Now, let's look at what both variables hold right before the final return statement:
+
+- `xor1` = $1 \oplus 2 \oplus 3 \oplus 4 \oplus 5$ _(All numbers that **should** be there)_
+- `xor2` = $1 \oplus 2 \oplus 4 \oplus 5$ _(All numbers that **are actually** there)_
+
+##### The Grand Finale: `return xor1 ^ xor2;`
+
+When the code returns `xor1 ^ xor2`, it mashes both groups together into one giant XOR chain. Order doesn't matter in XOR, so we can rearrange them to pair them up:
+
+$$\text{Result} = (1 \oplus 1) \oplus (2 \oplus 2) \oplus 3 \oplus (4 \oplus 4) \oplus (5 \oplus 5)$$
+
+Using our rules from earlier, watch them cancel out:
+
+$$\text{Result} = 0 \oplus 0 \oplus 3 \oplus 0 \oplus 0$$
+
+$$\text{Result} = 3$$
+
+Because $1, 2, 4,$ and $5$ appear in both the expected list and the actual list, they pair up, turn into $0$, and vanish. The missing number ($3$) only appears once in the entire chain, so it has no partner to cancel it out. It passes straight through the zeroes completely untouched.
+
 ---
 ### (v) Assignment Operators
 Used to assign values.

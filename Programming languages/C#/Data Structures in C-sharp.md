@@ -101,7 +101,7 @@ Functions that are used to work with lists [are](Functions%20for%20Lists%20in%20
 ---
 
 ## Tuples
-A tuple in C# is a lightweight data structure that groups multiple values—possibly of different types—into a single object, without needing to define a custom class or struct.
+A tuple in C# is a lightweight data structure that groups multiple values (possibly of different types) into a single object, without needing to define a custom class or struct.
 <blockquote>In C#, the simplest tool for creating composite types is called a tuple (pronounced “TOO-ples”or “TUP-ples”).</blockquote> 
 These are also sometimes referred to by the number of items in them: a 2-tuple if it has two things, an 8-tuple if it has eight things, etc.
 ### How to Create a Tuple
@@ -134,11 +134,11 @@ You can create tuples in C# in several ways:
     Console.WriteLine(author.Item1); // Mahesh 
     Console.WriteLine(author.Item2); // ADO.NET Programming 
     Console.WriteLine(author.Item3); // 2003
-```
+	```
     Or using the static `Create()` method:
     ```csharp
     var student = Tuple.Create("Taylor", 27, "Orlando");
-```
+	```
 
 ---
 ### Accessing Tuple Elements

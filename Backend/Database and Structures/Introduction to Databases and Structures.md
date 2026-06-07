@@ -1,3 +1,7 @@
+```
+Make things detaioled, and order them up accoridng to the topic and make new files for longer topics
+Re-read it all as well for revision 
+```
 
 ## What is a Database?
 
@@ -28,7 +32,7 @@ Modern computing utilizes various database models based on the use case:
 ### Relational Databases (RDBMS) vs. Object-Oriented (OODBMS)
 
 > The Questions:
-> What is the difference between relational database and Object-Oriented databas,e the table defined can be thought of as a class, and all the rows as columns?
+> What is the difference between relational database and Object-Oriented database the table defined can be thought of as a class, and all the rows as columns?
 
 To answer your question: **Yes, the analogy is very close!** In a RDBMS, we use tables, while in OOP, we use classes.
 
@@ -48,26 +52,22 @@ NoSQL (Not Only SQL) databases are "Schema-less," meaning they don't require a f
 
 1. **Document Databases (e.g., MongoDB):**
     
-    - **Concept:** Stores data in JSON-like documents.
-        
+    - **Concept:** Stores data in JSON-like documents.    
     - **Example:** A "User" document might have varying fields (some have phone numbers, some don't) without needing a column for every possibility.
-        
+    
 2. **Key-Value Stores (e.g., Redis):**
     
     - **Concept:** Like a giant Dictionary or Hash Map. You provide a Key and get a Value.
-        
     - **Example:** Storing session tokens or shopping carts for a website where speed is the only priority.
-        
+    
 3. **Graph Databases (e.g., Neo4j):**
     
-    - **Concept:** Focuses on relationships (Edges) between entities (Nodes).
-        
+    - **Concept:** Focuses on relationships (Edges) between entities (Nodes).    
     - **Example:** A Social Network. "User A" _is friends with_ "User B." Querying "friends of friends" is much faster here than in SQL.
-        
+    
 4. **Wide-Column Stores (e.g., Cassandra):**
     
-    - **Concept:** Designed for massive writes and large datasets across many servers.
-        
+    - **Concept:** Designed for massive writes and large datasets across many servers.    
     - **Example:** Storing sensor logs from millions of IoT devices.
 
 ## Introduction to SQL
@@ -77,19 +77,15 @@ NoSQL (Not Only SQL) databases are "Schema-less," meaning they don't require a f
 SQL is divided into sub-languages:
 
 1. **DDL (Data Definition Language):** Defines the structure (schema).
-    
     - `CREATE`, `ALTER`, `DROP`.
         
 2. **DML (Data Manipulation Language):** Manages the data within the schema.
-    
     - `INSERT`, `UPDATE`, `DELETE`.
     
 3. **DQL (Data Query Language):** Used to retrieve data.
-    
     - `SELECT`.
     
 4. **DCL (Data Control Language):** Manages permissions.
-    
     - `GRANT`, `REVOKE`.
 
 ## Getting Started with MySQL
@@ -102,14 +98,14 @@ To begin, you typically interact with the MySQL server via a terminal or a GUI (
 
 **Step 1: Create and Use a Database**
 
-```
+```MySQL
 CREATE DATABASE University;
 USE University;
 ```
 
 **Step 2: Create a Table** Following the schema from the "Student" example in Ramakrishnan:
 
-```
+```MySQL
 CREATE TABLE Students (
     sid INT PRIMARY KEY,
     name VARCHAR(50),
@@ -121,13 +117,13 @@ CREATE TABLE Students (
 
 **Step 3: Insert Data**
 
-```
+```MySQL
 INSERT INTO Students VALUES (53666, 'Jones', 'jones@cs', 18, 3.4);
 ```
 
 **Step 4: Query Data**
 
-```
+```MySQL
 SELECT name, gpa 
 FROM Students 
 WHERE age > 19;
@@ -155,7 +151,7 @@ DBMS solves all these problems.[^1]
 
 ## Real-World DBMS Applications
 
-Databases are everywhere:[^1]
+Databases are everywhere:
 
 - **Banking**: All transactions, account information
 - **Airlines**: Flight reservations, schedules
@@ -175,12 +171,12 @@ DBMS organizes data into three levels to separate how data is stored from how us
 
 ## Schema vs Instance
 
-Think of a database like a variable in programming:[^1]
+Think of a database like a variable in programming:
 
-- **Schema**: The structure/design of the database (like the data type of a variable). It defines tables, columns, data types, and relationships. Schema rarely changes.[^6][^7][^1]
-- **Instance**: The actual data stored at a specific moment (like the value of a variable). Instance changes frequently as data is inserted, updated, or deleted.[^7][^6][^1]
+- **Schema**: The structure/design of the database (like the data type of a variable). It defines tables, columns, data types, and relationships. Schema rarely changes.
+- **Instance**: The actual data stored at a specific moment (like the value of a variable). Instance changes frequently as data is inserted, updated, or deleted.
 
-Example: The schema defines "Student table has ID, Name, Age columns." The instance is the actual student records like "1, Tony Stark, 18" at 9 AM today.[^7]
+Example: The schema defines "Student table has ID, Name, Age columns." The instance is the actual student records like "1, Tony Stark, 18" at 9 AM today.
 
 ## Data Independence
 
@@ -352,7 +348,7 @@ CREATE TABLE PERSON (
 
 ### 3.2 Single-valued vs Multivalued Attributes
 
-#### Single-valued Attribute
+#### Single-valued Attribute (atomic value)
 Has **only one value** per entity.
 
 **ER Notation:**
@@ -697,9 +693,9 @@ CREATE TABLE ENROLLS_IN (
                 │    ◇
                 ├──teaches──┐
                 │           │
-┌─────────┐    │           │    ┌─────────┐
-│ STUDENT │────┘           └────│ COURSE  │
-└─────────┘                     └─────────┘
+┌─────────┐     │           │    ┌─────────┐
+│ STUDENT │─────┘           └────│ COURSE  │
+└─────────┘                      └─────────┘
 ```
 
 **Example:** Instructor teaches Student in Course (which instructor teaches which students in which course)
@@ -881,7 +877,7 @@ Each entity in A relates to **multiple** entities in B, but each entity in B rel
 ```
 ┌────────────┐    1      ◇      M    ┌─────────┐
 │ INSTRUCTOR │─────────teaches───────│ COURSE  │
-└────────────┘                        └─────────┘
+└────────────┘                       └─────────┘
 ```
 
 **Real-world Examples:**
@@ -1192,11 +1188,11 @@ Keys are attributes that **uniquely identify** entities in an entity set.
 Given `STUDENT(student_id, email, name, phone)`:
 
 **Super Keys:**
-- `{student_id}` ✓
-- `{email}` ✓
-- `{student_id, name}` ✓ (still unique)
-- `{student_id, email, phone}` ✓ (still unique)
-- `{email, name}` ✓ (if email is unique)
+- `{student_id}` 
+- `{email}` 
+- `{student_id, name}`  (still unique)
+- `{student_id, email, phone}`  (still unique)
+- `{email, name}`  (if email is unique)
 
 **Not a Super Key:**
 - `{name}` ✗ (not unique - many students can have same name)
@@ -1759,7 +1755,7 @@ CREATE TABLE MANAGES_WORK (
     PRIMARY KEY (manager_id, emp_id, project_id),
     FOREIGN KEY (manager_id) REFERENCES MANAGER(manager_id),
     -- This foreign key references the aggregated relationship
-    FOREIGN KEY (emp_id, project_id) REFERENCES WORKS_ON(emp_id, project_id)
+	    FOREIGN KEY (emp_id, project_id) REFERENCES WORKS_ON(emp_id, Q5G3 BHJMNRWY16CFTV241)
 );
 -- So we reference the relation we are refering to in aggregates
 ```
@@ -2048,13 +2044,10 @@ INSERT INTO CHECKING VALUES ('ACC001', 500.00, 0.25);
 ```
 
 ---
-
 ## 4. Generalization (Bottom-Up) 
 
 ### Definition
-
 **Generalization** is the **reverse** of specialization. It's the process of combining multiple entity types with common features into a single **superclass**.
-
 **Direction:** Bottom → Up (from specific to general)
 
 ### Process
@@ -2228,7 +2221,6 @@ INSERT INTO STUDENT VALUES (@person_id, 'Computer Science PhD', 3.95, '2020-09-0
 ```
 
 ---
-
 ## Constraints in EER 
 
 EER models use **three types of constraints** to define the rules governing superclass/subclass relationships.
@@ -2240,7 +2232,6 @@ EER models use **three types of constraints** to define the rules governing supe
 #### Disjoint (`d`)
 
 An entity can be a member of **at most ONE** subclass.
-
 **Symbol:** `d` inside the circle
 
 **Real-World Examples:**
@@ -2258,7 +2249,6 @@ An entity can be a member of **at most ONE** subclass.
    An employee has ONE job classification.
 
 **MySQL Enforcement:**
-
 ```mysql
 -- Method 1: Use CHECK constraint (MySQL 8.0+)
 CREATE TABLE EMPLOYEE (
@@ -2352,20 +2342,17 @@ INSERT INTO ALUMNUS VALUES (101, 2010, 'PhD Computer Science');
 ```
 
 #### But then what would be difference between Overlapping Specialization and Generalization EER?
-NO. Overlapping is a **constraint type**, not a direction indicator.
 
-**The direction (specialization vs generalization) is about the DESIGN PROCESS, not the constraint.**
-
-The overlapping constraint describes **membership rules**, not the **design process**. Whether you designed it top-down (specialization) or bottom-up (generalization), you can end up with the same overlapping constraint. The final EER diagram and SQL implementation are identical regardless of which approach you used.
+NO. Overlapping is a **constraint type**, not a direction indicator. 
+**The direction (specialization vs generalization) is about the DESIGN PROCESS, not the constraint.** 
+The overlapping constraint describes **membership rules**, not the **design process**. Whether you designed it top-down (specialization) or bottom-up (generalization), you can end up with the same overlapping constraint. The final EER diagram and SQL implementation are identical regardless of which approach you used. 
 
 ### 5.2 Completeness Constraint (Participation)
 
 **Question:** Must **every entity** in the superclass belong to **at least one** subclass?
 
 #### Total Participation (Mandatory)
-
 **Every** entity in the superclass **must** belong to at least one subclass.
-
 **Symbol:** Double line from superclass to circle `═══`
 
 **Real-World Examples:**
@@ -2398,7 +2385,6 @@ The overlapping constraint describes **membership rules**, not the **design pr
 ```
 
 **MySQL Enforcement:**
-
 ```sql
 CREATE TABLE PATIENT (
     patient_id INT PRIMARY KEY,
@@ -2434,7 +2420,6 @@ DELIMITER ;
 #### Partial Participation (Optional)
 
 Some entities in the superclass **may NOT** belong to any subclass.
-
 **Symbol:** Single line from superclass to circle `───`
 
 **Real-World Examples:**
@@ -2452,7 +2437,6 @@ Some entities in the superclass **may NOT** belong to any subclass.
    Some courses are regular lecture courses (neither online nor lab).
 
 **EER Diagram:**
-
 ```
                     ┌─────────────────────┐
                     │      EMPLOYEE       │
@@ -2467,7 +2451,6 @@ Some entities in the superclass **may NOT** belong to any subclass.
 ```
 
 **MySQL Implementation:**
-
 ```sql
 CREATE TABLE EMPLOYEE (
     ssn VARCHAR(11) PRIMARY KEY,
@@ -2507,8 +2490,8 @@ INSERT INTO EMPLOYEE VALUES ('111-22-3333', 'Mike Johnson', 40000);
 
 #### Attribute-Defined (Condition-Defined)
 
-Membership is **automatically determined** by the value of a specific attribute.
-**Notation:** Attribute name shown next to the circle
+Membership is **automatically determined** by the value of a specific attribute. 
+**Notation:** Attribute name shown next to the circle 
 
 **Real-World Examples:**
 
@@ -3958,2471 +3941,11 @@ WHERE s.ssn = '123-45-6789';
 ```
 
 ---
-# Complete Guide to Relational Algebra in DBMS
-
-## Table of Contents
-1. [Introduction to Relational Algebra](#introduction)
-2. [Sample Database Schema](#schema)
-3. [Unary Operations](#unary-operations)
-4. [Set Operations](#set-operations)
-5. [Binary Operations](#binary-operations)
-6. [Join Operations](#join-operations)
-7. [Division Operation](#division)
-8. [Extended Operations](#extended-operations)
-9. [Database Modification Operations](#modification)
-10. [Complex Query Examples](#complex-examples)
-11. [Translation to SQL](#sql-translation)
+# [[Relational Algebra in DBMS]]
 
 ---
 
-## 1. Introduction to Relational Algebra {#introduction}
-
-### What is Relational Algebra?
-
-**Relational Algebra** is a **procedural query language** that tells the database **HOW** to retrieve data step-by-step.
-
-**Comparison:**
-
-| Aspect | Relational Algebra | SQL |
-|--------|-------------------|-----|
-| **Type** | Procedural | Declarative |
-| **Approach** | Specify **how** to get data | Specify **what** data you want |
-| **Usage** | Theoretical foundation | Practical implementation |
-| **Example** | $\pi_{name}(\sigma_{age>25}(Person))$ | `SELECT name FROM Person WHERE age > 25` |
-
-### Why Learn Relational Algebra?
-
-1. **Foundation of SQL:** SQL queries are translated to relational algebra internally
-2. **Query Optimization:** Understanding how operations work helps write efficient queries
-3. **Database Theory:** Essential for understanding database design and optimization
-4. **Academic Importance:** Heavily tested in DBMS courses and exams
-
-### Properties
-
-- **Closure Property:** Output of any operation is also a relation
-- **Composable:** Operations can be nested and combined
-- **Set-based:** Operates on sets (no duplicates by default)
-
----
-
-## 2. Sample Database Schema {#schema}
-
-We'll use a **University Database** for all examples:
-
-### Schema Diagrams
-
-```
-┌─────────────────────────────┐
-│         SAILORS             │
-├─────────────────────────────┤
-��� sid (PK)  INTEGER           │
-│ sname     VARCHAR(50)       │
-│ rating    INTEGER           │
-│ age       DECIMAL(4,1)      │
-└─────────────────────────────┘
-
-┌─────────────────────────────┐
-│         BOATS               │
-├─────────────────────────────┤
-│ bid (PK)  INTEGER           │
-│ bname     VARCHAR(50)       │
-│ color     VARCHAR(20)       │
-└─────────────────────────────┘
-
-┌─────────────────────────────┐
-│        RESERVES             │
-├─────────────────────────────┤
-│ sid (FK)  INTEGER           │
-│ bid (FK)  INTEGER           │
-│ day       DATE              │
-└─────────────────────────────┘
-```
-
-### MySQL Implementation
-
-```sql
-CREATE TABLE SAILORS (
-    sid INT PRIMARY KEY,
-    sname VARCHAR(50),
-    rating INT,
-    age DECIMAL(4,1)
-);
-
-CREATE TABLE BOATS (
-    bid INT PRIMARY KEY,
-    bname VARCHAR(50),
-    color VARCHAR(20)
-);
-
-CREATE TABLE RESERVES (
-    sid INT,
-    bid INT,
-    day DATE,
-    PRIMARY KEY (sid, bid, day),
-    FOREIGN KEY (sid) REFERENCES SAILORS(sid),
-    FOREIGN KEY (bid) REFERENCES BOATS(bid)
-);
-
--- Sample Data
-INSERT INTO SAILORS VALUES
-    (22, 'Dustin', 7, 45.0),
-    (29, 'Brutus', 1, 33.0),
-    (31, 'Lubber', 8, 55.5),
-    (32, 'Andy', 8, 25.5),
-    (58, 'Rusty', 10, 35.0),
-    (64, 'Horatio', 7, 35.0),
-    (71, 'Zorba', 10, 16.0),
-    (74, 'Horatio', 9, 35.0),
-    (85, 'Art', 3, 25.5),
-    (95, 'Bob', 3, 63.5);
-
-INSERT INTO BOATS VALUES
-    (101, 'Interlake', 'blue'),
-    (102, 'Interlake', 'red'),
-    (103, 'Clipper', 'green'),
-    (104, 'Marine', 'red');
-
-INSERT INTO RESERVES VALUES
-    (22, 101, '2026-10-10'),
-    (22, 102, '2026-10-10'),
-    (22, 103, '2026-10-08'),
-    (22, 104, '2026-10-07'),
-    (31, 102, '2026-11-10'),
-    (31, 103, '2026-11-06'),
-    (31, 104, '2026-11-12'),
-    (64, 101, '2026-09-05'),
-    (64, 102, '2026-09-08'),
-    (74, 103, '2026-09-08');
-```
-
-### Additional Banking Schema (for specific examples)
-
-```sql
-CREATE TABLE ACCOUNT (
-    account_number VARCHAR(20) PRIMARY KEY,
-    branch_name VARCHAR(50),
-    balance DECIMAL(12,2)
-);
-
-CREATE TABLE LOAN (
-    loan_number VARCHAR(20) PRIMARY KEY,
-    branch_name VARCHAR(50),
-    amount DECIMAL(12,2)
-);
-
-CREATE TABLE BORROWER (
-    customer_name VARCHAR(50),
-    loan_number VARCHAR(20),
-    PRIMARY KEY (customer_name, loan_number),
-    FOREIGN KEY (loan_number) REFERENCES LOAN(loan_number)
-);
-
-CREATE TABLE DEPOSITOR (
-    customer_name VARCHAR(50),
-    account_number VARCHAR(20),
-    PRIMARY KEY (customer_name, account_number),
-    FOREIGN KEY (account_number) REFERENCES ACCOUNT(account_number)
-);
-
--- Sample data
-INSERT INTO ACCOUNT VALUES
-    ('A-101', 'Downtown', 500),
-    ('A-102', 'Perryridge', 400),
-    ('A-201', 'Brighton', 900),
-    ('A-215', 'Mianus', 700),
-    ('A-217', 'Brighton', 750);
-
-INSERT INTO LOAN VALUES
-    ('L-11', 'Round Hill', 900),
-    ('L-14', 'Downtown', 1500),
-    ('L-15', 'Perryridge', 1500),
-    ('L-16', 'Perryridge', 1300),
-    ('L-17', 'Downtown', 1000),
-    ('L-23', 'Redwood', 2000),
-    ('L-93', 'Mianus', 500);
-
-INSERT INTO BORROWER VALUES
-    ('Jones', 'L-17'),
-    ('Smith', 'L-11'),
-    ('Smith', 'L-23'),
-    ('Hayes', 'L-15');
-
-INSERT INTO DEPOSITOR VALUES
-    ('Johnson', 'A-101'),
-    ('Smith', 'A-215'),
-    ('Hayes', 'A-102'),
-    ('Turner', 'A-201');
-```
-
----
-
-## 3. Unary Operations {#unary-operations}
-
-**Unary operations** work on a **single relation**.
-
-### 3.1 Selection (σ) - The Row Filter
-
-**Symbol:** σ (sigma)
-
-**Purpose:** Select rows (tuples) that satisfy a given **condition** (predicate).
-
-**Equivalent:** SQL `WHERE` clause
-
-**Syntax:**
-```
-σ_condition(Relation)
-```
-
-**Properties:**
-- Returns a subset of rows
-- Same number of columns as input
-- Commutative: σ_c1(σ_c2(R)) = σ_c2(σ_c1(R))
-- Can combine conditions: σ_c1 AND c2(R) = σ_c1(σ_c2(R))
-
-#### Example 1: Simple Selection
-
-**Query:** Find all sailors with rating greater than 8
-
-**Relational Algebra:**
-
-$$σ_{rating > 8}(SAILORS)$$
-
-
-**Result:**
-```
-┌─────┬─────────┬────────┬──────┐
-│ sid │ sname   │ rating │ age  │
-├─────┼─────────┼────────┼──────┤
-│ 31  │ Lubber  │ 8      │ 55.5 │
-│ 58  │ Rusty   │ 10     │ 35.0 │
-│ 71  │ Zorba   │ 10     │ 16.0 │
-│ 74  │ Horatio │ 9      │ 35.0 │
-└─────┴─────────┴────────┴──────┘
-```
-
-**MySQL:**
-```sql
-SELECT * FROM SAILORS WHERE rating > 8;
-```
-
-#### Example 2: Multiple Conditions
-
-**Query:** Find sailors with rating > 7 AND age < 40
-
-**Relational Algebra:**
-$$σ_{rating > 7 \; ∧ \;age < 40}(SAILORS)$$
-
-**MySQL:**
-```sql
-SELECT * FROM SAILORS WHERE rating > 7 AND age < 40;
-```
-
-**Result:**
-```
-┌─────┬─────────┬────────┬──────┐
-│ sid │ sname   │ rating │ age  │
-├─────┼─────────┼────────┼──────┤
-│ 32  │ Andy    │ 8      │ 25.5 │
-│ 58  │ Rusty   │ 10     │ 35.0 │
-│ 71  │ Zorba   │ 10     │ 16.0 │
-│ 74  │ Horatio │ 9      │ 35.0 │
-└─────┴─────────┴────────┴──────┘
-```
-
-#### Comparison Operators in Selection
-
-| Operator          | Symbol | Example                |
-| ----------------- | ------ | ---------------------- |
-| **Equal**         | `=`    | σ_rating = 10(SAILORS) |
-| **Not Equal**     | `≠`    | σ_rating ≠ 10(SAILORS) |
-| **Greater**       | `>`    | σ_age > 30(SAILORS)    |
-| **Less**          | `<`    | σ_age < 30(SAILORS)    |
-| **Greater/Equal** | `≥`    | σ_rating ≥ 8(SAILORS)  |
-| **Less/Equal**    | `≤`    | σ_rating ≤ 5(SAILORS)  |
-
-#### Logical Operators
-
-| Operator | Symbol | Example |
-|----------|--------|---------|
-| **AND** | `∧` | σ_rating > 7 ∧ age < 40(SAILORS) |
-| **OR** | `∨` | σ_rating > 9 ∨ age < 20(SAILORS) |
-| **NOT** | `¬` | σ_¬(rating = 10)(SAILORS) |
-
----
-
-### 3.2 Projection (π) - The Column Filter
-
-**Symbol:** π (pi)
-
-**Purpose:** Select specific **columns** (attributes) from a relation.
-
-**Equivalent:** SQL `SELECT` clause
-
-**Syntax:**
-
-$$π_{attribute1,\;attribute2,\;...\;}(Relation)$$
-
-**Properties:**
-- Returns a subset of columns
-- **Automatically removes duplicate rows**
-- Number of rows ≤ input rows
-- Not commutative in general
-
-#### Example 1: Single Column Projection
-
-**Query:** Get all sailor names
-
-**Relational Algebra:**
-
-$$π_{sname}(SAILORS)$$
-
-
-**Result:**
-```
-┌─────────┐
-│ sname   │
-├─────────┤
-│ Dustin  │
-│ Brutus  │
-│ Lubber  │
-│ Andy    │
-│ Rusty   │
-│ Horatio │
-│ Zorba   │
-│ Art     │
-│ Bob     │
-└─────────┘
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT sname FROM SAILORS;
-```
-
-**Note:** SQL requires `DISTINCT` to match relational algebra behavior (automatic duplicate removal).
-
-#### Example 2: Multiple Column Projection
-
-**Query:** Get sailor names and ratings
-
-**Relational Algebra:**
-```
-π_sname, rating(SAILORS)
-```
-
-**Result:**
-```
-┌─────────┬────────┐
-│ sname   │ rating │
-├─────────┼────────┤
-│ Dustin  │ 7      │
-│ Brutus  │ 1      │
-│ Lubber  │ 8      │
-│ Andy    │ 8      │
-│ Rusty   │ 10     │
-│ Horatio │ 7      │
-│ Zorba   │ 10     │
-│ Horatio │ 9      │
-│ Art     │ 3      │
-│ Bob     │ 3      │
-└─────────┴────────┘
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT sname, rating FROM SAILORS;
-```
-
-#### Example 3: Combining Selection and Projection
-
-**Query:** Get names of sailors with rating > 8
-
-**Relational Algebra:**
-```
-π_sname(σ_rating > 8(SAILORS))
-```
-
-**Step-by-step execution:**
-1. **σ_rating > 8(SAILORS)** - Filter rows where rating > 8
-2. **π_sname(...)** - Project only sname column
-
-**Result:**
-```
-┌─────────┐
-│ sname   │
-├─────────┤
-│ Rusty   │
-│ Zorba   │
-│ Horatio │
-└─────────┘
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT sname 
-FROM SAILORS 
-WHERE rating > 8;
-```
-
----
-
-### 3.3 Rename (ρ) - The Alias Operator
-
-**Symbol:** ρ (rho)
-
-**Purpose:** Rename relations and/or their attributes.
-
-**Equivalent:** SQL `AS` keyword
-
-**Syntax:**
-
-$$ρ_{NewName}(Relation)$$
-	-- Rename relation
-
-$$ρ_{NewName\;(A1, A2, ...)}(Relation)$$       
-	-- Rename relation and attributes
-
-$$ρ_{(A1, A2, ...)}(Relation)$$
-	-- Rename only attributes
-
-
-**Why use Rename?**
-1. **Self-joins:** Join a table to itself
-2. **Clarity:** Make complex queries more readable
-3. **Avoid conflicts:** When same attribute names appear in different tables
-
-#### Example 1: Rename Relation
-
-**Query:** Rename SAILORS to S
-
-**Relational Algebra:**
-
-$$ρ_S(SAILORS)$$
-
-
-**MySQL:**
-```sql
-SELECT * FROM SAILORS AS S;
-```
-
-#### Example 2: Rename Relation and Attributes
-
-**Query:** Rename SAILORS to S with columns (id, name, r, a)
-
-**Relational Algebra:**
-
-$$ρ_{S\;(id, name, r, a)}(SAILORS)$$
-
-
-**MySQL:**
-```sql
-SELECT 
-    sid AS id, 
-    sname AS name, 
-    rating AS r, 
-    age AS a
-FROM SAILORS;
-```
-
-#### Example 3: Self-Join Using Rename
-
-**Query:** Find pairs of sailors with the same rating
-
-**Relational Algebra:**
-```
-π_{S1.sname, S2.sname}(
-    σ_{S1.rating = S2.rating ∧ S1.sid < S2.sid}(
-        ρ_{S1}(SAILORS) × ρ_{S2}(SAILORS)
-    )
-)
-```
-
-$$π_{S1.sname, S2.sname}(
-    σ_{S1.rating = S2.rating ∧ S1.sid < S2.sid}(
-        ρ_{S1}(SAILORS) × ρ_{S2}(SAILORS)
-    )
-)$$
-
-**MySQL:**
-```sql
-SELECT DISTINCT S1.sname, S2.sname
-FROM SAILORS S1, SAILORS S2
-WHERE S1.rating = S2.rating 
-  AND S1.sid < S2.sid;
-```
-
-**Result:**
-```
-┌─────────┬─────────┐
-│ S1.sname│ S2.sname│
-├─────────┼─────────┤
-│ Dustin  │ Horatio │
-│ Lubber  │ Andy    │
-│ Rusty   │ Zorba   │
-│ Brutus  │ Art     │
-│ Brutus  │ Bob     │
-│ Art     │ Bob     │
-└─────────┴─────────┘
-```
-
----
-
-## 4. Set Operations
-
-**Set operations** work on **two relations** that are **union-compatible**.
-
-### Union Compatibility
-
-**Definition:** Two relations R and S are union-compatible if:
-1. They have the **same number of attributes** (same arity)
-2. Corresponding attributes have **compatible data types**
-3. Attribute names don't need to match
-
-**Example:**
-
-**Union-Compatible:**
-```
-R(id INT, name VARCHAR)
-S(sid INT, sname VARCHAR)  ✓ Compatible (same types)
-```
-
-**NOT Union-Compatible:**
-```
-R(id INT, name VARCHAR)
-S(id INT, age INT)  ✗ Not compatible (VARCHAR ≠ INT)
-```
-
----
-
-### 4.1 Union (∪)
-
-**Symbol:** $∪$
-
-**Purpose:** Combine rows from two relations. Returns rows that appear in **either** relation.
-
-**Properties:**
-- Automatically removes duplicates
-- Commutative: $R ∪ S = S ∪ R$
-- Associative: $(R ∪ S) ∪ T = R ∪ (S ∪ T)$
-
-**Syntax:**
-```
-R ∪ S
-```
-
-#### Example 1: Union of Sailors
-
-**Setup:** Create two separate sailor groups
-
-```sql
-CREATE TABLE SAILORS_GROUP1 (
-    sid INT, sname VARCHAR(50), rating INT
-);
-
-CREATE TABLE SAILORS_GROUP2 (
-    sid INT, sname VARCHAR(50), rating INT
-);
-
-INSERT INTO SAILORS_GROUP1 VALUES
-    (22, 'Dustin', 7),
-    (31, 'Lubber', 8),
-    (58, 'Rusty', 10);
-
-INSERT INTO SAILORS_GROUP2 VALUES
-    (31, 'Lubber', 8),   -- Duplicate
-    (64, 'Horatio', 7),
-    (71, 'Zorba', 10);
-```
-
-**Query:** Find all sailors from either group
-
-**Relational Algebra:**
-```
-SAILORS_GROUP1 ∪ SAILORS_GROUP2
-```
-
-**Result:**
-```
-┌─────┬─────────┬────────┐
-│ sid │ sname   │ rating │
-├─────┼─────────┼────────┤
-│ 22  │ Dustin  │ 7      │
-│ 31  │ Lubber  │ 8      │  ← Duplicate removed
-│ 58  │ Rusty   │ 10     │
-│ 64  │ Horatio │ 7      │
-│ 71  │ Zorba   │ 10     │
-└─────┴─────────┴────────┘
-```
-
-**MySQL:**
-```sql
-SELECT * FROM SAILORS_GROUP1
-UNION
-SELECT * FROM SAILORS_GROUP2;
-```
-
-**Note:** `UNION` automatically removes duplicates. Use `UNION ALL` to keep duplicates.
-
-#### Example 2: Find customers who have account OR loan
-
-**Query:** Find all customer names who are either depositors or borrowers
-
-**Relational Algebra:**
-
-$$π_{customer_name}(DEPOSITOR) ∪ π_{customer_name}(BORROWER)$$
-
-**MySQL:**
-```sql
-SELECT customer_name FROM DEPOSITOR
-UNION
-SELECT customer_name FROM BORROWER;
-```
-
-**Result:**
-```
-┌───────────────┐
-│ customer_name │
-├───────────────┤
-│ Johnson       │
-│ Smith         │
-│ Hayes         │
-│ Turner        │
-│ Jones         │
-└───────────────┘
-```
-
----
-
-### 4.2 Intersection (∩)
-
-**Symbol:** ∩
-
-**Purpose:** Find rows that appear in **both** relations.
-
-**Properties:**
-- Commutative: R ∩ S = S ∩ R
-- Associative: (R ∩ S) ∩ T = R ∩ (S ∩ T)
-- Can be expressed using set difference: R ∩ S = R - (R - S)
-
-**Syntax:**
-```
-R ∩ S
-```
-
-#### Example 1: Intersection of Sailor Groups
-
-**Query:** Find sailors in both groups
-
-**Relational Algebra:**
-```
-SAILORS_GROUP1 ∩ SAILORS_GROUP2
-```
-
-**Result:**
-```
-┌─────┬────────┬────────┐
-│ sid │ sname  │ rating │
-├─────┼────────┼────────┤
-│ 31  │ Lubber │ 8      │
-└─────┴────────┴────────┘
-```
-
-**MySQL:**
-```sql
--- Method 1: Using INTERSECT (MySQL 8.0.31+)
-SELECT * FROM SAILORS_GROUP1
-INTERSECT
-SELECT * FROM SAILORS_GROUP2;
-
--- Method 2: Using JOIN (works in all versions)
-SELECT DISTINCT s1.*
-FROM SAILORS_GROUP1 s1
-JOIN SAILORS_GROUP2 s2 
-  ON s1.sid = s2.sid 
-  AND s1.sname = s2.sname 
-  AND s1.rating = s2.rating;
-
--- Method 3: Using IN
-SELECT * FROM SAILORS_GROUP1
-WHERE (sid, sname, rating) IN (SELECT sid, sname, rating FROM SAILORS_GROUP2);
-```
-
-#### Example 2: Find customers with BOTH account AND loan
-
-**Query:** Find customers who are both depositors and borrowers
-
-**Relational Algebra:**
-
-$$π_{customer_name}(DEPOSITOR) ∩ π_{customer_name}(BORROWER)$$
-
-
-**MySQL:**
-```sql
-SELECT customer_name FROM DEPOSITOR
-INTERSECT
-SELECT customer_name FROM BORROWER;
-
--- Alternative
-SELECT DISTINCT d.customer_name
-FROM DEPOSITOR d
-WHERE d.customer_name IN (SELECT customer_name FROM BORROWER);
-```
-
-**Result:**
-```
-┌───────────────┐
-│ customer_name │
-├───────────────┤
-│ Smith         │
-│ Hayes         │
-└───────────────┘
-```
-
----
-
-### 4.3 Set Difference (−)
-
-**Symbol:** − or \
-
-**Purpose:** Find rows in **first relation** but **NOT** in second relation.
-
-**Properties:**
-- **NOT commutative:** R − S ≠ S − R
-- **NOT associative**
-
-**Syntax:**
-```
-R − S
-```
-
-#### Example 1: Difference of Sailor Groups
-
-**Query:** Find sailors in GROUP1 but not in GROUP2
-
-**Relational Algebra:**
-```
-SAILORS_GROUP1 − SAILORS_GROUP2
-```
-
-**Result:**
-```
-┌─────┬────────┬────────┐
-│ sid │ sname  │ rating │
-├─────┼────────┼────────┤
-│ 22  │ Dustin │ 7      │
-│ 58  │ Rusty  │ 10     │
-└─────┴────────┴────────┘
-```
-
-**MySQL:**
-```sql
--- Method 1: Using EXCEPT (MySQL 8.0.31+)
-SELECT * FROM SAILORS_GROUP1
-EXCEPT
-SELECT * FROM SAILORS_GROUP2;
-
--- Method 2: Using NOT IN (works in all versions)
-SELECT * FROM SAILORS_GROUP1
-WHERE (sid, sname, rating) NOT IN (
-    SELECT sid, sname, rating FROM SAILORS_GROUP2
-);
-
--- Method 3: Using LEFT JOIN
-SELECT s1.*
-FROM SAILORS_GROUP1 s1
-LEFT JOIN SAILORS_GROUP2 s2 
-  ON s1.sid = s2.sid 
-  AND s1.sname = s2.sname 
-  AND s1.rating = s2.rating
-WHERE s2.sid IS NULL;
-```
-
-#### Example 2: Find customers with account but NO loan
-
-**Query:** Find customers who have deposited but not borrowed
-
-**Relational Algebra:**
-```
-π_customer_name(DEPOSITOR) − π_customer_name(BORROWER)
-```
-
-**MySQL:**
-```sql
-SELECT customer_name FROM DEPOSITOR
-EXCEPT
-SELECT customer_name FROM BORROWER;
-
--- Alternative
-SELECT customer_name 
-FROM DEPOSITOR
-WHERE customer_name NOT IN (SELECT customer_name FROM BORROWER);
-```
-
-**Result:**
-```
-┌───────────────┐
-│ customer_name │
-├───────────────┤
-│ Johnson       │
-│ Turner        │
-└───────────────┘
-```
-
-#### Example 3: Asymmetric Nature of Difference
-
-**Demonstrate:** R − S ≠ S − R
-
-```sql
--- SAILORS_GROUP1 − SAILORS_GROUP2
--- Result: (22, Dustin), (58, Rusty)
-
--- SAILORS_GROUP2 − SAILORS_GROUP1
--- Result: (64, Horatio), (71, Zorba)
-```
-
----
-
-## 5. Binary Operations 
-
-### 5.1 Cartesian Product (×)
-
-**Symbol:** × (cross)
-
-**Purpose:** Combine **every row** from first relation with **every row** from second relation.
-
-**Properties:**
-- If R has m rows and S has n rows, R × S has m × n rows
-- If R has p columns and S has q columns, R × S has p + q columns
-- Usually inefficient on its own (produces huge result)
-- Building block for joins
-
-**Syntax:**
-```
-R × S
-```
-
-#### Example 1: Simple Cartesian Product
-
-**Setup:**
-```sql
-CREATE TABLE R (A INT, B VARCHAR(10));
-CREATE TABLE S (C INT, D VARCHAR(10));
-
-INSERT INTO R VALUES (1, 'a'), (2, 'b');
-INSERT INTO S VALUES (10, 'x'), (20, 'y'), (30, 'z');
-```
-
-**Query:** Cartesian product of R and S
-
-**Relational Algebra:**
-```
-R × S
-```
-
-**Result:** 2 rows × 3 rows = 6 rows
-
-```
-┌───┬───┬────┬────┐
-│ A │ B │ C  │ D  │
-├───┼───┼────┼────┤
-│ 1 │ a │ 10 │ x  │
-│ 1 │ a │ 20 │ y  │
-│ 1 │ a │ 30 │ z  │
-│ 2 │ b │ 10 │ x  │
-│ 2 │ b │ 20 │ y  │
-│ 2 │ b │ 30 │ z  │
-└───┴───┴────┴────┘
-```
-
-**MySQL:**
-```sql
-SELECT * FROM R, S;
--- or
-SELECT * FROM R CROSS JOIN S;
-```
-
-#### Example 2: Cartesian Product with Real Data
-
-**Query:** Combine all sailors with all boats
-
-**Relational Algebra:**
-```
-SAILORS × BOATS
-```
-
-**Result:** 10 sailors × 4 boats = 40 rows
-
-```
-┌─────┬─────────┬────────┬──────┬─────┬───────────┬────────┐
-│ sid │ sname   │ rating │ age  │ bid │ bname     │ color  │
-├─────┼─────────┼────────┼──────┼─────┼───────────┼────────┤
-│ 22  │ Dustin  │ 7      │ 45.0 │ 101 │ Interlake │ blue   │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 102 │ Interlake │ red    │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 103 │ Clipper   │ green  │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 104 │ Marine    │ red    │
-│ 29  │ Brutus  │ 1      │ 33.0 │ 101 │ Interlake │ blue   │
-│ ... (36 more rows) ...                                    │
-└─────┴─────────┴────────┴──────┴─────┴───────────┴────────┘
-```
-
-**MySQL:**
-```sql
-SELECT * FROM SAILORS CROSS JOIN BOATS;
-```
-
-**Practical Use:** Cartesian product alone is rarely useful, but it's the foundation for **joins**.
-
----
-
-## 6. Join Operations
-
-**Join** = Cartesian Product + Selection
-
-Joins connect related tables based on common attributes.
-
-### 6.1 Theta Join ($⋈_θ$)
-
-**Symbol:** $⋈_{θ}$ (bowtie with theta)
-
-**Purpose:** Cartesian product followed by selection with condition $θ$.
-
-**Formula:**
-$$R ⋈_θ S = σ_θ(R × S)$$
-
-**Syntax:**
-$$R ⋈_{condition} S$$
-
-#### Example: Theta Join
-
-**Query:** Combine sailors and boats where sailor's age is greater than boat's bid
-
-**Relational Algebra:**
-```
-SAILORS ⋈_age > bid BOATS
-```
-
-**Equivalent:**
-```
-σ_age > bid(SAILORS × BOATS)
-```
-
-**MySQL:**
-```sql
-SELECT *
-FROM SAILORS, BOATS
-WHERE age > bid;
-```
-
----
-
-### 6.2 Equi-Join
-
-**Purpose:** Theta join where condition is **equality** (=).
-
-**Most common type of join.**
-
-**Syntax:**
-$$R ⋈_{R.A = S.B} S$$
-
-#### Example 1: Join Sailors and Reserves
-
-**Query:** Find sailor information for all reservations
-
-**Relational Algebra:**
-```
-SAILORS ⋈_SAILORS.sid = RESERVES.sid RESERVES
-```
-
-**MySQL:**
-```sql
-SELECT *
-FROM SAILORS S, RESERVES R
-WHERE S.sid = R.sid;
-
--- Or using explicit JOIN syntax
-SELECT *
-FROM SAILORS S
-JOIN RESERVES R ON S.sid = R.sid;
-```
-
-**Result:**
-```
-┌─────┬─────────┬────────┬──────┬─────┬─────┬────────────┐
-│ sid │ sname   │ rating │ age  │ sid │ bid │ day        │
-├─────┼─────────┼────────┼──────┼─────┼─────┼────────────┤
-│ 22  │ Dustin  │ 7      │ 45.0 │ 22  │ 101 │ 2026-10-10 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 22  │ 102 │ 2026-10-10 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 22  │ 103 │ 2026-10-08 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 22  │ 104 │ 2026-10-07 │
-│ 31  │ Lubber  │ 8      │ 55.5 │ 31  │ 102 │ 2026-11-10 │
-│ ... (more rows) ...                                      │
-└─────┴─────────┴────────┴──────┴─────┴─────┴────────────┘
-```
-
-**Note:** The `sid` column appears twice (once from SAILORS, once from RESERVES).
-
----
-
-### 6.3 Natural Join (⋈)
-
-**Symbol:** ⋈ (bowtie)
-
-**Purpose:** Equi-join on **all common attributes**, then **remove duplicate columns**.
-
-**Automatic behavior:**
-1. Find all attributes with the same name in both relations
-2. Join on equality of these attributes
-3. Keep only one copy of common attributes in result
-
-**Syntax:**
-```
-R ⋈ S
-```
-
-**Advantages:**
-- Cleaner output (no duplicate columns)
-- More concise notation
-- Matches foreign key relationships naturally
-
-#### Example 1: Natural Join Sailors and Reserves
-
-**Query:** Join SAILORS and RESERVES
-
-**Relational Algebra:**
-```
-SAILORS ⋈ RESERVES
-```
-
-**Steps:**
-1. Common attribute: `sid`
-2. Join condition: SAILORS.sid = RESERVES.sid
-3. Result keeps only one `sid` column
-
-**Result:**
-```
-┌─────┬─────────┬────────┬──────┬─────┬────────────┐
-│ sid │ sname   │ rating │ age  │ bid │ day        │  ← Only ONE sid column
-├─────┼─────────┼────────┼──────┼─────┼────────────┤
-│ 22  │ Dustin  │ 7      │ 45.0 │ 101 │ 2026-10-10 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 102 │ 2026-10-10 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 103 │ 2026-10-08 │
-│ 22  │ Dustin  │ 7      │ 45.0 │ 104 │ 2026-10-07 │
-│ 31  │ Lubber  │ 8      │ 55.5 │ 102 │ 2026-11-10 │
-│ 31  │ Lubber  │ 8      │ 55.5 │ 103 │ 2026-11-06 │
-│ 31  │ Lubber  │ 8      │ 55.5 │ 104 │ 2026-11-12 │
-│ 64  │ Horatio │ 7      │ 35.0 │ 101 │ 2026-09-05 │
-│ 64  │ Horatio │ 7      │ 35.0 │ 102 │ 2026-09-08 │
-│ 74  │ Horatio │ 9      │ 35.0 │ 103 │ 2026-09-08 │
-└─────┴─────────┴────────┴──────┴─────┴────────────┘
-```
-
-**MySQL:**
-```sql
-SELECT *
-FROM SAILORS
-NATURAL JOIN RESERVES;
-```
-
-#### Example 2: Three-Way Natural Join
-
-**Query:** Find sailor names and boat names for all reservations
-
-**Relational Algebra:**
-```
-π_sname, bname(SAILORS ⋈ RESERVES ⋈ BOATS)
-```
-
-**Step-by-step:**
-1. **SAILORS ⋈ RESERVES** - Join on `sid`
-2. **Result ⋈ BOATS** - Join on `bid`
-3. **π_sname, bname(...)** - Project sailor and boat names
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sname, B.bname
-FROM SAILORS S
-NATURAL JOIN RESERVES R
-NATURAL JOIN BOATS B;
-```
-
-**Result:**
-```
-┌─────────┬───────────┐
-│ sname   │ bname     │
-├─────────┼───────────┤
-│ Dustin  │ Interlake │
-│ Dustin  │ Clipper   │
-│ Dustin  │ Marine    │
-│ Lubber  │ Interlake │
-│ Lubber  │ Clipper   │
-│ Lubber  │ Marine    │
-│ Horatio │ Interlake │
-│ Horatio │ Clipper   │
-└─────────┴───────────┘
-```
-
-#### Example 3: Natural Join with Banking Data
-
-**Query:** Find customer names with their loan amounts
-
-**Relational Algebra:**
-```
-π_customer_name, amount(BORROWER ⋈ LOAN)
-```
-
-**MySQL:**
-```sql
-SELECT B.customer_name, L.amount
-FROM BORROWER B
-NATURAL JOIN LOAN L;
-```
-
-**Result:**
-```
-┌───────────────┬────────┐
-│ customer_name │ amount │
-├───────────────┼────────┤
-│ Jones         │ 1000   │
-│ Smith         │ 900    │
-│ Smith         │ 2000   │
-│ Hayes         │ 1500   │
-└───────────────┴────────┘
-```
-
----
-
-### 6.4 Outer Joins
-
-**Purpose:** Preserve rows that don't have matching rows in the other relation by filling with **NULL** values.
-
-![[Pasted image 20260313020635.png]]
-
-#### Left Outer Join ($⟕$)
-
-**Symbol:** $⟕$
-
-**Purpose:** Keep **all rows from left relation**, match with right where possible, fill with NULL otherwise.
-
-**Example:** Find all sailors and their reservations (include sailors with no reservations)
-
-**Relational Algebra:**
-```
-SAILORS ⟕ RESERVES
-```
-
-**Result:**
-```
-┌─────┬─────────┬────────┬──────┬──────┬──────┬────────────┐
-│ sid │ sname   │ rating │ age  │ bid  │ day  │            │
-├─────┼─────────┼────────┼──────┼──────┼──────┼────────────┤
-│ 22  │ Dustin  │ 7      │ 45.0 │ 101  │ ...  │            │
-│ 29  │ Brutus  │ 1      │ 33.0 │ NULL │ NULL │            │  ← No reservations
-│ 31  │ Lubber  │ 8      │ 55.5 │ 102  │ ...  │            │
-│ 32  │ Andy    │ 8      │ 25.5 │ NULL │ NULL │            │  ← No reservations
-│ ... (more rows) ...                                       │
-└─────┴─────────┴────────┴──────┴──────┴──────┴────────────┘
-```
-
-**MySQL:**
-```sql
-SELECT *
-FROM SAILORS S
-LEFT OUTER JOIN RESERVES R ON S.sid = R.sid;
-```
-
-#### Right Outer Join ($⟖$)
-
-**Symbol:** $⟖$
-
-**Purpose:** Keep **all rows from right relation**, match with left where possible.
-
-**MySQL:**
-```sql
-SELECT *
-FROM RESERVES R
-RIGHT OUTER JOIN SAILORS S ON R.sid = S.sid;
-```
-
-#### Full Outer Join ($⟗$)
-
-**Symbol:** ⟗
-
-**Purpose:** Keep **all rows from both relations**, match where possible.
-
-**MySQL:**
-```sql
--- MySQL doesn't have FULL OUTER JOIN directly
--- Simulate with UNION of LEFT and RIGHT joins
-
-SELECT *
-FROM SAILORS S
-LEFT OUTER JOIN RESERVES R ON S.sid = R.sid
-
-UNION
-
-SELECT *
-FROM SAILORS S
-RIGHT OUTER JOIN RESERVES R ON S.sid = R.sid;
-```
-
-![[Pasted image 20260313020756.png]]
-
----
-
-## 7. Division Operation (÷) 
-
-**Symbol:** ÷
-
-**Purpose:** Find entities related to **ALL** of a specific set (answers "for every" queries).
-
-**This is the HARDEST and MOST TESTED operation.**
-
-### Understanding Division
-
-**Conceptual Definition:**
-
-Given relations R(A, B) and S(B), the division R ÷ S produces relation T(A) containing all values of A that are associated with **EVERY** value of B in S.
-
-**Formula:**
-```
-R ÷ S = {a | for all b in S, (a, b) in R}
-```
-
-**In SQL terms:** "Find A such that for every B in S, the pair (A, B) exists in R."
-
-### Visual Example
-
-**Relation R (Student-Course):**
-```
-┌─────────┬─────────┐
-│ Student │ Course  │
-├─────────┼─────────┤
-│ Alice   │ DBMS    │
-│ Alice   │ OS      │
-│ Alice   │ Networks│
-│ Bob     │ DBMS    │
-│ Bob     │ OS      │
-│ Carol   │ DBMS    │
-└─────────┴─────────┘
-```
-
-**Relation S (Required Courses):**
-```
-┌─────────┐
-│ Course  │
-├─────────┤
-│ DBMS    │
-│ OS      │
-└─────────┘
-```
-
-**R ÷ S (Students who took ALL required courses):**
-```
-┌─────────┐
-│ Student │
-├─────────┤
-│ Alice   │  ← Has DBMS AND OS
-│ Bob     │  ← Has DBMS AND OS
-└─────────┘
-```
-
-Carol is NOT included because she only has DBMS, not OS.
-
-### Division Using Basic Operations
-
-**Formula 1 (Using Set Difference):**
-```
-R ÷ S = π_A(R) − π_A((π_A(R) × S) − R)
-```
-
-**Step-by-step explanation:**
-1. `π_A(R)` - Get all unique values of A from R (all students)
-2. `π_A(R) × S` - All possible (Student, Course) combinations
-3. `(π_A(R) × S) − R` - Combinations that DON'T exist (missing courses)
-4. `π_A(...)` - Students who have missing courses
-5. `π_A(R) − ...` - Subtract bad students from all students
-
-**Formula 2 (Using Double Negation):**
-```
-R ÷ S = {a | ¬∃b ∈ S such that (a, b) ∉ R}
-```
-
-"Find A such that there does NOT exist any B in S for which (A, B) is NOT in R."
-
----
-
-### Division Examples
-
-#### Example 1: Sailors Who Reserved ALL Boats
-
-**Setup:**
-```sql
--- Create view of all boats
-CREATE VIEW ALL_BOATS AS
-SELECT bid FROM BOATS;
-```
-
-**Query:** Find sailors who have reserved every boat
-
-**Relational Algebra:**
-```
-π_sid, bid(RESERVES) ÷ π_bid(BOATS)
-```
-
-**Step-by-step calculation:**
-
-**Step 1:** Get (sid, bid) pairs from RESERVES
-```
-┌─────┬─────┐
-│ sid │ bid │
-├─────┼─────┤
-│ 22  │ 101 │
-│ 22  │ 102 │
-│ 22  │ 103 │
-│ 22  │ 104 │
-│ 31  │ 102 │
-│ 31  │ 103 │
-│ 31  │ 104 │
-│ 64  │ 101 │
-│ 64  │ 102 │
-│ 74  │ 103 │
-└─────┴─────┘
-```
-
-**Step 2:** Get all boat IDs
-```
-┌─────┐
-│ bid │
-├─────┤
-│ 101 │
-│ 102 │
-│ 103 │
-│ 104 │
-└─────┘
-```
-
-**Step 3:** Find sids associated with ALL bids
-
-Checking each sailor:
-- **Sailor 22:** Has bids {101, 102, 103, 104} = ALL boats ✓
-- **Sailor 31:** Has bids {102, 103, 104} = Missing 101 ✗
-- **Sailor 64:** Has bids {101, 102} = Missing 103, 104 ✗
-- **Sailor 74:** Has bids {103} = Missing 101, 102, 104 ✗
-
-**Result:**
-```
-┌─────┐
-│ sid │
-├─────┤
-│ 22  │
-└─────┘
-```
-
-**MySQL Implementation:**
-
-```sql
--- Method 1: Using NOT EXISTS (most efficient)
-SELECT DISTINCT S.sid, S.sname
-FROM SAILORS S
-WHERE NOT EXISTS (
-    -- Find a boat that this sailor has NOT reserved
-    SELECT B.bid
-    FROM BOATS B
-    WHERE NOT EXISTS (
-        -- Check if sailor S reserved boat B
-        SELECT R.sid
-        FROM RESERVES R
-        WHERE R.sid = S.sid AND R.bid = B.bid
-    )
-);
-
--- Method 2: Using COUNT and GROUP BY
-SELECT R.sid, S.sname
-FROM RESERVES R
-JOIN SAILORS S ON R.sid = S.sid
-GROUP BY R.sid, S.sname
-HAVING COUNT(DISTINCT R.bid) = (SELECT COUNT(*) FROM BOATS);
-
--- Method 3: Using set difference logic
-SELECT DISTINCT S.sid, S.sname
-FROM SAILORS S
-WHERE S.sid NOT IN (
-    -- Find sailors who are missing at least one boat
-    SELECT S2.sid
-    FROM SAILORS S2, BOATS B
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM RESERVES R
-        WHERE R.sid = S2.sid AND R.bid = B.bid
-    )
-);
-```
-
-#### Example 2: Sailors Who Reserved ALL Red Boats
-
-**Query:** Find sailors who have reserved every red boat
-
-**Relational Algebra:**
-```
-π_sid, bid(RESERVES) ÷ π_bid(σ_color='red'(BOATS))
-```
-
-**Step-by-step:**
-
-**Step 1:** Find all red boats
-```sql
-SELECT bid FROM BOATS WHERE color = 'red';
-```
-Result: {102, 104}
-
-**Step 2:** Find sailors who reserved both 102 AND 104
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sid, S.sname
-FROM SAILORS S
-WHERE NOT EXISTS (
-    SELECT B.bid
-    FROM BOATS B
-    WHERE B.color = 'red'
-      AND NOT EXISTS (
-          SELECT R.sid
-          FROM RESERVES R
-          WHERE R.sid = S.sid AND R.bid = B.bid
-      )
-);
-
--- Alternative using COUNT
-SELECT R.sid, S.sname
-FROM RESERVES R
-JOIN SAILORS S ON R.sid = S.sid
-JOIN BOATS B ON R.bid = B.bid
-WHERE B.color = 'red'
-GROUP BY R.sid, S.sname
-HAVING COUNT(DISTINCT R.bid) = (
-    SELECT COUNT(*) FROM BOATS WHERE color = 'red'
-);
-```
-
-**Result:**
-```
-┌─────┬────────┐
-│ sid │ sname  │
-├─────┼────────┤
-│ 22  │ Dustin │
-│ 31  │ Lubber │
-└─────┴────────┘
-```
-
-#### Example 3: Banking - Customers with Accounts at ALL Branches
-
-**Setup:**
-```sql
--- Branches
-CREATE VIEW BRANCH_LIST AS
-SELECT DISTINCT branch_name FROM ACCOUNT;
-```
-
-**Query:** Find customers who have accounts at every branch
-
-**Relational Algebra:**
-```
-π_customer_name, branch_name(DEPOSITOR ⋈ ACCOUNT) ÷ π_branch_name(BRANCH_LIST)
-```
-
-**MySQL:**
-```sql
-SELECT D.customer_name
-FROM DEPOSITOR D
-JOIN ACCOUNT A ON D.account_number = A.account_number
-GROUP BY D.customer_name
-HAVING COUNT(DISTINCT A.branch_name) = (
-    SELECT COUNT(DISTINCT branch_name) FROM ACCOUNT
-);
-```
-
----
-
-## 8. Extended Operations
-
-### 8.1 Assignment (←)
-
-**Symbol:** ← (left arrow)
-
-**Purpose:** Break complex queries into **steps**, assign intermediate results to temporary variables.
-
-**Advantages:**
-- Improves readability
-- Enables reuse of intermediate results
-- Makes debugging easier
-
-**Syntax:**
-```
-TempRelation ← Expression
-```
-
-#### Example: Multi-Step Query
-
-**Query:** Find names of sailors who reserved a red boat
-
-**Without Assignment (Complex):**
-```
-π_sname(σ_color='red'(BOATS) ⋈ RESERVES ⋈ SAILORS)
-```
-
-**With Assignment (Clear):**
-```
-RedBoats ← σ_color='red'(BOATS)
-RedReserves ← RedBoats ⋈ RESERVES
-Result ← π_sname(RedReserves ⋈ SAILORS)
-```
-
-**MySQL (Using CTEs - Common Table Expressions):**
-```sql
-WITH RedBoats AS (
-    SELECT * FROM BOATS WHERE color = 'red'
-),
-RedReserves AS (
-    SELECT * FROM RedBoats NATURAL JOIN RESERVES
-)
-SELECT DISTINCT S.sname
-FROM RedReserves RR
-JOIN SAILORS S ON RR.sid = S.sid;
-```
-
----
-
-### 8.2 Generalized Projection (π̂)
-
-**Symbol:** π̂ (pi-hat)
-
-**Purpose:** Project columns AND perform **arithmetic operations** or **computations**.
-
-**Syntax:**
-```
-π̂_expression1, expression2, ...(Relation)
-```
-
-#### Example 1: Arithmetic Operations
-
-**Query:** Calculate annual salary for each employee
-
-**Relational Algebra:**
-```
-π̂_name, salary*12 AS annual_salary(EMPLOYEE)
-```
-
-**MySQL:**
-```sql
-SELECT name, salary * 12 AS annual_salary
-FROM EMPLOYEE;
-```
-
-#### Example 2: String Operations
-
-**Query:** Create full name and age in months
-
-**Relational Algebra:**
-```
-π̂_first_name || ' ' || last_name AS full_name, age*12 AS age_months(PERSON)
-```
-
-**MySQL:**
-```sql
-SELECT 
-    CONCAT(first_name, ' ', last_name) AS full_name,
-    age * 12 AS age_months
-FROM PERSON;
-```
-
-#### Example 3: Conditional Expressions
-
-**Query:** Categorize sailors by rating
-
-**Relational Algebra:**
-```
-π̂_sname, rating, 
-   CASE 
-       WHEN rating >= 8 THEN 'Excellent'
-       WHEN rating >= 5 THEN 'Good'
-       ELSE 'Average'
-   END AS category
-(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT 
-    sname,
-    rating,
-    CASE 
-        WHEN rating >= 8 THEN 'Excellent'
-        WHEN rating >= 5 THEN 'Good'
-        ELSE 'Average'
-    END AS category
-FROM SAILORS;
-```
-
----
-
-### 8.3 Aggregate Functions (ℱ)
-
-**Symbol:** ℱ (script F)
-
-**Purpose:** Perform calculations on groups of tuples (sum, count, avg, min, max).
-
-**Syntax:**
-```
-ℱ_function(attribute)(Relation)
-ℱ_grouping_attributes; function(attribute)(Relation)
-```
-
-#### Basic Aggregate Functions
-
-| Function | Symbol | Purpose | MySQL |
-|----------|--------|---------|-------|
-| **Count** | COUNT | Number of tuples | `COUNT(*)` |
-| **Sum** | SUM | Sum of values | `SUM(column)` |
-| **Average** | AVG | Average of values | `AVG(column)` |
-| **Maximum** | MAX | Maximum value | `MAX(column)` |
-| **Minimum** | MIN | Minimum value | `MIN(column)` |
-
-#### Example 1: Simple Aggregates
-
-**Query 1:** Count total number of sailors
-
-**Relational Algebra:**
-```
-ℱ_COUNT(*)(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT COUNT(*) AS total_sailors FROM SAILORS;
-```
-
-**Result:** `10`
-
-**Query 2:** Average rating of all sailors
-
-**Relational Algebra:**
-```
-ℱ_AVG(rating)(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT AVG(rating) AS avg_rating FROM SAILORS;
-```
-
-**Result:** `6.3`
-
-**Query 3:** Maximum age
-
-**Relational Algebra:**
-```
-ℱ_MAX(age)(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT MAX(age) AS max_age FROM SAILORS;
-```
-
-**Result:** `63.5`
-
-#### Example 2: Grouping (GROUP BY)
-
-**Query:** Count number of reservations per sailor
-
-**Relational Algebra:**
-```
-ℱ_sid; COUNT(*) AS num_reservations(RESERVES)
-```
-
-**Explanation:**
-- `sid` = grouping attribute (GROUP BY sid)
-- `COUNT(*)` = aggregate function
-- Result: (sid, num_reservations) pairs
-
-**MySQL:**
-```sql
-SELECT sid, COUNT(*) AS num_reservations
-FROM RESERVES
-GROUP BY sid;
-```
-
-**Result:**
-```
-┌─────┬──────────────────┐
-│ sid │num_reservations  │
-├─────┼──────────────────┤
-│ 22  │ 4                │
-│ 31  │ 3                │
-│ 64  │ 2                │
-│ 74  │ 1                │
-└─────┴──────────────────┘
-```
-
-#### Example 3: Multiple Aggregates with Grouping
-
-**Query:** For each rating, find count of sailors and average age
-
-**Relational Algebra:**
-```
-ℱ_rating; COUNT(*) AS num_sailors, AVG(age) AS avg_age(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT 
-    rating,
-    COUNT(*) AS num_sailors,
-    AVG(age) AS avg_age
-FROM SAILORS
-GROUP BY rating
-ORDER BY rating;
-```
-
-**Result:**
-```
-┌────────┬─────────────┬─────────┐
-│ rating │ num_sailors │ avg_age │
-├────────┼─────────────┼─────────┤
-│ 1      │ 1           │ 33.0    │
-│ 3      │ 2           │ 44.5    │
-│ 7      │ 2           │ 40.0    │
-│ 8      │ 2           │ 40.5    │
-│ 9      │ 1           │ 35.0    │
-│ 10     │ 2           │ 25.5    │
-└────────┴─────────────┴─────────┘
-```
-
-#### Example 4: HAVING Clause
-
-**Query:** Find ratings with more than one sailor
-
-**Relational Algebra:**
-```
-σ_{num_sailors > 1}(ℱ_rating; COUNT(*) AS num_sailors(SAILORS))
-```
-
-**MySQL:**
-```sql
-SELECT rating, COUNT(*) AS num_sailors
-FROM SAILORS
-GROUP BY rating
-HAVING COUNT(*) > 1;
-```
-
-**Result:**
-```
-┌────────┬─────────────┐
-│ rating │ num_sailors │
-├────────┼─────────────┤
-│ 3      │ 2           │
-│ 7      │ 2           │
-│ 8      │ 2           │
-│ 10     │ 2           │
-└────────┴─────────────┘
-```
-
-#### Example 5: Aggregate with Join
-
-**Query:** For each boat, find total number of reservations
-
-**Relational Algebra:**
-```
-ℱ_bname, color; COUNT(*) AS num_reservations(BOATS ⋈ RESERVES)
-```
-
-**MySQL:**
-```sql
-SELECT 
-    B.bname,
-    B.color,
-    COUNT(*) AS num_reservations
-FROM BOATS B
-JOIN RESERVES R ON B.bid = R.bid
-GROUP BY B.bid, B.bname, B.color;
-```
-
-**Result:**
-```
-┌───────────┬────────┬──────────────────┐
-│ bname     │ color  │num_reservations  │
-├───────────┼────────┼──────────────────┤
-│ Interlake │ blue   │ 2                │
-│ Interlake │ red    │ 4                │
-│ Clipper   │ green  │ 3                │
-│ Marine    │ red    │ 1                │
-└───────────┴────────┴──────────────────┘
-```
-
----
-
-## 9. Database Modification Operations {#modification}
-
-### 9.1 Deletion
-
-**Purpose:** Remove tuples from a relation.
-
-**Syntax:**
-```
-Relation ← Relation − Expression
-```
-
-#### Example 1: Delete All Sailors
-
-**Relational Algebra:**
-```
-SAILORS ← ∅
-```
-
-**MySQL:**
-```sql
-DELETE FROM SAILORS;
-```
-
-#### Example 2: Delete Sailors with Rating < 5
-
-**Relational Algebra:**
-```
-SAILORS ← SAILORS − σ_rating < 5(SAILORS)
-```
-
-**Equivalent:**
-```
-SAILORS ← σ_rating ≥ 5(SAILORS)
-```
-
-**MySQL:**
-```sql
-DELETE FROM SAILORS
-WHERE rating < 5;
-```
-
-#### Example 3: Delete All Reservations for Boat 103
-
-**Relational Algebra:**
-```
-RESERVES ← RESERVES − σ_bid=103(RESERVES)
-```
-
-**MySQL:**
-```sql
-DELETE FROM RESERVES
-WHERE bid = 103;
-```
-
-#### Example 4: Delete Sailors Who Never Reserved
-
-**Relational Algebra:**
-```
-SAILORS ← SAILORS − (SAILORS − π_sid(RESERVES))
-```
-
-**Simplified:**
-```
-SAILORS ← π_sid(RESERVES) ⋈ SAILORS
-```
-
-**MySQL:**
-```sql
-DELETE FROM SAILORS
-WHERE sid NOT IN (SELECT DISTINCT sid FROM RESERVES);
-```
-
----
-
-### 9.2 Insertion
-
-**Purpose:** Add new tuples to a relation.
-
-**Syntax:**
-```
-Relation ← Relation ∪ Expression
-```
-
-#### Example 1: Insert Single Tuple
-
-**Relational Algebra:**
-```
-SAILORS ← SAILORS ∪ {(99, 'Charlie', 5, 28.0)}
-```
-
-**MySQL:**
-```sql
-INSERT INTO SAILORS VALUES (99, 'Charlie', 5, 28.0);
-```
-
-#### Example 2: Insert Multiple Tuples
-
-**Relational Algebra:**
-```
-SAILORS ← SAILORS ∪ {
-    (100, 'David', 7, 30.0),
-    (101, 'Emma', 9, 27.5)
-}
-```
-
-**MySQL:**
-```sql
-INSERT INTO SAILORS VALUES
-    (100, 'David', 7, 30.0),
-    (101, 'Emma', 9, 27.5);
-```
-
-#### Example 3: Insert Result of Query
-
-**Query:** Create a new table of high-rated sailors (rating ≥ 8)
-
-**Relational Algebra:**
-```
-HIGH_RATED_SAILORS ← σ_rating ≥ 8(SAILORS)
-```
-
-**MySQL:**
-```sql
-CREATE TABLE HIGH_RATED_SAILORS AS
-SELECT * FROM SAILORS WHERE rating >= 8;
-
--- Or insert into existing table
-INSERT INTO HIGH_RATED_SAILORS
-SELECT * FROM SAILORS WHERE rating >= 8;
-```
-
-#### Example 4: Insert with Computation
-
-**Query:** Give 10% raise to all sailors and insert as bonus
-
-**MySQL:**
-```sql
-INSERT INTO SALARY_BONUS (sid, bonus_amount)
-SELECT sid, salary * 0.10
-FROM SAILORS;
-```
-
----
-
-### 9.3 Update
-
-**Purpose:** Modify attribute values of existing tuples.
-
-**Syntax:**
-```
-Relation ← π̂_attr1, attr2, ..., modified_attr(Relation)
-```
-
-#### Example 1: Update Single Attribute
-
-**Query:** Increase rating of sailor 22 by 1
-
-**Relational Algebra:**
-```
-SAILORS ← π̂_sid, sname, rating+1, age(σ_sid=22(SAILORS)) 
-          ∪ σ_sid≠22(SAILORS)
-```
-
-**MySQL:**
-```sql
-UPDATE SAILORS
-SET rating = rating + 1
-WHERE sid = 22;
-```
-
-#### Example 2: Update Multiple Attributes
-
-**Query:** Update sailor 31: new rating 9, new age 56.0
-
-**MySQL:**
-```sql
-UPDATE SAILORS
-SET rating = 9, age = 56.0
-WHERE sid = 31;
-```
-
-#### Example 3: Conditional Update
-
-**Query:** Give 5% raise to employees in Downtown branch
-
-**MySQL:**
-```sql
-UPDATE EMPLOYEE E
-SET salary = salary * 1.05
-WHERE branch_name = 'Downtown';
-```
-
-#### Example 4: Update Using Subquery
-
-**Query:** Set rating to average rating for sailors older than 50
-
-**MySQL:**
-```sql
-UPDATE SAILORS
-SET rating = (SELECT AVG(rating) FROM SAILORS)
-WHERE age > 50;
-```
-
-#### Example 5: Update with Join
-
-**Query:** Increase balance by 6% for accounts in Perryridge branch
-
-**MySQL:**
-```sql
-UPDATE ACCOUNT A
-JOIN (SELECT account_number FROM ACCOUNT WHERE branch_name = 'Perryridge') AS P
-  ON A.account_number = P.account_number
-SET A.balance = A.balance * 1.06;
-```
-
----
-
-## 10. Complex Query Examples {#complex-examples}
-
-### Example 1: Find Sailors Who Reserved Red OR Green Boats
-
-**English:** Find names of sailors who reserved a red boat or a green boat.
-
-**Relational Algebra:**
-```
-RedOrGreenBoats ← σ_color='red' ∨ color='green'(BOATS)
-ReservedRedOrGreen ← π_sid(RedOrGreenBoats ⋈ RESERVES)
-Result ← π_sname(ReservedRedOrGreen ⋈ SAILORS)
-```
-
-**One-liner:**
-```
-π_sname((σ_color='red' ∨ color='green'(BOATS)) ⋈ RESERVES ⋈ SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sname
-FROM SAILORS S
-JOIN RESERVES R ON S.sid = R.sid
-JOIN BOATS B ON R.bid = B.bid
-WHERE B.color IN ('red', 'green');
-```
-
----
-
-### Example 2: Find Sailors Who Reserved Red AND Green Boats
-
-**English:** Find names of sailors who reserved both a red boat AND a green boat.
-
-**Relational Algebra (Using Intersection):**
-```
-RedBoatSailors ← π_sid(σ_color='red'(BOATS) ⋈ RESERVES)
-GreenBoatSailors ← π_sid(σ_color='green'(BOATS) ⋈ RESERVES)
-BothColorSailors ← RedBoatSailors ∩ GreenBoatSailors
-Result ← π_sname(BothColorSailors ⋈ SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sname
-FROM SAILORS S
-WHERE S.sid IN (
-    SELECT R.sid FROM RESERVES R
-    JOIN BOATS B ON R.bid = B.bid
-    WHERE B.color = 'red'
-)
-AND S.sid IN (
-    SELECT R.sid FROM RESERVES R
-    JOIN BOATS B ON R.bid = B.bid
-    WHERE B.color = 'green'
-);
-
--- Alternative using COUNT
-SELECT S.sname
-FROM SAILORS S
-JOIN RESERVES R ON S.sid = R.sid
-JOIN BOATS B ON R.bid = B.bid
-WHERE B.color IN ('red', 'green')
-GROUP BY S.sid, S.sname
-HAVING COUNT(DISTINCT B.color) = 2;
-```
-
----
-
-### Example 3: Find Sailors Who Reserved Red BUT NOT Green Boats
-
-**English:** Find sailors who reserved at least one red boat but no green boats.
-
-**Relational Algebra:**
-```
-RedBoatSailors ← π_sid(σ_color='red'(BOATS) ⋈ RESERVES)
-GreenBoatSailors ← π_sid(σ_color='green'(BOATS) ⋈ RESERVES)
-RedOnlySailors ← RedBoatSailors − GreenBoatSailors
-Result ← π_sname(RedOnlySailors ⋈ SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sname
-FROM SAILORS S
-JOIN RESERVES R ON S.sid = R.sid
-JOIN BOATS B ON R.bid = B.bid
-WHERE B.color = 'red'
-  AND S.sid NOT IN (
-      SELECT R2.sid
-      FROM RESERVES R2
-      JOIN BOATS B2 ON R2.bid = B2.bid
-      WHERE B2.color = 'green'
-  );
-```
-
----
-
-### Example 4: Find Oldest Sailor
-
-**English:** Find the name of the oldest sailor.
-
-**Relational Algebra:**
-```
-MaxAge ← ℱ_MAX(age)(SAILORS)
-Result ← π_sname(σ_age=MaxAge.max_age(SAILORS × MaxAge))
-```
-
-**MySQL:**
-```sql
-SELECT sname
-FROM SAILORS
-WHERE age = (SELECT MAX(age) FROM SAILORS);
-```
-
----
-
-### Example 5: Find Sailors with Rating Higher Than All Sailors Named 'Horatio'
-
-**English:** Find sailors whose rating is greater than every sailor named Horatio.
-
-**Relational Algebra:**
-```
-HoratioMaxRating ← ℱ_MAX(rating)(σ_sname='Horatio'(SAILORS))
-Result ← π_sname(σ_rating > HoratioMaxRating.max_rating(SAILORS))
-```
-
-**MySQL:**
-```sql
-SELECT sname
-FROM SAILORS
-WHERE rating > ALL (
-    SELECT rating 
-    FROM SAILORS 
-    WHERE sname = 'Horatio'
-);
-
--- Alternative
-SELECT sname
-FROM SAILORS
-WHERE rating > (
-    SELECT MAX(rating) 
-    FROM SAILORS 
-    WHERE sname = 'Horatio'
-);
-```
-
----
-
-### Example 6: Find Average Age Per Rating, Only for Ratings with 2+ Sailors
-
-**English:** For each rating level that has at least 2 sailors, find the average age.
-
-**Relational Algebra:**
-```
-GroupedData ← ℱ_rating; COUNT(*) AS cnt, AVG(age) AS avg_age(SAILORS)
-Result ← σ_cnt ≥ 2(GroupedData)
-```
-
-**MySQL:**
-```sql
-SELECT rating, AVG(age) AS avg_age
-FROM SAILORS
-GROUP BY rating
-HAVING COUNT(*) >= 2;
-```
-
----
-
-### Example 7: Find Boats Reserved by All Sailors with Rating 10
-
-**English:** Find boats that have been reserved by every sailor with rating 10.
-
-**Relational Algebra:**
-```
-Rating10Sailors ← π_sid(σ_rating=10(SAILORS))
-BoatSailorPairs ← π_bid, sid(RESERVES)
-Result ← π_bid(BoatSailorPairs ÷ Rating10Sailors)
-```
-
-**MySQL:**
-```sql
-SELECT R.bid
-FROM RESERVES R
-GROUP BY R.bid
-HAVING COUNT(DISTINCT CASE WHEN S.rating = 10 THEN R.sid END) = (
-    SELECT COUNT(*) FROM SAILORS WHERE rating = 10
-)
-AND COUNT(DISTINCT CASE WHEN S.rating = 10 THEN R.sid END) > 0;
-
--- Clearer version
-SELECT B.bid, B.bname
-FROM BOATS B
-WHERE NOT EXISTS (
-    SELECT S.sid
-    FROM SAILORS S
-    WHERE S.rating = 10
-      AND NOT EXISTS (
-          SELECT R.sid
-          FROM RESERVES R
-          WHERE R.sid = S.sid AND R.bid = B.bid
-      )
-);
-```
-
----
-
-### Example 8: Find Pairs of Sailors with Same Rating
-
-**English:** Find all pairs of different sailors who have the same rating.
-
-**Relational Algebra:**
-```
-S1 ← ρ_S1(sid1, sname1, rating1, age1)(SAILORS)
-S2 ← ρ_S2(sid2, sname2, rating2, age2)(SAILORS)
-SameRating ← σ_rating1 = rating2 ∧ sid1 < sid2(S1 × S2)
-Result ← π_sname1, sname2, rating1(SameRating)
-```
-
-**MySQL:**
-```sql
-SELECT 
-    S1.sname AS sailor1,
-    S2.sname AS sailor2,
-    S1.rating
-FROM SAILORS S1
-JOIN SAILORS S2 ON S1.rating = S2.rating AND S1.sid < S2.sid
-ORDER BY S1.rating, S1.sname;
-```
-
----
-
-## 11. Translation Guide: Relational Algebra ↔ SQL {#sql-translation}
-
-### Quick Reference Table
-
-| Relational Algebra | SQL Equivalent | Example |
-|-------------------|----------------|---------|
-| **σ_condition(R)** | `SELECT * FROM R WHERE condition` | σ_age>25(Person) → `WHERE age > 25` |
-| **π_A,B(R)** | `SELECT DISTINCT A, B FROM R` | π_name,age(Person) |
-| **R ∪ S** | `SELECT * FROM R UNION SELECT * FROM S` | R ∪ S |
-| **R ∩ S** | `SELECT * FROM R INTERSECT SELECT * FROM S` | R ∩ S |
-| **R − S** | `SELECT * FROM R EXCEPT SELECT * FROM S` | R − S |
-| **R × S** | `SELECT * FROM R, S` or `R CROSS JOIN S` | R × S |
-| **R ⋈ S** | `SELECT * FROM R NATURAL JOIN S` | R ⋈ S |
-| **R ⋈_R.A=S.B S** | `SELECT * FROM R JOIN S ON R.A = S.B` | Equi-join |
-| **ρ_NewName(R)** | `FROM R AS NewName` | Rename |
-| **ℱ_COUNT(*)(R)** | `SELECT COUNT(*) FROM R` | Count |
-| **ℱ_A;SUM(B)(R)** | `SELECT A, SUM(B) FROM R GROUP BY A` | Aggregate |
-
----
-
-### Step-by-Step Translation Examples
-
-#### Example 1: Simple Selection + Projection
-
-**English:** Find names of sailors older than 40
-
-**Relational Algebra:**
-```
-π_sname(σ_age > 40(SAILORS))
-```
-
-**Translation Steps:**
-1. Start inside-out: σ_age > 40(SAILORS)
-2. SQL: `SELECT * FROM SAILORS WHERE age > 40`
-3. Add projection: π_sname
-4. SQL: `SELECT sname FROM SAILORS WHERE age > 40`
-5. Add DISTINCT (relational algebra default)
-6. Final: `SELECT DISTINCT sname FROM SAILORS WHERE age > 40`
-
-**Final SQL:**
-```sql
-SELECT DISTINCT sname
-FROM SAILORS
-WHERE age > 40;
-```
-
----
-
-#### Example 2: Join with Selection
-
-**English:** Find names of sailors who reserved boat 103
-
-**Relational Algebra:**
-```
-π_sname(σ_bid=103(RESERVES) ⋈ SAILORS)
-```
-
-**Translation Steps:**
-1. σ_bid=103(RESERVES) → `WHERE bid = 103`
-2. Join with SAILORS: `JOIN SAILORS`
-3. Common attribute: sid
-4. Project sname: `SELECT sname`
-
-**Final SQL:**
-```sql
-SELECT DISTINCT S.sname
-FROM RESERVES R
-JOIN SAILORS S ON R.sid = S.sid
-WHERE R.bid = 103;
-```
-
----
-
-#### Example 3: Set Difference
-
-**English:** Find sailors who never made a reservation
-
-**Relational Algebra:**
-```
-π_sid(SAILORS) − π_sid(RESERVES)
-```
-
-**Translation:**
-```sql
-SELECT sid FROM SAILORS
-EXCEPT
-SELECT sid FROM RESERVES;
-
--- Alternative
-SELECT S.sid
-FROM SAILORS S
-WHERE S.sid NOT IN (SELECT sid FROM RESERVES);
-```
-
----
-
-#### Example 4: Division
-
-**English:** Find sailors who reserved all boats
-
-**Relational Algebra:**
-```
-π_sid,bid(RESERVES) ÷ π_bid(BOATS)
-```
-
-**Translation:**
-```sql
-SELECT DISTINCT S.sid
-FROM SAILORS S
-WHERE NOT EXISTS (
-    SELECT B.bid
-    FROM BOATS B
-    WHERE NOT EXISTS (
-        SELECT R.sid
-        FROM RESERVES R
-        WHERE R.sid = S.sid AND R.bid = B.bid
-    )
-);
-```
-
----
-
-## Summary Tables
-
-### Operator Precedence
-
-1. **σ, π, ρ** (Unary operators - highest precedence)
-2. **×, ⋈** (Cartesian product, Join)
-3. **∩** (Intersection)
-4. **∪, −** (Union, Difference - lowest precedence)
-
-### Operator Properties
-
-| Operator | Commutative | Associative | Idempotent |
-|----------|-------------|-------------|------------|
-| **σ** | ✓ Yes | ✓ Yes | ✓ Yes |
-| **π** | ✗ No | ✗ No | ✓ Yes |
-| **∪** | ✓ Yes | ✓ Yes | ✓ Yes |
-| **∩** | ✓ Yes | ✓ Yes | ✓ Yes |
-| **−** | ✗ No | ✗ No | ✗ No |
-| **×** | ✓ Yes | ✓ Yes | ✗ No |
-| **⋈** | ✓ Yes | ✓ Yes | ✗ No |
-
----
-
-## Practice Problems
-
-### Problem 1
-**Find names of sailors who reserved a red boat AND have rating > 7**
-
-<details>
-<summary>Click to see solution</summary>
-
-**Relational Algebra:**
-```
-π_sname((σ_color='red'(BOATS) ⋈ RESERVES) ⋈ σ_rating>7(SAILORS))
-```
-
-**MySQL:**
-```sql
-SELECT DISTINCT S.sname
-FROM SAILORS S
-JOIN RESERVES R ON S.sid = R.sid
-JOIN BOATS B ON R.bid = B.bid
-WHERE B.color = 'red' AND S.rating > 7;
-```
-</details>
-
-### Problem 2
-**Find average age of sailors for each rating level**
-
-<details>
-<summary>Click to see solution</summary>
-
-**Relational Algebra:**
-```
-ℱ_rating; AVG(age) AS avg_age(SAILORS)
-```
-
-**MySQL:**
-```sql
-SELECT rating, AVG(age) AS avg_age
-FROM SAILORS
-GROUP BY rating;
-```
-</details>
-
-### Problem 3
-**Find boats that have never been reserved**
-
-<details>
-<summary>Click to see solution</summary>
-
-**Relational Algebra:**
-```
-π_bid(BOATS) − π_bid(RESERVES)
-```
-
-**MySQL:**
-```sql
-SELECT bid FROM BOATS
-EXCEPT
-SELECT bid FROM RESERVES;
-
--- Alternative
-SELECT B.bid
-FROM BOATS B
-WHERE B.bid NOT IN (SELECT bid FROM RESERVES);
-```
-</details>
-
----
-
-# Complete Guide to Views, Assertions, and Bitmap Indexing in DBMS
+# Views, Assertions, and Bitmap Indexing in DBMS
 
 ## 1. Views
 
@@ -7604,13 +5127,10 @@ DBMS performance is dictated by the physical limitations of the disk.
 ### The Math of Waiting (Disk Access Metrics)
 
 1. **Seek Time (1–20ms):** Moving the arm to the correct track. **(Dominant Cost)**.
-    
 2. **Rotational Delay (0–10ms):** Waiting for the disk to spin to the right block.
-    
 3. **Transfer Time (~1ms per 4KB):** Moving data to RAM.
-    
 
-**💡 The Trend:** Disk capacity grows 50% yearly, but access speed (Seek/Rotate) stays almost flat. This is why software optimization (Indexing) is mandatory.
+**The Trend:** Disk capacity grows 50% yearly, but access speed (Seek/Rotate) stays almost flat. This is why software optimization (Indexing) is mandatory.
 
 ## 3. Buffer Management: The "Waiting Room"
 
@@ -7621,9 +5141,7 @@ The **Buffer Manager** allocates RAM to hold pages. It acts as a middleman betwe
 OS memory management is generic. A DBMS knows _more_ about the data:
 
 - **Prefetching:** If you are scanning a table, the DBMS knows you'll need Page 2 after Page 1 and can load it ahead of time.
-    
 - **Force-Writing:** For security/logging (WAL), the DBMS must ensure data is _actually_ on disk, which OS caches might delay.
-    
 
 ### Buffer Replacement Policies
 
@@ -7880,7 +5398,7 @@ Proof:
 
 ### **Minimal Cover (Canonical Cover)**
 
-A **Minimal Cover** is the "cleanest" version of your FD set—no redundancy, minimum complexity.
+A **Minimal Cover** is the "cleanest" version of your FD set: no redundancy, minimum complexity.
 
 **Steps to find it:**
 
@@ -7955,7 +5473,8 @@ INSERT INTO StudentCourses VALUES
 
 ## **1NF (First Normal Form) - Atomic Values**
 
-**Rule:** Every attribute must contain only **atomic (indivisible) values**.
+**Rule:** Every attribute must contain only **atomic (indivisible) values**, i.e., shouldn't have multi-valued attribute
+There shouldn't be any value that can lead us to create a same entry multiple times
 
 **Bad (violates 1NF):**
 ```sql
@@ -8082,7 +5601,6 @@ CREATE TABLE Department (
 ## **BCNF (Boyce-Codd Normal Form) - The Strict Version**
 
 **Rule:** Every **determinant** (left side of an FD) must be a **Candidate Key**.
-
 This is stricter than 3NF.
 
 **Problem case (3NF OK, BCNF not):**
@@ -8237,13 +5755,13 @@ When you split a table, two critical properties matter:
 Original Table:
 StudentID | Name  | Department
 101       | Alice | Math
-102       | Bob   | CS
+102       | Alice | CS
 
 Split into:
 Table A:
 StudentID | Name
 101       | Alice
-102       | Bob
+102       | Alice
 
 Table B:
 StudentID | Department
@@ -8253,26 +5771,26 @@ StudentID | Department
 JOIN A and B:
 StudentID | Name  | Department
 101       | Alice | Math
-102       | Bob   | CS
+102       | Alice | CS
 ✓ Same data! LOSSLESS
 
 But what if we did:
 Table A:
 Name      | Department
 Alice     | Math
-Bob       | CS
+Alice     | CS
 
 Table B:
 StudentID | Name
 101       | Alice
-102       | Bob
+102       | Alice
 
 JOIN A and B:
 StudentID | Name  | Department
 101       | Alice | Math
 101       | Alice | CS      ← WRONG! (phantom data)
-102       | Bob   | Math    ← WRONG! (phantom data)
-102       | Bob   | CS
+102       | Alice | Math    ← WRONG! (phantom data)
+102       | Alice | CS
 ✗ Extra rows! LOSSY
 ```
 
@@ -8479,3 +5997,2891 @@ For each FD `X → Y` in the table:
 1. **Is X a Candidate Key?** → YES = OK
 2. **Is Y a Prime Attribute** (part of any candidate key)? → YES = OK
 3. **Otherwise** → VIOLATES 3NF, decompose
+
+
+I'll teach you Transaction Management in detail with clear explanations and MySQL examples. Let me break this down systematically.
+
+---
+
+# Transaction Management
+
+## 1.1 – Introduction & Definitions
+
+**What is a Transaction?**
+
+A transaction is a **sequence of database operations grouped together as a single logical unit of work**. Think of it as a contract: either all operations succeed and are saved permanently, or none of them happen at all.
+
+**Real-World Analogy:**
+Imagine transferring money from your bank account to a friend's account. This involves:
+1. Reading your current balance
+2. Deducting the transfer amount from your account
+3. Reading your friend's balance
+4. Adding the transfer amount to their account
+5. Saving both changes
+
+If the system crashes after step 2 but before step 4, your money would be deducted but your friend wouldn't receive it. A transaction prevents this disaster.
+
+**MySQL Transaction Example:**
+```sql
+-- Start a transaction
+START TRANSACTION;
+
+-- All these operations are grouped together
+SELECT balance INTO @myBalance FROM accounts WHERE account_id = 101;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+
+-- Either COMMIT all changes or ROLLBACK everything
+COMMIT; -- Makes changes permanent
+-- OR
+ROLLBACK; -- Undoes everything
+```
+
+**Why Transactions Matter:**
+- Without transactions, concurrent access could corrupt data
+- System failures could leave database in inconsistent state
+- Multiple users could interfere with each other's operations
+
+---
+
+## 1.2 – ACID Properties (The Golden Rules)
+
+These are **four fundamental guarantees** every transaction must provide:
+
+#### **A – Atomicity (All-or-Nothing)**
+
+**Definition:** A transaction is either **completely executed or not executed at all**. There's no middle ground.
+
+**Who ensures it?** Transaction Management Component (through logging and rollback mechanisms)
+
+**Example:**
+```sql
+START TRANSACTION;
+
+-- Both must succeed
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+
+COMMIT; -- Both succeed together
+```
+
+If there's an error in the second UPDATE, the first one is automatically rolled back. You never have a situation where one account is debited but the other isn't credited.
+
+**What if something fails?**
+```sql
+START TRANSACTION;
+
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101; -- Success
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 999; -- Error: account doesn't exist
+
+-- Entire transaction rolls back automatically
+-- Account 101's balance change is UNDONE
+```
+
+---
+
+#### **C – Consistency (Logical Correctness)**
+
+**Definition:** The database moves from one **valid/correct state to another valid state**. All business rules must be satisfied.
+
+**Who ensures it?** Application Programmer (through proper SQL logic)
+
+**Example:**
+Suppose you have a constraint: *Total balance of all accounts must remain constant during transfer*
+
+```sql
+-- Initial state: Account 101 has 1000, Account 102 has 2000, Total = 3000
+START TRANSACTION;
+
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101; -- 500
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102; -- 2500
+
+COMMIT;
+-- Final state: Total = 3000 (still consistent)
+```
+
+If you accidentally wrote a transaction that violated business logic:
+```sql
+-- WRONG - Violates consistency
+START TRANSACTION;
+
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+UPDATE accounts SET balance = balance + 600 WHERE account_id = 102; -- Money created!
+```
+
+The DBMS won't stop this automatically—it's the **programmer's responsibility** to write correct SQL.
+
+---
+
+#### **I – Isolation (Independence)**
+
+**Definition:** Each transaction executes **as if it's the only one in the system**. Transactions don't interfere with each other.
+
+**Who ensures it?** Concurrency Control Component (through locking mechanisms)
+
+**Example:**
+Imagine two ATMs accessing the same account simultaneously:
+
+**Without Isolation:**
+```
+Time  ATM1 (User A)              ATM2 (User B)
+1     Read balance: 1000
+2                                Read balance: 1000
+3     Withdraw 200
+4     Write balance: 800
+5                                Withdraw 300
+6                                Write balance: 700 (WRONG! Lost Update)
+-- User B's withdrawal overwrote User A's balance change
+```
+
+**With Isolation (correct):**
+```
+Time  ATM1 (User A)              ATM2 (User B)
+1     Read balance: 1000         (waits for ATM1 to finish)
+2     Withdraw 200
+3     Write balance: 800
+4     Commit
+5                                Now reads balance: 800
+6                                Withdraw 200
+7                                Write balance: 600
+8                                Commit
+```
+
+**MySQL Example:**
+```sql
+-- Connection 1 (ATM 1)
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- 1000
+UPDATE accounts SET balance = balance - 200 WHERE account_id = 101;
+COMMIT;
+
+-- Connection 2 (ATM 2) - operates independently
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- Either 1000 (before ATM1 commits) or 800 (after)
+UPDATE accounts SET balance = balance - 300 WHERE account_id = 101;
+COMMIT;
+```
+
+---
+
+#### **D – Durability (Persistence)**
+
+**Definition:** Once a transaction is **committed**, the changes are **permanent** even if there's a system crash, power failure, or hardware failure.
+
+**Who ensures it?** Recovery Management Component (through transaction logs and backups)
+
+**How it works:**
+1. Changes are written to a **transaction log** on disk
+2. After successful commit, the log entry is forced to stable storage
+3. Even if the computer crashes immediately after, recovery can restore the committed data
+
+**Example:**
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+COMMIT; -- At this point, changes are written to disk
+
+-- Even if power fails in the next second, the change is permanent
+```
+
+**What if crash happens before COMMIT?**
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+-- CRASH happens here (no COMMIT executed)
+
+-- After restart: The update is ROLLED BACK
+-- Database is back to the state before the transaction started
+```
+
+---
+	A **phantom problem** (also known as a **phantom read**) is a specific concurrency issue in database management systems where a transaction reads a set of rows that satisfy a search condition, but when it repeats the read later in the same transaction, the set of rows has changed because another transaction inserted or deleted data in the meantime.
+
+It essentially creates a situation where data appears to pop in or out of existence like a "phantom" between two points of execution within a single transaction.
+
+---
+
+### Why It Happens: The "Locking Gap"
+
+In standard **Strict Two-Phase Locking (S2PL)** with **record-level locking**, the system only places locks on records that exist at the time of the initial scan. Because the database is only locking the specific rows it finds, it doesn't "claim" the empty space where new rows might be inserted.
+
+### A Practical Scenario
+
+Using the example from **image_641fba.jpg**:
+
+- **Initial Read**: Transaction $T1$ scans Page 1 to find the oldest employee in Grade 1. It sees ages $\{50, 51, 56\}$ and determines the oldest is **56**.
+    
+- **The Insertion**: While $T1$ is still active, Transaction $T2$ inserts a new employee record with **age 60** and **Grade 1**, then commits.
+    
+- **The Phantom**: $T1$ re-scans the table later in its execution. It now sees the new record $\{50, 51, 56, 60\}$. Suddenly, the "oldest age" has jumped to **60**.
+    
+
+This violates the **Isolation** property of the ACID model, as $T1$ is seeing uncoordinated changes made by $T2$ during its own lifespan.
+
+---
+
+### How to Solve the Phantom Problem
+
+To prevent phantoms, you have to lock more than just the rows; you have to lock the **range** or the **container**.
+
+1. **Page-Level Locking**: Instead of locking individual records, the database locks the entire physical page (e.g., Page 1). This prevents any other transaction from inserting _any_ new records into that block of memory until the first transaction is done.
+    
+2. **Index-Range / Predicate Locking**: The database locks a logical range (e.g., "all rows where Grade = 1"). If $T2$ tries to insert any record that falls into that "Grade 1" category, it will be blocked until $T1$ finishes.
+### **1.3 – Types of Failures**
+
+Understanding different failures helps us design recovery mechanisms:
+
+#### **1. Computer Failure (System Crash)**
+- Hardware error or OS crash during transaction execution
+- Example: DBMS process crashes in middle of UPDATE
+- **Recovery:** Use transaction logs to redo or undo operations
+
+```sql
+-- System crashes here
+UPDATE accounts SET balance = 500 WHERE account_id = 101;
+-- Recovery: Check logs, determine if transaction was committed, redo or undo
+```
+
+#### **2. Transaction Failure (Logical Error)**
+- The transaction itself has a problem
+- Example: Division by zero, constraint violation, incorrect logic
+
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance / 0; -- ERROR!
+-- Transaction automatically rolls back
+-- Database unchanged
+```
+
+#### **3. Local Errors (Data Issues)**
+- Required data not found or condition not met
+- Example: Trying to transfer from non-existent account
+
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 999; -- No such account
+-- Transaction canceled; no rows affected
+ROLLBACK;
+```
+
+#### **4. Concurrency Control Enforcement**
+- One transaction conflicts with another concurrent transaction
+- The conflicting transaction is aborted
+
+```sql
+-- Two users simultaneously update the same row
+-- The second one to arrive is forced to abort and retry
+```
+
+#### **5. Disk Failure**
+- Physical damage to storage device
+- Read/write head crash causes data loss
+- **Recovery:** Use backups and archived logs
+
+#### **6. Catastrophic Failures**
+- Power outages, natural disasters, network partitions
+- Beyond software control
+- **Recovery:** Geographically distributed backups, redundant systems
+
+---
+
+### **1.4 – TCL Commands (Transaction Control Language)**
+
+These are SQL commands you use to manage transactions:
+
+#### **COMMIT**
+- **Purpose:** Make all changes permanent
+- **When used:** After all operations succeed
+- Once committed, changes cannot be undone
+
+```sql
+START TRANSACTION;
+INSERT INTO accounts (account_id, balance) VALUES (999, 0);
+UPDATE accounts SET balance = balance + 1000 WHERE account_id = 999;
+COMMIT; -- Changes are now permanent
+```
+
+#### **ROLLBACK**
+- **Purpose:** Undo all changes in the current transaction
+- **When used:** When you want to cancel the transaction
+- Takes database back to state before transaction started
+
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+
+-- Oops, made a mistake!
+ROLLBACK; -- Both updates are canceled, balances unchanged
+```
+
+#### **SAVEPOINT**
+- **Purpose:** Create a checkpoint within a transaction
+- **When used:** When you want partial rollback
+- Can rollback to a specific savepoint instead of entire transaction
+
+```sql
+START TRANSACTION;
+
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+SAVEPOINT sp1; -- Mark this point
+
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+-- Oops, wrong account!
+
+ROLLBACK TO sp1; -- Go back to savepoint, undo only the second update
+-- First update still stands
+
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 103; -- Correct
+COMMIT; -- Both the first and corrected third updates are committed
+```
+
+**MySQL Example - Multiple Savepoints:**
+```sql
+START TRANSACTION;
+
+-- Step 1: Add new customer
+INSERT INTO customers (id, name) VALUES (555, 'John');
+SAVEPOINT sp_customer;
+
+-- Step 2: Create account for customer
+INSERT INTO accounts (customer_id, balance) VALUES (555, 1000);
+SAVEPOINT sp_account;
+
+-- Step 3: Apply signup bonus
+UPDATE accounts SET balance = balance + 50 WHERE customer_id = 555;
+
+-- Something went wrong with bonus logic
+ROLLBACK TO sp_account; -- Undo bonus, but keep account
+-- Now fix the bonus logic
+UPDATE accounts SET balance = balance + 75 WHERE customer_id = 555; -- Correct amount
+
+COMMIT; -- All changes saved
+```
+
+---
+
+### **1.5 – Transaction State Diagram**
+
+A transaction goes through different states during its lifecycle:
+
+```
+         START
+          ↓
+    ╔═════════════╗
+    ║   ACTIVE    ║  ← Transaction executing, reading/writing data
+    ╚═════════════╝
+          ↓
+    ╔══════════════════════╗
+    ║ PARTIALLY COMMITTED  ║  ← Last statement executed, awaiting final commit
+    ╚══════════════════════╝
+          ↙        ↘
+    ╔═════════╗  ╔══════════╗
+    ║ FAILED  ║  ║ COMMITTED║  ← All changes permanent
+    ╚═════════╝  ╚══════════╝
+          ↓
+    ╔═════════╗
+    ║ ABORTED ║  ← Rolled back, database restored
+    ╚═════════╝
+```
+
+**Detailed Explanation:**
+
+1. **ACTIVE** - Initial state
+   - Transaction is running
+   - Reading and writing data
+   - No commits yet
+   ```sql
+   START TRANSACTION;
+   UPDATE accounts SET balance = balance - 500; -- ACTIVE state
+   ```
+
+2. **PARTIALLY COMMITTED** - After last statement completes
+   - All SQL statements have executed
+   - But not yet permanently saved to disk
+   - Still in memory, vulnerable to failure
+   ```sql
+   UPDATE accounts SET balance = balance + 500; -- Just finished
+   -- Currently in PARTIALLY COMMITTED state
+   ```
+
+3. **COMMITTED** - Success path
+   - Changes written to disk
+   - Permanent and durable
+   - Transaction complete
+   ```sql
+   COMMIT; -- Now COMMITTED
+   ```
+
+4. **FAILED** - Error detected
+   - An operation encountered an error
+   - Cannot proceed normally
+   - Must be rolled back
+   ```sql
+   UPDATE accounts SET balance = balance / 0; -- ERROR!
+   -- State becomes FAILED
+   ```
+
+5. **ABORTED** - Rolled back
+   - Changes undone
+   - Database restored to pre-transaction state
+   - Options:
+     - **Restart:** Re-execute if it was a temporary issue
+     - **Kill:** Terminate if it's a logical error
+   ```sql
+   ROLLBACK; -- Move to ABORTED state
+   ```
+
+**Complete MySQL Example:**
+```sql
+-- Start a transaction
+START TRANSACTION;
+-- State: ACTIVE
+
+SELECT @balance := balance FROM accounts WHERE account_id = 101;
+-- Still ACTIVE - reading data
+
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+-- Still ACTIVE - multiple writes
+
+-- After last statement: PARTIALLY COMMITTED state
+
+COMMIT;
+-- State: COMMITTED (success)
+
+-- If something went wrong:
+-- ROLLBACK;
+-- State: ABORTED
+```
+
+---
+
+## 1.6 – Concurrent Execution
+
+**Why run transactions concurrently?**
+
+Imagine a bank with one customer and one teller—very inefficient. The bank uses multiple tellers to serve many customers simultaneously. Similarly, a database server handles many transactions at once.
+
+#### **Advantages of Concurrency:**
+
+1. **Increased Resource Utilization**
+   - While one transaction waits for disk I/O, another uses CPU
+   - Hardware is used continuously, not idle
+
+2. **Better Throughput**
+   - Process more transactions per second
+   - More customers served in same time
+
+3. **Reduced Average Response Time**
+   - Short transactions don't wait behind long ones
+   - Fair scheduling possible
+
+**Example:**
+```
+Without Concurrency:
+T1 (10 seconds) → T2 (2 seconds) → T3 (2 seconds)
+Total time: 14 seconds, Average per transaction: 4.67 seconds
+
+With Concurrency (interleaved):
+Time 0-2:   T1, T2, T3 all running
+Time 2-4:   T1, T3 running (T2 finished)
+Time 4-10:  T1 running
+Total time: 10 seconds, Average per transaction: 3.33 seconds
+```
+
+#### **Concurrency Control Schemes**
+
+**Definition:** Mechanisms to manage concurrent transactions so they don't interfere with each other and maintain data consistency.
+
+**Common Approaches:**
+- **Locking:** Only one transaction can access a resource at a time
+- **Timestamp Ordering:** Transactions ordered by timestamp
+- **Optimistic Concurrency:** Assume conflicts rare, detect conflicts at commit time
+
+We'll discuss these in detail in later units.
+
+#### **Schedules**
+
+**Definition:** A sequence showing the order in which operations of concurrent transactions are executed.
+
+**Rules for a valid schedule:**
+1. Must include all operations from all transactions
+2. Must preserve the order of operations within each transaction
+3. Can interleave operations from different transactions
+
+**Example:**
+```
+Two transactions:
+T1: Read(A), Write(A), Read(B), Write(B)
+T2: Read(A), Write(A), Read(C), Write(C)
+
+A valid schedule might be:
+T1: Read(A)
+T2: Read(A)
+T1: Write(A)
+T2: Write(A)
+T1: Read(B)
+T1: Write(B)
+T2: Read(C)
+T2: Write(C)
+
+Note: T1 operations maintain their order: Read(A)→Write(A)→Read(B)→Write(B)
+And: T2 operations maintain their order: Read(A)→Write(A)→Read(C)→Write(C)
+```
+
+---
+
+## 1.7 – Anomalies Due to Interleaved Execution
+
+When transactions run concurrently without proper control, bad things happen:
+
+#### **WR Conflict – Dirty Read Problem**
+
+**What is it?** A transaction reads data that was written by another transaction **before that transaction commits** (uncommitted data).
+
+**Problem:** If the writing transaction fails and rolls back, the reading transaction has read incorrect ("dirty") data.
+
+**Visual:**
+```
+Time  T1 (Transfer OUT)          T2 (Check Balance)
+1     Read balance: 1000
+2     Write balance: 500
+3                                Read balance: 500 (DIRTY!)
+4     ROLLBACK (transfer canceled)
+5     Actual balance restored: 1000
+-- T2 made decision based on balance that didn't really exist
+```
+
+**MySQL Example:**
+```sql
+-- Connection 1 (T1)
+SET autocommit = 0; -- Disable autocommit for manual control
+START TRANSACTION;
+UPDATE accounts SET balance = 500 WHERE account_id = 101;
+-- Not committed yet
+
+-- Connection 2 (T2) - Set isolation level low
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SELECT balance FROM accounts WHERE account_id = 101; 
+-- Returns 500 (DIRTY READ!)
+
+-- Connection 1
+ROLLBACK; -- Oops, transfer failed
+
+-- Connection 2
+SELECT balance FROM accounts WHERE account_id = 101; 
+-- Returns 1000 (the dirty read was invalid!)
+```
+
+**Real-world impact:**
+- Bank employee sees withdrawal but it never actually happened
+- Stock trader sees stock price that gets reverted
+- Confirmation email sent for transaction that doesn't exist
+
+---
+
+#### **RW Conflict – Unrepeatable Read / Incorrect Summary**
+
+**What is it?** A transaction reads the same row multiple times and gets **different values** because another transaction updated it in between.
+
+Also called "Inconsistent Read" or "Unrepeatable Read".
+
+**Problem:** A transaction assumes a value stays constant, but it changes during the transaction.
+
+**Scenario 1 - Unrepeatable Read:**
+```
+Time  T1 (Calculate Salary Bonus)  T2 (Salary Adjustment)
+1     Read salary: 50000
+2                                  Read salary: 50000
+3                                  Update salary: 60000 (raise)
+4                                  Commit
+5     Read salary again: 60000
+6     Calculate bonus: 60000 * 0.1 = 6000 (too high!)
+-- Expected bonus was 5000, but got 6000
+```
+
+**Scenario 2 - Incorrect Summary:**
+```
+Time  T1 (Calculate Total)         T2 (Transfer Funds)
+1     Read Account A: 1000, sum = 1000
+2                                  Read Account A: 1000
+3                                  Update Account A: 500
+4                                  Read Account B: 2000
+5                                  Update Account B: 2500
+6                                  Commit
+7     Read Account B: 2500, sum = 1000 + 2500 = 3500
+-- Real sum was 3000 (500+2500), but saw 3500!
+```
+
+**MySQL Example:**
+```sql
+-- Connection 1 (T1)
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- 1000
+
+-- Connection 2 (T2)
+UPDATE accounts SET balance = 2000 WHERE account_id = 101;
+COMMIT;
+
+-- Connection 1
+SELECT balance FROM accounts WHERE account_id = 101; -- 2000 (different!)
+-- Can't repeat the first read!
+```
+
+**Real-world impact:**
+- Audit query shows different totals when run twice
+- Salary calculation gets inconsistent data
+- Reservation system double-books seats
+
+---
+
+#### **WW Conflict – Lost Update Problem**
+
+**What is it?** Two transactions both write to the same data item, and **the second write overwrites the first**, losing the first transaction's update.
+
+**Problem:** The first transaction's work is completely lost.
+
+**Visual:**
+```
+Time  T1 (ATM 1: Withdraw 200)     T2 (ATM 2: Withdraw 300)
+1     Read balance: 1000
+2                                  Read balance: 1000
+3     balance = 1000 - 200 = 800
+4                                  balance = 1000 - 300 = 700
+5     Write balance: 800
+6                                  Write balance: 700 (OVERWRITES!)
+-- LOST UPDATE! T1's withdrawal is lost
+-- Should be: 1000 - 200 - 300 = 500
+-- But it's: 700 (only T2's withdrawal counted)
+```
+
+**MySQL Example:**
+```sql
+-- Connection 1 (T1)
+SET autocommit = 0;
+SELECT balance FROM accounts WHERE account_id = 101; -- 1000
+SET @balance = 1000;
+UPDATE accounts SET balance = @balance - 200 WHERE account_id = 101;
+-- Connection 1's update is: balance = 800
+
+-- Connection 2 (T2) - interleaved
+SELECT balance FROM accounts WHERE account_id = 101; -- Still reads 1000
+SET @balance = 1000;
+UPDATE accounts SET balance = @balance - 300 WHERE account_id = 101;
+-- Connection 2's update is: balance = 700
+
+-- Connection 1
+COMMIT;
+
+-- Connection 2
+COMMIT; -- This overwrites T1's update!
+
+-- Final result: balance = 700 (should be 500)
+SELECT balance FROM accounts WHERE account_id = 101;
+```
+
+**Real-world impact:**
+- Money disappears (lost withdrawal)
+- Inventory count becomes wrong
+- View counts on social media incorrect
+- Website hit counter loses updates
+
+---
+
+**Summary Table of Anomalies:**
+
+| Conflict | Read | Write | Problem |
+|----------|------|-------|---------|
+| **WR (Dirty Read)** | T2 reads | T1 writes uncommitted | T2 reads invalid data that T1 rolls back |
+| **RW (Unrepeatable)** | T1 reads twice | T2 writes between reads | T1 gets different values for same item |
+| **WW (Lost Update)** | - | Both write | T2's write overwrites T1's write |
+
+---
+
+### **1.8 – Scheduling & Serializability**
+
+Now let's talk about how to fix these problems: **making concurrent execution safe**.
+
+#### **Serial Schedule**
+
+**Definition:** A schedule where **transactions execute one after another**, never interleaved. Each transaction completes fully before the next starts.
+
+**Example:**
+```
+Serial Schedule 1:
+T1: Read(A), Write(A), Read(B), Write(B) | T2: Read(A), Write(A), Read(C), Write(C)
+-- T1 completes, then T2 starts
+
+Serial Schedule 2:
+T2: Read(A), Write(A), Read(C), Write(C) | T1: Read(A), Write(A), Read(B), Write(B)
+-- T2 completes, then T1 starts
+```
+
+**Advantage:** No conflicts, data always consistent.
+**Disadvantage:** No concurrency benefit—back to processing one transaction at a time.
+
+---
+
+#### **Equivalent Schedules**
+
+**Definition:** Two schedules are **equivalent** if they produce the **same final database state** for any initial state.
+
+**Key principle:** If both transactions maintain consistency individually, then equivalent schedules both maintain consistency.
+
+**Example:**
+
+Schedule S:
+```
+T1: Read(A)
+T2: Read(A)
+T1: Write(A)
+T2: Write(A)
+```
+
+Schedule S':
+```
+T2: Read(A)
+T1: Read(A)
+T2: Write(A)
+T1: Write(A)
+```
+
+If we apply both schedules to the same initial database state, the final result might be the same (or might differ based on the write values). The point is: if they always produce the same result, they're equivalent.
+
+---
+
+#### **Serializable Schedule**
+
+**Definition:** A schedule is **serializable** if it is **equivalent to some serial schedule**.
+
+**Why it matters:** Serializable schedules guarantee correctness even though they look interleaved. The interleaving doesn't actually cause any problems—it produces the same result as if transactions ran one-by-one.
+
+**Example:**
+```
+This interleaved schedule:
+T1: Read(A), Write(A) | T2: Read(A), Write(A)
+
+is equivalent to this serial schedule:
+T1: Read(A), Write(A), T2: Read(A), Write(A)
+
+So the interleaved version is SERIALIZABLE (safe to use).
+```
+
+**The Golden Rule:**
+> If each transaction preserves consistency (C in ACID), then every serializable schedule preserves consistency.
+
+This means: **Make schedules serializable, and consistency is guaranteed**.
+
+---
+
+Below is a clear, comprehensive lesson on **conflict serializability** and the **precedence graph test**, with logical examples and the effects/implications of each rule.
+
+---
+
+## 1.9 Conflict Serializability
+
+### 1) What is a Schedule?
+A **schedule** is an interleaving of operations (read/write) from multiple transactions that preserves the **order of each transaction’s own steps**.
+
+Example (two transactions):
+- **T1**: `R1(X)  W1(X)`
+- **T2**: `R2(X)  W2(X)`
+
+A possible schedule:
+```
+R1(X)  R2(X)  W1(X)  W2(X)
+```
+
+---
+
+### 2) Conflict Rules (same item Q)
+
+Two instructions **conflict** if:
+- they are from **different transactions**,  
+- on the **same data item**,  
+- and **at least one is a write**.
+
+#### Conflict Table
+| Operation Pair | Conflict? | Why |
+|--------------|-----------|-----|
+| Read–Read    | ❌ No      | Neither changes data |
+| Read–Write   | ✅ Yes     | Write can change what read sees |
+| Write–Read   | ✅ Yes     | Read may see old or new value |
+| Write–Write  | ✅ Yes     | Final value depends on order |
+
+#### Effect of Conflicts
+Conflicts matter because they can **change the final database state** or **what a read observes**. If you swap conflicting operations, you can change results, which is unsafe.
+
+---
+
+### 3) Conflict Equivalence
+
+Two schedules are **conflict equivalent** if:
+- they contain the **same operations**, and  
+- the **order of every conflicting pair** is the same in both.
+
+You can transform one schedule into another by **swapping only non‑conflicting adjacent operations**.
+
+#### Example
+Transactions:
+- **T1**: `R1(X) W1(X)`
+- **T2**: `R2(Y) W2(Y)`
+
+Schedule S:
+```
+R1(X) R2(Y) W1(X) W2(Y)
+```
+
+Here, operations on X and Y are independent → **non‑conflicting**.  
+So you can swap some steps and still get the same effect.
+
+---
+
+### 4) Conflict Serializability
+
+A schedule is **conflict serializable** if it is **conflict equivalent to a serial schedule** (one transaction fully before the other).
+
+#### Example (Serializable)
+
+Transactions:
+- **T1**: `R1(X) W1(X)`
+- **T2**: `R2(X) W2(X)`
+
+Schedule:
+```
+R1(X) W1(X) R2(X) W2(X)
+```
+
+This is already serial (T1 → T2).  
+So it is **conflict serializable**.
+
+#### Example (Non‑Serializable)
+
+Schedule:
+```
+R1(X) R2(X) W1(X) W2(X)
+```
+
+Conflicts:
+- `R2(X)` and `W1(X)` → order matters
+- `R1(X)` and `W2(X)` → order matters
+Both directions create a **cycle** (see graph section).  
+So **not conflict serializable**.
+
+---
+
+## 1.10 Precedence Graph (Serializability Test)
+
+### 1) What is a Precedence Graph?
+A **directed graph**:
+- **Vertices** = transactions  
+- **Edge Ti → Tj** if:
+  - Ti and Tj conflict on some item,  
+  - and Ti’s operation happens first.
+
+#### Labeling
+You can label edges with the item (e.g., `X`) to show why the edge exists.
+
+---
+
+### 2) Acyclic = Serializable
+
+If the graph has **no cycle**, the schedule is **conflict serializable**.
+
+A topological order gives the **serial equivalent order**.
+
+#### Example (Acyclic)
+
+Schedule:
+```
+R1(X) W1(X) R2(X) W2(X)
+```
+
+Conflicts:
+- `W1(X)` before `R2(X)` → edge T1 → T2  
+Graph: **T1 → T2** (no cycle)
+
+Serializable as **T1 then T2**
+
+---
+
+### 3) Cyclic = NOT Serializable
+
+If there is a **cycle**, no serial order can preserve all conflicts.
+
+#### Example (Cyclic)
+
+Schedule:
+```
+R1(X) R2(X) W1(X) W2(X)
+```
+
+Conflicts:
+- `R2(X)` before `W1(X)` → edge T2 → T1  
+- `R1(X)` before `W2(X)` → edge T1 → T2  
+
+Graph:
+```
+T1 → T2
+T2 → T1
+```
+Cycle exists → ❌ Not conflict serializable.
+
+---
+
+### 4) Algorithmic Effect (Time Complexity)
+
+- **O(n²)** naive check for edges  
+- **O(n + e)** cycle detection with DFS or Kahn’s algorithm  
+Where:
+- **n** = number of transactions  
+- **e** = number of edges (conflicts)
+
+---
+
+## Why This Matters (Effects & Implications)
+
+### If schedule is conflict serializable:
+- You get **correctness equivalent to serial execution**
+- Database remains **consistent**
+- Concurrency is safe
+
+### If not serializable:
+- **Lost updates**
+- **Dirty reads**
+- **Unrepeatable reads**
+- Final state depends on timing → unsafe
+
+---
+
+## Full Worked Example (Step‑by‑Step)
+
+Transactions:
+- **T1**: `R1(X) W1(X)`
+- **T2**: `R2(X) W2(X)`
+- **T3**: `R3(X) W3(X)`
+
+Schedule:
+```
+R1(X) R2(X) W2(X) R3(X) W1(X) W3(X)
+```
+
+### Conflicts:
+- `R1(X)` before `W2(X)` → T1 → T2  
+- `W2(X)` before `R3(X)` → T2 → T3  
+- `R3(X)` before `W1(X)` → T3 → T1  
+
+Graph:
+```
+T1 → T2 → T3 → T1 (cycle)
+```
+
+Not conflict serializable.
+
+---
+
+## 1.11 – View Serializability
+
+**Conflict serializability** is strict but sometimes overly restrictive. **View serializability** is more lenient.
+
+#### **View Equivalence (Three Conditions)**
+
+Two schedules are **view equivalent** if for every data item Q:
+
+1. **Initial Read:** If Ti reads the **initial value** of Q in schedule S, Ti must also read the initial value in schedule S'.
+2. **Intermediate Reads:** If Ti reads value **written by Tj** in schedule S, Ti must read the value written by Tj in schedule S'.
+3. **Final Write:** The transaction performing the **final write** of Q in schedule S must also do so in schedule S'.
+
+**In simpler terms:**
+- Same reads of initial values
+- Same reads of intermediate writes
+- Same final writer
+
+#### **Example 1: View Serializable but NOT Conflict Serializable**
+
+```
+Schedule:
+T1: Write(A)          ← Final write of A (by T1)
+T2: Read(A)           ← Reads T1's write
+T2: Write(B)
+T3: Read(B)           ← Reads T2's write
+
+Serial equivalent: T1, T2, T3
+```
+
+**Check conflicts:**
+- Precedence graph: T1 → T2 → T3 (no cycle) → CONFLICT SERIALIZABLE
+
+Actually, this example is both conflict and view serializable. Let me give a better example.
+
+#### **Blind Writes Concept**
+
+A **blind write** occurs when a transaction **writes to a value without reading it first**.
+
+```
+T1: Write(A)    ← Blind write (doesn't read A first)
+T2: Read(A)
+T1: Read(A)
+T2: Write(A)
+```
+
+**Key insight:** Every view-serializable schedule that's NOT conflict-serializable contains blind writes.
+
+#### **Relationship Between Serializability Types**
+
+```
+Conflict Serializable ⊂ View Serializable
+
+OR:
+
+All conflict-serializable schedules are view-serializable.
+But not all view-serializable schedules are conflict-serializable.
+```
+
+**Why care?**
+
+Conflict serializability is easier to enforce (using locking). View serializability is harder to test in practice, so most databases use conflict serializability.
+
+---
+
+## 1.12 – Recoverability
+
+Now we shift focus: instead of "are transactions safe from each other?", we ask "are transactions safe from failures?"
+
+#### **Recoverable Schedule**
+
+**Definition:** A schedule is **recoverable** if whenever transaction Tj **commits** after reading data **written by Ti**, Ti's commit appears **before** Tj's commit.
+
+**In other words:** Don't commit a transaction that read uncommitted data from another transaction until that transaction itself commits.
+
+**Visual:**
+```
+Recoverable:
+T1: Write(A)
+T1: Commit ← Must commit here (before T2 reads and commits)
+T2: Read(A)
+T2: Commit
+
+NOT Recoverable:
+T1: Write(A)
+T2: Read(A)
+T2: Commit ← Commits before T1!
+T1: Rollback ← Now T2 read data that no longer exists
+```
+
+**MySQL Example:**
+
+```sql
+-- Connection 1 (T1)
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+COMMIT; -- Commits before T2
+
+-- Connection 2 (T2)
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- Reads committed data
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+COMMIT; -- Safe because T1 already committed
+```
+
+## Wait, but how does committing a Read affect anything?
+
+**A Commit doesn't just mean "save data to the disk." A Commit means "I am officially finished, and any actions I took based on this data are now permanent and irreversible."**
+
+### The Real-World Danger of "Committing a Read"
+
+Transactions don't just read data for fun; they read data to _do something in the real world_.
+
+Imagine a bank database:
+
+- **$T_1$ (The Writer):** A pending wire transfer of $1,000 into your empty account.
+    
+- **$T_2$ (The Reader):** An ATM transaction where you are trying to withdraw $1,000 in cash.
+    
+
+Let's look at your **"NOT Recoverable"** schedule using this scenario:
+
+1. **$T_1$: Write(A)** $\rightarrow$ The wire transfer tentatively adds $1,000 to your account. (Balance is now $1,000, but it's unconfirmed).
+    
+2. **$T_2$: Read(A)** $\rightarrow$ The ATM checks your balance. It sees $1,000!
+    
+3. **$T_2$: Commit** $\rightarrow$ The ATM transaction is complete. **It spits out $1,000 in physical cash.**
+    
+4. **$T_1$: Rollback** $\rightarrow$ The bank realizes the wire transfer was fraudulent and cancels it.
+
+---
+
+## Cascading Rollback (The Problem)
+
+**Definition:** When one transaction fails and forces **multiple other transactions to rollback** in a chain reaction.
+
+**Why it's bad:**
+- Undoes significant amounts of work
+- Time-consuming
+- Can cause deadlocks
+- User frustration
+
+**Example:**
+
+```
+T10: Write(A), Commit
+T11: Read(A), Write(B)
+T12: Read(B), Write(C)
+
+What if T11 fails?
+→ T11 Rollback (undo B)
+→ But T12 read B! (now invalid)
+→ T12 must Rollback (undo C)
+→ T12 cascades the rollback
+
+Chain: T11 fails → forces T12 to rollback → could force T13, T14... to rollback
+```
+
+**Real World:**
+
+Imagine an audit system:
+```
+Transaction 1: Record transaction, write to audit log
+Transaction 2: Read audit log, generate audit report
+Transaction 3: Read report, send to manager
+
+If Transaction 1 fails and rolls back:
+- Audit log entry deleted
+- Report is invalid (read invalid audit log)
+- Report must be deleted
+- Manager's notification becomes invalid
+- Notification must be retracted
+```
+
+---
+
+## Cascadeless Schedule (The Solution)
+
+**Definition:** A schedule is **cascadeless** if for each transaction Tj reading data written by Ti, the **commit of Ti appears before the read by Tj**.
+
+**In simpler terms:** A transaction reads only **committed data**.
+
+**Key Rule:**
+```
+If Tj reads data written by Ti:
+    Ti must COMMIT before Tj READ
+
+(Not just before Tj commits, but before Tj even reads!)
+```
+
+**MySQL Example:**
+
+```sql
+-- Connection 1 (T1)
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE account_id = 101;
+COMMIT; -- Must commit here
+
+-- Connection 2 (T2) - can only start reading after T1 commits
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- Now safe
+UPDATE accounts SET balance = balance + 500 WHERE account_id = 102;
+COMMIT;
+```
+
+**Comparison:**
+
+```
+Recoverable but NOT Cascadeless:
+T1: Write(A)
+T2: Read(A)      ← Read before T1 commits!
+T1: Commit
+T2: Commit
+
+Cascadeless (and thus Recoverable):
+T1: Write(A)
+T1: Commit       ← Must commit first
+T2: Read(A)      ← Now read
+T2: Commit
+```
+
+**How Cascadelessness Prevents Cascading Rollbacks:**
+
+If T1 fails and rolls back, T2 never even reads the data (because T1 hadn't committed when T2 tried to read). So T2 has nothing to roll back!
+
+**Hierarchy of Schedules:**
+
+```
+Cascadeless Schedules ⊂ Recoverable Schedules ⊂ All Schedules
+
+Every cascadeless schedule is recoverable.
+But not all recoverable schedules are cascadeless.
+```
+
+**Best Practice (from the notes):**
+> "It is desirable to restrict schedules to those that are cascadeless to avoid cascading rollbacks entirely."
+
+---
+
+## **Summary Table: Schedule Properties**
+
+| Property | What it ensures | How | When to use |
+|----------|-----------------|-----|------------|
+| **Serializable** | Concurrency safety (no conflicts) | Precedence graph analysis | Always try for |
+| **Recoverable** | Protection from failed reads | Commit Ti before Tj reads | Minimum standard |
+| **Cascadeless** | No cascading rollbacks | Commit Ti before Tj reads | Best practice |
+
+---
+
+## **Complete MySQL Practical Example**
+
+Let's put it all together with a real banking scenario:
+
+```sql
+-- Create accounts table
+CREATE TABLE accounts (
+    account_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    balance DECIMAL(10, 2)
+);
+
+INSERT INTO accounts VALUES
+(101, 'Alice', 1000),
+(102, 'Bob', 2000),
+(103, 'Charlie', 500);
+
+-- SCENARIO 1: ACID Transaction
+START TRANSACTION;
+    -- Atomicity: All or nothing
+    UPDATE accounts SET balance = balance - 300 WHERE account_id = 101;
+    UPDATE accounts SET balance = balance + 300 WHERE account_id = 102;
+COMMIT;
+-- Consistency: Total balance maintained (3500 before and after)
+-- Isolation: Other transactions don't interfere
+-- Durability: Changes persistent
+
+-- SCENARIO 2: Conflict Handling
+-- Session 1
+SET autocommit = 0;
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- 700
+-- At this point: ACTIVE state
+
+UPDATE accounts SET balance = 400 WHERE account_id = 101;
+-- At this point: PARTIALLY COMMITTED state
+
+-- Session 2 (isolated, cannot see uncommitted change)
+SELECT balance FROM accounts WHERE account_id = 101; -- Still sees 700
+
+-- Session 1
+COMMIT;
+-- Now: COMMITTED state, Session 2 can see the change
+
+-- SCENARIO 3: Savepoints
+START TRANSACTION;
+    INSERT INTO accounts VALUES (104, 'David', 1500);
+    SAVEPOINT sp1;
+    
+    UPDATE accounts SET balance = balance + 100 WHERE account_id = 104;
+    SAVEPOINT sp2;
+    
+    -- Oops, made a mistake
+    ROLLBACK TO sp2; -- Undo the UPDATE
+    
+    -- Try again
+    UPDATE accounts SET balance = balance + 50 WHERE account_id = 104;
+COMMIT;
+-- David created with balance 1550 (1500 + 50, not +100)
+
+-- SCENARIO 4: Cascadeless Schedule Simulation
+-- Connection 1
+START TRANSACTION;
+UPDATE accounts SET balance = 500 WHERE account_id = 101;
+COMMIT; -- Must commit first
+
+-- Connection 2 (can now safely read)
+START TRANSACTION;
+SELECT balance FROM accounts WHERE account_id = 101; -- 500
+UPDATE accounts SET balance = balance + 100 WHERE account_id = 102;
+COMMIT; 
+-- If Connection 1 fails now, Connection 2 is unaffected (already committed)
+
+-- SCENARIO 5: Preventing Dirty Reads
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- Higher isolation prevents WR, RW, WW conflicts
+
+START TRANSACTION;
+SELECT SUM(balance) as total FROM accounts;
+COMMIT;
+-- Result is consistent, no dirty reads
+```
+
+---
+
+## **Key Takeaways**
+
+1. **ACID properties** guarantee database correctness and reliability
+2. **Transactions** group multiple operations into atomic units
+3. **Concurrency** improves performance but creates conflicts (WR, RW, WW)
+4. **Serializability** makes interleaved execution safe
+5. **Precedence graphs** test if a schedule is serializable
+6. **Cascadeless schedules** prevent dangerous rollback chains
+7. **Use MySQL's isolation levels** to enforce these properties at runtime
+
+Below is a clean, detailed, and accurate guide to **Concurrency Control** in DBMS using **MySQL** examples. I’ll explain each topic clearly, with practical examples, and keep it direct.
+
+---
+
+# 2.1 Lock‑Based Protocols
+
+## 🔴 Exclusive (X) Lock
+- **Purpose:** Read *and* write.
+- **Used for:** `INSERT`, `UPDATE`, `DELETE`.
+- **Rule:** Only **one** X lock can exist on a data item. No other locks can coexist.
+
+### MySQL Example
+```sql
+START TRANSACTION;
+UPDATE accounts SET balance = balance - 500 WHERE id = 10;
+```
+- MySQL takes an **exclusive lock** on the matching row(s).
+- Any other transaction trying to read/write those rows must wait.
+
+---
+
+## 🟢 Shared (S) Lock
+- **Purpose:** Read only.
+- **Used for:** `SELECT ... LOCK IN SHARE MODE`.
+- **Rule:** Many S locks can coexist. But **cannot coexist with X lock**.
+
+### MySQL Example
+```sql
+START TRANSACTION;
+SELECT * FROM accounts WHERE id = 10 LOCK IN SHARE MODE;
+```
+- Other transactions can also read the same row.
+- But no one can update/delete it until S locks are released.
+
+---
+
+## 📋 Lock Compatibility Matrix
+- **S + S = OK**
+- **S + X = NOT OK**
+- **X + X = NOT OK**
+
+If incompatible → request **waits**.
+
+---
+
+## Lock Table
+DBMS keeps an in-memory structure:
+- Item name
+- Lock type (S/X)
+- Who holds it
+- Waiting queue
+
+---
+
+## Lock Manager
+- Handles **lock/unlock** requests atomically.
+- Grants locks or makes transactions wait/rollback.
+
+---
+
+## `LOCK TABLE` in MySQL
+```sql
+LOCK TABLES mytable READ;   -- shared
+LOCK TABLES mytable WRITE;  -- exclusive
+```
+MySQL’s syntax differs from Oracle, but effect is similar.
+
+Basically this is used to affect the whole tables itself to remove dependency of including locks in each query.
+
+---
+
+# 2.2 Two‑Phase Locking (2PL)
+### What 2PL is
+
+**2PL is a rule about when a transaction is allowed to take locks and when it’s allowed to release them.**  
+If every transaction follows this rule, the resulting schedule is guaranteed to be **conflict-serializable** (equivalent to some serial order).
+
+---
+
+## Phase 1: Growing phase (only “take”, never “release”)
+
+In the **growing phase**, a transaction:
+
+- **may acquire locks** (S or X)
+- **may upgrade locks** (S → X) (still counts as acquiring “stronger” lock)
+- **may NOT release any lock**
+
+Think: the transaction is “growing” its lock set.
+
+---
+
+## Phase 2: Shrinking phase (only “release”, never “take”)
+
+In the **shrinking phase**, a transaction:
+
+- **may release locks**
+- **may downgrade** (X → S) (counts like releasing “strength”)
+- **may NOT acquire any new locks**
+
+The instant a transaction releases its **first** lock, it has entered shrinking phase and can’t lock anything new after that.
+
+---
+
+## Lock Point (key idea)
+
+The **lock point** of a transaction = the moment it acquires its **last** lock.
+
+2PL guarantees serializability because you can **order transactions by their lock points**, and the outcome will match a serial execution in that order.
+
+---
+
+# Why it matters (the 3 bullets you listed)
+
+## 1) Guarantees conflict serializability
+
+### Meaning of conflict-serializable
+
+A schedule is conflict-serializable if it is equivalent to some serial order considering **conflicting operations**:
+
+- conflicts happen when two different transactions access the same item and **at least one is a write**:
+    - `R-R` does **not** conflict
+    - `R-W`, `W-R`, `W-W` **do** conflict
+
+### Why 2PL guarantees it (intuition)
+
+Because locks prevent “illegal” interleavings:
+
+- If T1 writes X, it holds an X-lock, so no one else can read/write X until allowed.
+- The growing-then-shrinking structure prevents cycles in the precedence graph.
+
+So: **2PL ⇒ precedence graph has no cycles ⇒ conflict-serializable.**
+
+---
+
+## 2) Not deadlock-free
+
+2PL can cause deadlocks because transactions **can wait** for locks, and waiting can form cycles.
+
+### Classic deadlock example (2 items: A and B)
+
+- T1 locks A (X)
+- T2 locks B (X)
+- T1 now requests X lock on B → waits for T2
+- T2 now requests X lock on A → waits for T1 Cycle formed → deadlock.
+
+This follows 2PL perfectly (both are still “growing”), yet deadlock happens.
+
+### MySQL note
+
+InnoDB **detects** deadlocks and rolls back one transaction automatically:
+
+- You’ll see `ERROR 1213: Deadlock found when trying to get lock; try restarting transaction`
+
+---
+
+## 3) Cascading rollbacks can still happen
+
+### What a cascading rollback is
+
+A **cascading rollback** happens when:
+
+1. T1 writes something
+2. T2 reads that uncommitted written value (a “dirty read”)
+3. T1 aborts → now T2 must also abort because it used invalid data
+
+That “domino effect” is cascading rollback.
+
+### Why basic 2PL still allows it
+
+Because **basic 2PL does not force you to keep X-locks until commit**. A transaction could:
+
+- obtain X lock
+- write
+- release X lock _before commit_ (this is allowed in basic 2PL once shrinking starts) Another transaction could then read the uncommitted data **if the system allows it**.
+
+### MySQL reality check
+
+In MySQL with InnoDB, under normal isolation levels (READ COMMITTED / REPEATABLE READ), **dirty reads are not allowed**, so cascading rollbacks due to dirty reads are typically prevented by MVCC rules.  
+But the theory point is: **2PL alone** (as a locking discipline) doesn’t guarantee recoverability/cascade-freedom. That’s why **Strict 2PL** exists.
+
+---
+
+# 2.3 Graph‑Based (Tree) Protocol
+
+The **Tree protocol** is a locking protocol designed to guarantee **conflict serializability** *and* **deadlock freedom** by forcing transactions to acquire locks in a **predefined order** given by a **directed acyclic graph (DAG)** (often a tree).
+
+Key rules (classic tree protocol):
+1. **First lock can be on any node**.
+2. After locking a node `X`, a transaction may lock node `Y` **only if `Y` is a child (descendant) of `X`** in the DAG.
+3. A transaction **may unlock nodes at any time** (no 2-phase restriction).
+4. Once a node is unlocked, that transaction **cannot relock it**.
+
+It typically uses **X locks only** (simplifies correctness).
+
+---
+
+## 1) How it prevents the deadlock you mentioned (T1 has A needs B, T2 has B needs A)
+
+### Deadlock under 2PL (no ordering)
+- T1 locks **A**, then requests **B**
+- T2 locks **B**, then requests **A**
+→ wait cycle → deadlock.
+
+### Under Tree protocol: this situation becomes impossible (if A and B have an ordering)
+
+To use Tree protocol, **A and B must have a parent/child relation in the DAG** (or share an ancestor that dictates the order you must follow).
+
+### Example DAG
+Assume the database designer defines:
+
+```
+A → B
+```
+
+Meaning: **A is parent, B is child** (you must go A then B if you need both).
+
+#### What happens now
+- If T1 locks A, it is allowed to lock B next (good).
+- If T2 locks B first, then T2 is **not allowed** to later lock A, because A is not a child of B.
+
+So the “T2: lock B then request A” action is **illegal** in Tree protocol.
+
+**Result:** the classic circular wait pattern cannot form.
+
+#### Important: does this eliminate waiting entirely?
+No. Transactions can still wait if another transaction holds a lock.  
+But **deadlock (cycle of waits)** cannot occur because cycles require “out-of-order” acquisition somewhere.
+
+---
+
+## 2) “How is child decided?” (this is the most important conceptual piece)
+
+The **child/parent relationship is not discovered dynamically** by the DB at runtime.
+
+It is a **predefined partial order** over data items chosen by:
+- the DB designer (in theory), or
+- the DB’s internal structure (in practice), like:
+  - hierarchical objects (Database → Table → Page → Row)
+  - B-Tree index structure (root → internal nodes → leaves)
+  - partition → page → record
+
+### Intuition
+The protocol needs a DAG so that:
+- there is **no cycle** in the “lock ordering rules”
+- everyone follows the same direction (top → down)
+
+So “child” means: **a node reachable by following directed edges downward**.
+
+---
+
+## 3) Concrete teaching example with a real “tree”
+
+Let’s model a table and its rows as a tree:
+
+```
+Table: accounts (T)
+  ├── Row: id=10 (R10)
+  └── Row: id=20 (R20)
+```
+
+Edges: `T → R10` and `T → R20`.
+
+### Transaction that needs two rows
+T1 wants to update both rows 10 and 20.
+
+Under Tree protocol:
+1. Lock T (table node) [X lock]
+2. Lock R10 [X lock]
+3. Unlock R10 early if done
+4. Lock R20 [X lock]
+5. Unlock R20
+6. Unlock T
+
+Notice: because the rule is “parent before child”, T1 is forced to lock the table node first if the graph is defined that way.
+
+### Why this can reduce concurrency (a con)
+Locking the parent `T` is broad: it may block other transactions that only wanted one row.  
+That’s where “you might lock data you don’t need” comes from.
+
+(Real DBs avoid this using intention locks / multi-granularity locking; Tree protocol is a theoretical baseline.)
+
+---
+
+## 4) Example showing early unlock (why it can improve concurrency)
+
+Suppose:
+- T1 updates row 10 then row 20
+- T2 only needs row 10
+
+With 2PL, T1 might hold locks until later (depending on variant), forcing T2 to wait longer.
+
+With Tree protocol, T1 can:
+- lock parent → lock row10 → update → **unlock row10 immediately**
+Then T2 can proceed on row10 even while T1 later locks row20.
+
+So **early unlock** can improve throughput.
+
+---
+
+## 5) Why it is conflict-serializable (simple explanation)
+
+Because all transactions follow a consistent “top → down” locking order in an acyclic graph, you can’t get a cycle in the precedence graph that would violate serializability. The ordering constraints enforce a serializable interleaving.
+
+---
+
+## 6) Why cascading rollbacks can still happen (important)
+Tree protocol allows **unlocking before commit**.
+
+If the system allows another transaction to read a value written by an uncommitted transaction (dirty read), then:
+- T1 writes X, unlocks X early
+- T2 reads X (dirty)
+- T1 aborts → T2 must abort
+That’s cascading rollback.
+
+This is why **Strict 2PL** is popular: it prevents that by holding X locks till commit.
+
+(MySQL/InnoDB generally prevents dirty reads at normal isolation levels, but the protocol itself doesn’t guarantee it.)
+
+---
+
+## 7) “Some 2PL schedules impossible here and vice versa”
+- Tree protocol forces an order (parent → child). If a transaction needs two unrelated nodes, you might be forced to lock some ancestor or may not be able to express a certain interleaving that 2PL could allow.
+- Conversely, Tree protocol allows early unlocks, which some 2PL variants would forbid.
+
+---
+
+### Quick mental model
+- **2PL:** “Don’t unlock until you’re done locking.” (prevents non-serializable interleavings, but can deadlock)
+- **Tree protocol:** “Lock only moving downward in a predefined DAG.” (prevents deadlocks by preventing circular wait)
+
+---
+
+# 2.5 Timestamp‑Based Protocols
+
+Each transaction gets a **timestamp** (older = smaller).
+
+Each data item Q keeps:
+- `R-timestamp(Q)`
+- `W-timestamp(Q)`
+
+## READ(Q) by Ti
+- If `TS(Ti) < W-timestamp(Q)` → **rollback Ti**
+- Else: read and update `R-timestamp(Q)`
+
+## WRITE(Q) by Ti
+- If `TS(Ti) < R-timestamp(Q)` → rollback
+- If `TS(Ti) < W-timestamp(Q)` → rollback
+- Else: write, set `W-timestamp(Q)=TS(Ti)`
+
+### Properties
+Serializable  
+Deadlock‑free (no waiting)  
+❌ Not cascade‑free  
+❌ May cause many rollbacks
+
+---
+# 2.6 Thomas’ Write Rule
+
+If a **write is too old**, instead of rollback → **ignore** the write.
+
+### Why?
+- Improves concurrency
+- Allows **view‑serializable** schedules
+
+Example:
+- T1 (old) wants to write Q
+- But Q already written by newer T2  
+→ Ignore T1’s write
+
+[[Detailed explanation of Thomas' Write Rule]]
+
+---
+
+# 2.7 Multiple Granularity Locking
+
+Hierarchy:
+**DB → Table → Page → Row → Field**
+
+Locking higher level = implicitly locks all below.
+
+## Lock Modes
+| Mode | Meaning |
+|------|---------|
+| IS | Intention Shared |
+| IX | Intention Exclusive |
+| SIX | Shared + IX |
+| S | Shared |
+| X | Exclusive |
+
+### Rules
+- Lock **root first**
+- Lock **top to bottom**
+- Release **bottom to top**
+
+### Example
+To update a single row:
+- IX on table
+- X on row
+
+---
+
+# 2.8 Deadlock Handling
+
+## 💀 Deadlock
+Transactions waiting in a cycle:
+T1 waits for T2, T2 waits for T1.
+
+## 🚫 Starvation
+A transaction waits forever (e.g., always rolled back).
+
+---
+
+## 2.8.1 Deadlock Prevention
+
+### Wait-Die (non-preemptive)
+
+When `Ti` requests a lock held by `Tj`:
+
+- If `Ti` is **older** than `Tj` → `Ti` **waits**
+- If `Ti` is **younger** than `Tj` → `Ti` **dies** (abort/rollback), and later restarts with the **same timestamp**
+
+Why “non-preemptive”?  
+Because if the lock holder is `Tj`, **you never force `Tj` to release the lock**. You only decide whether the requester waits or aborts.
+
+**Effect:** younger transactions are more likely to be aborted.
+
+### Wound-Wait (preemptive)
+
+When `Ti` requests a lock held by `Tj`:
+
+- If `Ti` is **older** than `Tj` → `Ti` **wounds** `Tj` → **abort `Tj`** (force it to release locks), then `Ti` gets the lock
+- If `Ti` is **younger** than `Tj` → `Ti` **waits**
+
+Why “preemptive”?  
+Because an older requester can **preempt** (kick out) a younger lock holder.
+
+**Effect:** younger transactions get aborted too, but _specifically when they block an older one_; older transactions tend to finish sooner.
+
+#### The “one-line” difference
+
+- **Wait-Die:** _young requester aborts_ (if it conflicts with older holder)
+- **Wound-Wait:** _young holder aborts_ (if it conflicts with older requester)
+
+### Timeout
+Wait only fixed time → rollback.
+
+---
+
+## 2.8.2 Deadlock Detection & Recovery
+
+### 🔍 Wait‑For Graph
+Nodes = transactions  
+Edge Ti → Tj if Ti waits for Tj  
+Cycle = deadlock
+
+### 🎯 Victim Selection
+Pick cheapest rollback (least work).
+
+### ↩️ Rollback Scope
+- Full abort
+- Partial rollback
+
+### ⚡ Starvation Prevention
+Count rollbacks so same victim isn’t always chosen.
+
+---
+
+# 3 ARIES
+
+ARIES is the classic crash-recovery algorithm for **steal/no-force** database systems. It’s “how a serious DB can survive a power cut without losing committed work and without corrupting data,” even if dirty pages were written to disk before commit (steal) and even if pages are not forced to disk at commit (no-force).
+
+Two important MySQL realities before we start (so we stay accurate):
+- **MySQL’s InnoDB uses WAL-style recovery with redo + undo logs**, plus checkpoints, and it “replays” changes after a crash. Conceptually it’s very close to ARIES.
+- InnoDB’s **exact log record format is not ARIES**, and terms differ (InnoDB has *redo log*, *undo log*, *binlog*, etc.). But the *core ideas you listed* (WAL, analysis/redo/undo phases, CLRs concept) map very well to what InnoDB does.
+
+Below I’ll teach ARIES *properly* and then keep anchoring with **MySQL/InnoDB-style examples** so it’s not abstract.
+
+---
+
+## 1) The problem ARIES solves (steal/no-force)
+
+### Buffer pool vs disk
+Databases don’t update data files directly for every change. They:
+1) read pages into memory (buffer pool),
+2) modify memory,
+3) later flush pages to disk.
+
+### Steal / No-force
+- **Steal**: the buffer manager is allowed to flush a dirty page to disk **even if the transaction hasn’t committed yet**.  
+  - Good: avoids running out of memory.
+  - Bad: disk might contain uncommitted data → must be able to UNDO after crash.
+- **No-force**: on commit, the DB is **not required** to flush all pages touched by the transaction to disk.
+  - Good: commit becomes fast.
+  - Bad: committed changes might still be only in memory → must be able to REDO after crash.
+
+So crash recovery must guarantee:
+- **Atomicity**: uncommitted stuff must not remain (UNDO losers).
+- **Durability**: committed stuff must not be lost (REDO winners).
+
+ARIES is designed exactly for this.
+
+---
+
+## 2) WAL (Write-Ahead Logging): the non-negotiable rule
+
+**WAL rule:** *Before a dirty page is written to disk, the log describing those changes must already be on stable storage.*
+
+Why:
+- If disk gets an uncommitted change (steal), we need log to undo it.
+- If disk didn’t get a committed change (no-force), we need log to redo it.
+
+### MySQL analogy
+In InnoDB:
+- Data changes generate **redo log records** (in redo log buffer → flushed to redo log files).
+- Dirty pages can be flushed later.
+- On crash, InnoDB uses redo logs to “roll forward” changes that weren’t in data files yet.
+
+Commit durability in MySQL depends on settings:
+- With `innodb_flush_log_at_trx_commit=1`, InnoDB flushes redo at commit (strong durability).
+- With weaker settings, it may not flush each commit (faster, less durable). ARIES-style theory assumes commit record is forced to stable storage.
+
+---
+
+## 3) The log: LSN, pageLSN, and log tail
+
+### LSN (Log Sequence Number)
+Every log record has a monotonically increasing **LSN**.
+- Think of LSN as “the byte offset / position in the log” or a unique increasing id.
+
+### pageLSN
+Each database page stores a **pageLSN**: “the LSN of the most recent update applied to this page.”
+This is how redo decides whether a page already has a change.
+
+### Log tail
+The most recent part of the log sits in memory and is periodically flushed to stable storage.
+
+---
+
+## 4) Log record types (ARIES terminology) + MySQL mapping
+
+### Update record
+Contains enough info to redo/undo a change:
+- `prevLSN`, `transID`, `pageID`, before-image, after-image, etc.
+
+**MySQL mapping:** InnoDB redo logs are more “physical/byte-oriented” and undo is stored separately in undo segments. But conceptually, an “update happened” is logged for recovery.
+
+### Commit record (force-written)
+In ARIES, a transaction is committed when the **commit log record is on stable storage**.
+
+**MySQL mapping:** With strict durability (`innodb_flush_log_at_trx_commit=1`), redo is flushed at commit so crash after commit won’t lose it.
+
+### Abort / End
+Abort triggers undo; End means fully cleaned up.
+
+### CLR (Compensation Log Record)
+A CLR is written **when undoing an update**.
+Key properties:
+- It is **redo-only** (it describes the undo action as a forward action).
+- It has `undoNextLSN` so recovery can *skip work already undone* if crash happens during recovery.
+- “Never undo an undo”: CLRs are not undone.
+
+**MySQL mapping:** InnoDB has the concept of recording enough information so rollback/recovery can proceed safely. Exact CLR format isn’t exposed, but the *idea* (idempotent recovery progress markers) exists.
+
+---
+
+## 5) The two key in-memory tables ARIES reconstructs after a crash
+
+### Transaction Table (TT)
+One entry per active transaction:
+- `tid`
+- `status` (in-progress / committed / aborted)
+- `lastLSN` (latest log record for that transaction)
+
+### Dirty Page Table (DPT)
+One entry per dirty page:
+- `pageID`
+- `recLSN`: the LSN of the **first** log record that made the page dirty.
+
+`recLSN` is critical: it says “redo must start no later than here for this page.”
+
+**MySQL mapping:** InnoDB has checkpoints and tracks dirty pages; during recovery it knows where to start applying redo based on checkpoint LSN and page LSN comparisons.
+
+---
+
+## 6) Checkpointing: “fuzzy” checkpoint (no stop-the-world)
+
+A fuzzy checkpoint does **not** force dirty pages to disk; it just records “here’s what’s going on.”
+
+ARIES steps:
+1) write `begin_checkpoint`
+2) write `end_checkpoint` containing a snapshot of TT and DPT
+3) update the **master record** to point to the checkpoint LSN
+
+Benefit: checkpoint is cheap and concurrent.
+
+Limit: if dirty pages are very old (small `recLSN`), redo might still have to scan far back.
+
+**MySQL mapping:** InnoDB checkpoints advance a checkpoint LSN; redo before that can be discarded. This is the same goal: bound recovery time and log growth.
+
+---
+
+## 7) ARIES Restart Recovery: the 3 phases
+
+### Phase A: Analysis
+Goal:
+- Reconstruct TT and DPT at the time of crash
+- Identify “loser” transactions (active / not committed)
+- Find where redo must start
+
+How:
+- Start from the last checkpoint (via master record → begin_checkpoint → end_checkpoint).
+- Scan log forward to end, updating TT and DPT.
+
+Rules (conceptually):
+- `END(T)` → remove T from TT
+- any record for T → update `lastLSN`, status
+- update on page P:
+  - if P not in DPT: add with `recLSN = thisLSN`
+
+Output:
+- TT = who was active/committed/aborted at crash
+- DPT = dirty pages and their earliest dirtier LSN
+
+**MySQL example scenario (conceptual):**
+- T1 updates account A, then commits.
+- T2 updates account B, does not commit.
+- Crash.
+Analysis will mark:
+- T1: committed (winner)
+- T2: in-progress (loser)
+DPT contains pages for A and B.
+
+---
+
+### Phase B: Redo (repeat history)
+This is ARIES’s signature idea: **redo everything needed to reproduce the exact state at crash time**, including actions of loser transactions.
+
+Start point:
+- the smallest `recLSN` in the DPT (earliest thing that could matter)
+
+Scan forward and for each redoable record, decide if it must be redone. Skip if:
+1) page not in DPT, or
+2) DPT says `recLSN > LSN(record)` (page got dirty later), or
+3) on-disk `pageLSN >= LSN(record)` (already applied)
+
+If redo needed:
+- apply the change
+- set `pageLSN = LSN(record)`
+
+Important: **no new log record is written during redo**.
+
+#### Why redo losers too?
+Because after a crash, disk might be missing some updates that were only in memory. If a loser transaction updated a page in memory, redo must reapply it to recreate the “crash-time state,” then undo can cleanly roll it back.
+
+**MySQL analogy:**
+InnoDB crash recovery:
+- applies redo to bring pages up to date as of crash
+- then rolls back uncommitted transactions using undo
+
+That is basically “repeat history, then rollback losers.”
+
+---
+
+### Phase C: Undo (only losers)
+Undo all actions of loser transactions, in reverse order.
+
+Mechanism:
+- Initialize `ToUndo` set with `lastLSN` of each loser transaction.
+- Repeatedly pick the **largest LSN** (work backwards globally).
+- If record is an UPDATE:
+  - write a CLR (with `undoNextLSN = prevLSN of the record being undone`)
+  - apply the undo to the page
+  - add `prevLSN` to `ToUndo`
+- If record is a CLR:
+  - follow `undoNextLSN` (this is how you skip work already undone)
+- When a transaction finishes undo:
+  - write `END(T)`
+
+**Why CLRs matter (crash during recovery):**
+If the system crashes halfway through undo:
+- On restart, redo will reapply CLRs (so your undo progress is not lost)
+- Undo will jump using `undoNextLSN` and not repeat already-undone actions
+
+This is what makes recovery itself crash-safe.
+
+---
+
+## 8) A concrete teaching example (small but realistic)
+
+Imagine one table `accounts(id, balance)` on disk. Two transactions:
+
+- **T1**: `UPDATE accounts SET balance = balance - 100 WHERE id=1;` then COMMIT
+- **T2**: `UPDATE accounts SET balance = balance + 100 WHERE id=2;` (no commit yet)
+Crash happens.
+
+Because of steal/no-force, many possibilities:
+- The page for id=1 might not be on disk yet (no-force) → need REDO for T1.
+- The page for id=2 might have been flushed early (steal) → need UNDO for T2.
+
+### What ARIES does
+**Analysis:** finds T1 committed, T2 loser; DPT includes both pages if dirtied.
+
+**Redo:** reapplies updates for both T1 and T2 as needed to match crash-time state.
+
+Now disk reflects:
+- id=1 decreased
+- id=2 increased  
+even though T2 never committed (this is intentional after redo).
+
+**Undo:** rolls back T2, writing CLRs. Final state:
+- id=1 decreased (durable committed effect)
+- id=2 unchanged (T2 undone)
+
+That’s atomicity + durability.
+
+### MySQL/InnoDB interpretation
+- Redo log replays page modifications.
+- Undo log allows rollback of uncommitted T2.
+- After crash, InnoDB does crash recovery redo, then transaction rollback.
+
+---
+
+## 9) Media recovery (disk corruption) vs crash recovery (power loss)
+
+Crash recovery assumes:
+- data files exist but may be inconsistent w.r.t. memory
+- log is intact on stable storage
+
+Media recovery assumes:
+- a disk/page/file is corrupted/lost
+- you restore from a backup copy, then use logs to roll forward
+
+ARIES media recovery:
+1) restore last backup copy
+2) redo from some LSN (based on checkpoint/recLSN) to bring it forward
+3) undo losers as needed
+
+**MySQL mapping:**
+- “media recovery” is typically: restore backup + apply **binary logs** (point-in-time recovery).
+- InnoDB redo logs are not meant to be long-term archival like binlogs; they’re for crash recovery.
+
+So:
+- **ARIES log** ≈ InnoDB **redo log** for crash recovery semantics
+- **media recovery / PITR** in MySQL is more like **binlog-based** replay after restoring a backup
+
+---
+
+## 10) Shadow paging (why WAL/ARIES won)
+
+Shadow paging idea:
+- no log
+- never overwrite a page in place
+- write new pages elsewhere, update a page table
+- commit = atomically switch the root/page table pointer
+- abort = discard new pages
+
+Why it’s not used for modern OLTP engines:
+- fragmentation + write amplification
+- complicated concurrency and fine-grained locking
+- performance cliffs under high update rates
+
+Modern systems overwhelmingly use WAL families (ARIES-like) because they:
+- support high concurrency (row locks, MVCC)
+- handle complex structures (B+trees) with logical/physiological logging
+- keep sequential log writes (fast)
+
+---
+
+## 11) How this relates to what you’ll see in MySQL terms
+
+If you keep learning MySQL/InnoDB, map terms like this:
+
+- **Redo log (InnoDB)** ⇢ ARIES “log records used for REDO” (WAL)
+- **Undo log (InnoDB)** ⇢ ARIES UNDO phase data (though ARIES describes undo via log + CLRs; InnoDB has dedicated undo structures for MVCC/rollback)
+- **Checkpoint LSN** ⇢ “safe point” from which redo must start (bounded by dirty pages)
+- **pageLSN** ⇢ InnoDB pages also have LSN metadata used to decide if redo is needed
+
+If you want, I can also show you:
+- how to *observe* some of this in MySQL (`SHOW ENGINE INNODB STATUS`, `performance_schema`), and
+- how `innodb_flush_log_at_trx_commit` changes the durability guarantee.
+
+---
+
+## 12) Quick mastery checklist (if you truly understood ARIES)
+
+You should be able to answer:
+1) Why steal implies you must support undo after crash.
+2) Why no-force implies you must support redo after crash.
+3) Why WAL must force log before page flush.
+4) What `pageLSN` is used for in redo decisions.
+5) What `recLSN` means and why redo starts at min(recLSN).
+6) Why ARIES redoes losers too (“repeat history”).
+7) Why CLRs + `undoNextLSN` make recovery crash-safe.
+
+---
+
+Below is a structured, accurate “teach me from scratch” walkthrough of what you listed: **tree-structured indices (ISAM, B+ trees), B+ tree operations, bulk loading, and RAID**, plus how these ideas map to **MySQL/InnoDB** with concrete SQL examples.
+
+I’ll be direct about what MySQL *does* vs what’s just DB theory.
+
+---
+# B+ trees and RAIDS
+
+## 1) Tree-Structured Indices: what an index actually is
+
+A database index is a **data structure** that lets the DBMS find rows **without scanning the whole table**.
+
+### Key idea
+- Without an index: `SELECT ... WHERE col = x` usually means scanning many pages/rows.
+- With an index: the DB uses the index to jump to relevant pages quickly (logarithmic-ish).
+
+### In MySQL (InnoDB)
+- The **primary key** is stored as a **clustered B+ tree**: leaf pages contain the **entire row**.
+- Secondary indexes are also **B+ trees**, but their leaf entries contain `(secondary_key, primary_key)` and then it “goes to” the clustered index to fetch the row.
+
+---
+
+## 2) ISAM (Index Sequential Access Method)
+
+### What it is (theory)
+- Data stored in a **sorted** sequential file.
+- A **fixed** index points to ranges of the file.
+- As you insert new rows, you may not be able to keep the file perfectly sorted, so inserts go into **overflow blocks** (extra pages linked off the main file pages).
+
+### Why it becomes bad over time
+- Overflow chains grow.
+- Lookups and especially range scans become slower because you traverse overflow blocks.
+- Eventually you need **reorganization** (rewrite/compact the whole structure).
+
+### Where you see this idea today
+Most modern DB engines avoid pure ISAM for general-purpose tables because it ages badly. Some storage engines historically used ISAM-like structures (MyISAM name hints at it), but modern InnoDB is B+ tree based.
+
+---
+
+## 3) B+ Trees (the workhorse index)
+
+## 1. The Architecture: Anatomy of a B+ Tree
+
+A B+ Tree is divided into two strictly different types of nodes. This "class system" is the most important part of its design.
+
+### The Internal Nodes (The "Index" Layer)
+
+- **What they are:** These are purely navigation tools. They do **not** store actual data or pointers to records.
+    
+- **What they hold:** They hold **Keys** and **Pointers** to other nodes.
+    
+- **The Math:** If an internal node has $k$ keys, it has exactly $k+1$ pointers.
+    
+- **Role:** Think of these as the "Address Decoding" logic in a CPU. They tell the system which memory block to jump to next.
+    
+
+### The Leaf Nodes (The "Data" Layer)
+
+- **What they are:** This is the only place where the "real" information lives.
+    
+- **What they hold:** They hold the **Key** and the **Value** (either the actual data or a pointer to the row on the disk).
+    
+- **The Secret Sauce:** Every leaf node has a pointer to the **next** leaf node, creating a giant linked list at the bottom.
+    
+
+---
+
+## 2. Navigation Logic: How one node handles multiple keys
+
+You asked how a node directs a search if it has multiple keys inside it. This is where the $k+1$ pointers come in.
+
+Inside a single internal node, the keys act as **boundary markers**. For a node with keys `[10, 20]`, there are three pointers:
+
+1. **Left Pointer ($P_0$):** Leads to everything where $Key < 10$.
+    
+2. **Middle Pointer ($P_1$):** Leads to everything where $10 \le Key < 20$.
+    
+3. **Right Pointer ($P_2$):** Leads to everything where $Key \ge 20$.
+    
+
+When the database engine reads a node, it performs a **Binary Search** or a **Linear Search** _inside the node's memory_ to find the correct pointer. Because the node is usually small (fitting exactly in one disk page or cache line), this search is incredibly fast compared to the "cost" of fetching a new node from the disk.
+
+---
+
+## 3. The "Duplicate" Mystery: Why have repeats?
+
+This is your main design doubt. Why have "5" in an internal node and "5" again in a leaf?
+
+In a standard **B-Tree**, keys appear only once. If you find the key in an internal node, you stop. In a **B+ Tree**, every single key **must** exist in a leaf node, even if it's already in the internal nodes.
+
+### Reason A: Separation of Concerns (Index vs. Data)
+
+By making the internal nodes purely "road signs," we can pack them much tighter.
+
+- Because internal nodes don't carry "Data," they can hold many more "Keys."
+    
+- More keys per node = Higher **Fan-out** ($m$).
+    
+- Higher Fan-out = Shorter Tree.
+    
+- A shorter tree means fewer disk I/O operations to find what you need.
+    
+
+### Reason B: The "Road Sign" Logic
+
+Think of the keys in internal nodes as **Road Signs** on a highway.
+
+- The sign on the highway says **"Exit 5: Downtown."**
+    
+- The sign is not "Downtown." You haven't arrived yet. The sign just tells you which lane to take.
+    
+- When you finally get to the city, you see another sign that says **"Welcome to Downtown (Population: 5)."**
+    
+
+In a B+ Tree, the internal "5" is the highway sign (navigation). The leaf "5" is the actual city (data).
+
+---
+
+## 4. The Real-World "Why": Range Queries
+
+This is the ultimate reason B+ Trees won the database war.
+
+In a standard tree, if you want to find "All students with IDs between 10 and 50," you have to constantly travel **Up** and **Down** the tree branches (In-order traversal). This is a nightmare for disk performance.
+
+In a B+ Tree, because of the linked list at the bottom:
+
+1. You search the tree **once** to find ID 10.
+    
+2. You land on the correct Leaf Node.
+    
+3. You simply **walk sideways** along the leaf linked list until you hit ID 50.
+    
+
+You never have to go back "Up" to an internal node again. For a student working on systems like game engines or microprocessors, you can recognize this as a **Linear Memory Access** pattern, which is significantly more cache-friendly and faster than jumping around tree pointers.
+
+## Summary of the Design Logic
+
+- **Internal Nodes:** Maximized for "Fan-out" to keep the tree short.
+    
+- **Leaf Nodes:** Maximized for "Data Storage" and "Sequential Access."
+    
+- **Duplicates:** The price we pay to keep the Index Layer small and the Data Layer perfectly ordered for range scans.
+
+## Constraints
+## 1. Determining the Separator
+
+The "Separator" is the key in an internal node that acts as a fence. In a B+ Tree, we follow the **Successor Rule**: the separator is typically the smallest key in the right subtree.
+
+### For $m=4$ (Max 3 keys, 4 pointers):
+
+When a node overflows (you try to put a 4th key into a node that can only hold 3), we split at the **middle index** $i = \lceil m/2 \rceil$.
+
+If we have keys $\{K_1, K_2, K_3, K_4\}$:
+
+1. **Split Point:** $\lceil 4/2 \rceil = 2$.
+    
+2. **Left Node:** Gets the first 2 keys $\{K_1, K_2\}$.
+    
+3. **Right Node:** Gets the remaining keys $\{K_3, K_4\}$.
+    
+4. **The Separator:** $K_3$ is chosen because it is the "boundary" that separates the left group from the right group.
+    
+    - **In a Leaf Split:** $K_3$ is **copied** to the parent (it stays in the leaf because leaves must contain all data).
+        
+    - **In an Internal Split:** $K_3$ is **pushed** to the parent (it leaves the current level because internal nodes are just road signs).
+        
+
+---
+
+## 2. B+ Tree Constraints & Derivations
+
+In your studies at BITS Pilani, you'll see these rules enforced to ensure the tree never "degrades" into a slow linked list.
+
+### Constraint Table
+
+| **Component**      | **Constraint (Order m)**                     | **Reason**                                                 |
+| ------------------ | -------------------------------------------- | ---------------------------------------------------------- |
+| **Root**           | At least 2 children (if not a leaf).         | Prevents the tree from having a useless "single-path" top. |
+| **Internal Nodes** | $\lceil m/2 \rceil - 1 \leq children \leq m$ | Ensures the tree is at least 50% full (space efficiency).  |
+| **Leaf Nodes**     | $\lceil (m-1)/2 \rceil \leq keys \leq m-1$   | Keeps data density high and reduces total tree height.     |
+| **Depth**          | All leaves must be at depth $h$.             | Guarantees that every search takes the exact same time.    |
+
+---
+
+### 3. Derivation of Height ($h$)
+
+Why is a B+ Tree so fast? We can derive the maximum height to prove its efficiency.
+
+Let $N$ be the total number of records (keys in leaves) and $m$ be the order.
+
+To find the **maximum height** (the worst-case scenario), we assume every node is at its **minimum capacity**.
+
+1. **Level 0 (Root):** Has at least 2 children.
+    
+2. **Level 1:** Each child has at least $\lceil m/2 \rceil$ children. Total = $2 \cdot \lceil m/2 \rceil$.
+    
+3. **Level 2:** Total = $2 \cdot \lceil m/2 \rceil^2$.
+    
+4. **Level $h-1$ (Leaf Level):** Total leaf nodes $L \geq 2 \cdot \lceil m/2 \rceil^{h-2}$.
+    
+
+Since each leaf node contains at least $\lceil (m-1)/2 \rceil$ keys, the total keys $N$ is:
+
+$$N \geq 2 \cdot \lceil m/2 \rceil^{h-2} \cdot \lceil (m-1)/2 \rceil$$
+
+Solving for $h$:
+
+$$h \leq \log_{\lceil m/2 \rceil} \left( \frac{N}{2 \cdot \text{min\_keys\_in\_leaf}} \right) + 2$$
+
+**The Result:** Because $m$ (the base of the log) is usually large (like 100 or 200 in real databases), the height $h$ stays incredibly small (usually 3 or 4) even for millions of records.
+
+---
+
+### 4. The Logic Behind the Constraints
+
+- **Why the 50% Fill Rule?** If we allowed nodes to have only 1 key, the tree would become very "skinny" and tall, increasing disk I/O. By forcing nodes to be at least half-full, we force the tree to stay "fat" and short.
+    
+- **Why All Leaves at the Same Depth?** In a standard Binary Search Tree, if you insert sorted data, it becomes a line. In a B+ Tree, the only way to increase height is to split the **root**. Since every path starts from the root and goes to a split leaf, all paths stay equal.
+    
+
+As you're looking into game engine architecture, think of this as **constant-time complexity** for your asset lookups. Whether you have 1,000 or 1,000,000 items, the "cost" to find one is almost identical.
+
+---
+
+## 4) B+ tree queries (how a lookup works)
+
+### Equality search: `find(k)`
+1. Start at root page in buffer pool.
+2. Binary search within the node to choose a pointer.
+3. Repeat until leaf.
+4. In leaf, binary search for `k`. If found → return row/pointer.
+
+### Range query: `k BETWEEN a AND b`
+1. Find the first leaf entry for `a`.
+2. Then walk leaf chain sequentially until `b`.
+
+That leaf chain is why B+ trees are great for ranges.
+
+### MySQL examples
+```sql
+-- equality
+SELECT * FROM accounts WHERE account_id = 123;
+
+-- range
+SELECT * FROM accounts
+WHERE account_id BETWEEN 100 AND 200
+ORDER BY account_id;
+```
+
+To see if MySQL uses an index:
+```sql
+EXPLAIN SELECT * FROM accounts WHERE account_id BETWEEN 100 AND 200;
+```
+
+---
+
+## 5) Insertions in a B+ tree (what “split” really means)
+
+### Insertion algorithm (theory)
+1. Find target leaf where key belongs.
+2. If leaf has space: insert key in sorted order.
+3. If leaf full:
+   - split the leaf into two leaves
+   - redistribute keys roughly half-half
+   - copy up (or push up) a separator key into parent
+4. Parent may overflow → split internal node → propagate upward.
+5. Root split increases height by 1.
+
+### What “overhead” means
+- Inserts may cause **page splits**, which cost extra IO and can fragment pages.
+- Deletes may cause **merges** or **redistribution** (more overhead).
+
+### MySQL mapping
+InnoDB does B+ tree page splits. You’ll notice overhead when:
+- inserting random keys into a primary key (like UUIDs)
+- heavy write workloads
+- poor fill factor due to random inserts
+
+**Good practice:** Use monotonic increasing primary keys (`BIGINT AUTO_INCREMENT`) when possible to reduce splits.
+
+Example:
+```sql
+CREATE TABLE t (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  val VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  KEY (created_at)
+) ENGINE=InnoDB;
+```
+
+Insert pattern:
+- Insert by auto_increment → mostly appends near the “rightmost” leaf → fewer splits.
+- Insert random `id` values → causes inserts all over the tree → more splits.
+
+---
+
+## 6) Deletions in a B+ tree
+
+### What can go wrong after delete
+After deleting an entry, a page might become **underfull** (less than minimum occupancy).
+
+Two approaches:
+
+**A) Practical (“lazy”) deletion**
+- Many systems tolerate some underfull pages for performance.
+- Rebalancing happens less aggressively.
+
+**B) Formal deletion**
+If underfull:
+1. Try to **borrow** from a sibling (redistribute keys).
+2. If can’t borrow, **merge** with a sibling.
+3. Update parent separator keys accordingly.
+4. This may propagate upward if parent becomes underfull.
+
+### MySQL note
+InnoDB doesn’t necessarily immediately merge pages on delete; it may keep free space for future inserts. That’s why tables can become bloated and why `OPTIMIZE TABLE` (or rebuild) sometimes helps.
+
+### B+ Tree Deletion: The Visual Mechanics
+
+#### 1. Case: Simple Deletion
+
+When a leaf node has enough keys to stay above the minimum ($min\_keys = \lceil (m-1)/2 \rceil$ for leaves), we just pull the key out. The index remains stable.
+
+- **Constraint:** If the deleted key was a "separator" in a parent, we update that parent with the new **In-order Successor**.
+    
+
+#### 2. Case: Borrowing from Sibling (Redistribution)
+
+When a node drops  below the minimum, it checks its neighbor. If the neighbor is "rich" (has more than the minimum), we perform a rotation.
+
+- **The Move:** A key moves from the sibling to the parent, and the parent's old separator moves down to the "hungry" node.
+    
+- **The Result:** The tree height stays the same, and both nodes are now balanced.
+    
+
+#### 3. Case: Merging (The "Collapse" Case)
+
+When a node underflows and its neighbor is also at the minimum, we cannot borrow. We must merge them into one.
+
+- **The Move:** Two nodes become one.
+    
+- **The Consequence:** Because we have one less node, the parent **must lose a separator**.
+    
+- **The Chain Reaction:** If the parent now has 0 keys, it must borrow from _its_ sibling or merge again. If this happens at the root, the tree height decreases by 1.
+    
+
+---
+
+### Step-by-Step Solution for image_65083f.png
+
+Here is the trace of your specific problem (Order $m=4$, Min Keys = 2 for leaves, 1 for internal).
+
+**Initial Tree Structure:**
+
+- **Root:** `[9]`
+    
+- **Left Internal:** `[3, 5, 7]` $\rightarrow$ Leaves: `[1, 2]`, `[3, 4]`, `[5, 6]`, `[7, 8]`
+    
+- **Right Internal:** `[11]` $\rightarrow$ Leaves: `[9, 10]`, `[11, 12]`
+    
+
+#### 1. Delete 9
+
+1. **Leaf `[9, 10]`** $\rightarrow$ `[10]` (**Underflow**).
+    
+2. **Merge:** Right sibling `[11, 12]` is at minimum. Combine them into `[10, 11, 12]`.
+    
+3. **Internal Adjustment:** The separator `11` is deleted from the parent. The parent `[11]` is now empty `[]` (**Internal Underflow**).
+    
+4. **Rebalance:** The empty internal node borrows from its left sibling `[3, 5, 7]`. 7 moves to the root; the old root (updated to successor 10) moves down.
+    
+
+**Structure After Deleting 9:**
+
+Plaintext
+
+```
+          [7]
+        /     \
+    [3, 5]     [10]
+   /  |  \    /    \
+[1,2][3,4][5,6] [7,8] [10,11,12]
+```
+
+#### 2. Delete 7
+
+1. **Leaf `[7, 8]`** $\rightarrow$ `[8]` (**Underflow**).
+    
+2. **Borrow:** Right sibling `[10, 11, 12]` has 3 keys. It gives **10** to the left.
+    
+3. **Parent Update:** The right internal separator becomes **11**.
+    
+4. **Root Update:** The deleted root key 7 is replaced by its successor **8**.
+    
+
+**Structure After Deleting 7:**
+
+Plaintext
+
+```
+          [8]
+        /     \
+    [3, 5]     [11]
+   /  |  \    /    \
+[1,2][3,4][5,6] [8,10] [11,12]
+```
+
+#### 3. Delete 8
+
+1. **Leaf `[8, 10]`** $\rightarrow$ `[10]` (**Underflow**).
+    
+2. **Merge:** Sibling `[11, 12]` is at minimum. Merge into `[10, 11, 12]`.
+    
+3. **Internal Adjustment:** Right internal node becomes empty `[]`.
+    
+4. **Rebalance:** Borrows from left sibling `[3, 5]`. Key **5** moves to the root; key **10** moves down.
+    
+
+**Final Tree Structure:**
+
+Plaintext
+
+```
+          [5]
+        /     \
+      [3]      [10]
+     /   \    /    \
+  [1,2] [3,4][5,6] [10,11,12]
+```
+
+---
+
+## 7) Bulk loading a B+ tree (why it’s faster)
+
+### Problem
+If you insert 1 billion rows one-by-one into an empty B+ tree:
+- lots of random page splits
+- lots of parent updates
+- lots of IO
+
+### Bulk load idea
+1. Sort all entries by key.
+2. Fill leaf pages sequentially to desired fill factor.
+3. Build internal levels above it bottom-up.
+
+### MySQL equivalent
+- Loading data in primary key order is faster.
+- Using `LOAD DATA INFILE` is faster than many single inserts.
+- Disabling secondary indexes temporarily is possible in some engines; in InnoDB you can still benefit by creating indexes **after** loading.
+
+Example pattern:
+```sql
+-- 1) create table without secondary indexes
+CREATE TABLE events (
+  id BIGINT PRIMARY KEY,
+  ts DATETIME,
+  user_id BIGINT,
+  payload JSON
+) ENGINE=InnoDB;
+
+-- 2) bulk load
+LOAD DATA INFILE '/path/events.csv'
+INTO TABLE events
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+-- 3) then add indexes (build in bulk)
+CREATE INDEX idx_events_ts ON events(ts);
+CREATE INDEX idx_events_user ON events(user_id);
+```
+
+---
+
+## 8) RAID levels: what they change for databases
+
+RAID is about turning multiple disks into a single logical “disk array” for:
+- performance (striping)
+- redundancy (mirroring/parity)
+- availability (survive disk failure)
+
+### Terminology
+- **Striping**: split data across disks → parallel IO
+- **Mirroring**: duplicate data on another disk → redundancy
+- **Parity**: extra info to reconstruct lost data if a disk fails (cheaper than mirroring)
+
+### RAID 0 (striping only)
+- Fast
+- **No redundancy**
+- 1 disk dies → you lose everything
+
+**DB use:** almost never acceptable alone for real data.
+
+### RAID 1 (mirroring)
+- Writes go to both mirrors
+- Reads can be balanced
+- Great reliability
+- Often great for random reads; writes are roughly “2x” but can be optimized by controller
+
+**DB use:** common, especially for logs / critical data.
+
+### RAID 5 (striping + distributed parity)
+- Good capacity efficiency
+- Reads are good
+- Writes have a parity overhead (“read-modify-write” penalty for small random writes)
+- Rebuild after failure is expensive and performance-degrading
+
+**DB use:** good for **mostly-read / low-update** large datasets; less good for heavy OLTP random writes.
+
+### RAID 6 (double parity)
+- Survives 2 disk failures
+- More write overhead than RAID 5
+
+**DB use:** when reliability matters with many disks, but performance costs.
+
+### RAID 0+1 vs RAID 10 (common confusion)
+- **RAID 10 (1+0)**: mirror pairs, then stripe across pairs. Better fault tolerance than 0+1 typically.
+- Many DBAs prefer RAID 10 for write-heavy OLTP.
+
+### MySQL practical point (modern reality)
+On cloud / SSD / NVMe with replication, people often rely more on:
+- replication (MySQL replication / Group Replication)
+- filesystem / cloud block storage redundancy
+than classic hardware RAID. But the tradeoffs (write amplification, rebuild pain) still matter conceptually.
+
+---
+
+## 9) Putting it together in MySQL: why indexes + storage matter
+
+### Example: bank accounts table
+```sql
+CREATE TABLE accounts (
+  account_id BIGINT PRIMARY KEY,
+  balance_cents BIGINT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+```
+
+- Primary key B+ tree leaf contains the row.
+- Lookup by `account_id` is one B+ tree traversal.
+
+### Why range scans are fast
+```sql
+SELECT * FROM accounts
+WHERE account_id BETWEEN 100000 AND 200000;
+```
+This becomes: go to leaf for 100000 → walk leaf chain.
+
+---
+
+## 10) About your “Timestamp protocol + Thomas’ write rule” note in the sheet
+You included that earlier; just to connect:
+
+- B+ trees / RAID are storage & indexing.
+- Timestamp ordering / Thomas’ write rule are concurrency control.
+
+They solve different problems:
+- B+ trees: “find data fast”
+- RAID: “store data safely/fast on disks”
+- concurrency control: “correct results with multiple users”
+
+If you want, I can also teach the **timestamp protocol exercise (T19/T20/T21)** in the same “step-by-step table with R_TS/W_TS” style, but you didn’t paste the exact schedule lines—only the conclusion.
+
+---
+
+Below is a **complete, detailed teaching example** with **two databases**, each with **three tables**, and a **tree‑based (DAG) locking model**, followed by **6 schedules** showing where **2PL fails/works** and where **Tree (Graph‑based) protocol works/fails**.
+
+I’ll keep it precise and illustrative.
+
+---
+
+# DATA MODEL (2 databases × 3 tables each)
+
+## **DB1: SalesDB**
+- **Customers** (10 rows: C1…C10)
+- **Orders** (10 rows: O1…O10)
+- **Payments** (10 rows: P1…P10)
+
+## **DB2: HRDB**
+- **Employees** (10 rows: E1…E10)
+- **Departments** (10 rows: D1…D10)
+- **Salaries** (10 rows: S1…S10)
+
+Each table has at least 10 rows; think of “row i” as the lockable data item.
+
+---
+
+# ✅ TREE/DAG FOR TREE PROTOCOL
+
+We define a DAG where **database is parent of tables**, and **tables are parent of rows**. (This is the standard hierarchical DAG.)
+
+```
+Root
+├── SalesDB
+│   ├── Customers
+│   │   ├── C1 ... C10
+│   ├── Orders
+│   │   ├── O1 ... O10
+│   └── Payments
+│       ├── P1 ... P10
+└── HRDB
+    ├── Employees
+    │   ├── E1 ... E10
+    ├── Departments
+    │   ├── D1 ... D10
+    └── Salaries
+        ├── S1 ... S10
+```
+
+**Tree Protocol rule:** after you lock a node, you may only lock its **children (descendants)**.
+
+---
+
+# ✅ 6 SCHEDULE CASES (2PL vs Tree Protocol)
+
+I’ll use short notation:
+
+- `Lx(Ti, X)` = exclusive lock on X by Ti  
+- `Ux(Ti, X)` = unlock  
+- `R(Ti, X)` / `W(Ti, X)` = read/write  
+
+---
+
+## ✅ CASE 1 — 2PL FAILS (deadlock), Tree Protocol PREVENTS IT
+**Scenario:** classic deadlock across two rows in two tables.
+
+### Schedule (2PL)
+```
+T1: Lx(Orders.O1)
+T2: Lx(Payments.P1)
+T1: Lx(Payments.P1)   -- waits
+T2: Lx(Orders.O1)     -- waits
+```
+✅ 2PL allows this → **deadlock**
+
+### Under Tree Protocol
+T1 must lock parent before child.  
+If it started at Orders table, it cannot jump to Payments unless it first locked SalesDB and then Payments (valid path).  
+T2 locked Payments first → cannot lock Orders later because Orders is **not a child** of Payments.
+
+So **Tree Protocol blocks this schedule** → **deadlock avoided**.
+
+---
+
+## ✅ CASE 2 — 2PL WORKS (serializable), Tree Protocol WORKS
+Both transactions follow same top‑down order.
+
+```
+T1: Lx(SalesDB)
+T1: Lx(Orders)
+T1: Lx(Orders.O1) → W(O1)
+T1: Ux(Orders.O1)
+
+T2: Lx(SalesDB)
+T2: Lx(Orders)
+T2: Lx(Orders.O2) → W(O2)
+T2: Ux(Orders.O2)
+
+T1/T2 unlock rest
+```
+
+✅ 2PL works (serializable)  
+✅ Tree protocol works (top‑down path)  
+✅ No deadlock
+
+---
+
+## ✅ CASE 3 — 2PL WORKS, Tree Protocol FAILS (illegal path)
+Transaction wants **Orders.O1 then Customers.C1**.
+
+### Schedule
+```
+T1: Lx(SalesDB)
+T1: Lx(Orders)
+T1: Lx(Orders.O1) → W(O1)
+T1: Lx(Customers.C1) → W(C1)
+```
+
+- Under 2PL this is legal (still growing).
+- Under Tree protocol this is **illegal** because after locking `Orders`, you may only lock **children of Orders**, not move sideways to `Customers`.
+
+**So Tree protocol rejects this schedule.**
+
+---
+
+## ✅ CASE 4 — Tree Protocol WORKS, Basic 2PL CAUSES CASCADE ROLLBACK RISK
+T1 unlocks early (allowed in Tree protocol), T2 reads dirty data.
+
+```
+T1: Lx(SalesDB) → Lx(Customers) → Lx(C1)
+T1: W(C1) 
+T1: Ux(C1)        -- early unlock allowed in Tree protocol
+T2: Lx(SalesDB) → Lx(Customers) → Lx(C1)
+T2: R(C1)
+T1: ABORT
+```
+
+- Tree protocol allows early unlocks → this schedule can happen.
+- If T1 aborts, T2 read dirty data → **cascading rollback**.
+
+**So Tree protocol allows schedules that are NOT recoverable.**
+
+Under Strict 2PL this would be blocked (T1 would keep X lock).
+
+---
+
+## ✅ CASE 5 — 2PL FAILS (deadlock) across **databases**
+T1 updates SalesDB row, then wants HRDB row.  
+T2 does opposite.
+
+```
+T1: Lx(SalesDB.Customers.C1)
+T2: Lx(HRDB.Employees.E1)
+
+T1: Lx(HRDB.Employees.E1)   -- waits
+T2: Lx(SalesDB.Customers.C1) -- waits
+```
+
+✅ 2PL allows → deadlock possible.
+
+### Tree protocol?
+If DAG is **Root → SalesDB → ...** and **Root → HRDB → ...**, then:
+- If T1 starts in SalesDB, it **cannot later move to HRDB** (not a descendant).
+- So Tree protocol blocks the schedule early → no deadlock.
+
+---
+
+## ✅ CASE 6 — 2PL WORKS, Tree Protocol WORKS, but Tree Protocol forces extra locks
+Transaction needs **two rows in same table**.
+
+```
+T1: Lx(SalesDB) → Lx(Orders) → Lx(O1) → W(O1) → Ux(O1)
+T1: Lx(O2) → W(O2) → Ux(O2)
+```
+
+✅ Tree protocol OK  
+✅ 2PL OK  
+But note: Tree protocol often **forces the parent locks** even if you only need rows → more overhead.
+
+---
+
+# ✅ SUMMARY OF WHEN EACH “WORKS” OR “FAILS”
+
+| Case | 2PL | Tree Protocol |
+|------|-----|---------------|
+| 1 (deadlock classic) | ❌ possible deadlock | ✅ prevented |
+| 2 (same order) | ✅ works | ✅ works |
+| 3 (sideways move) | ✅ works | ❌ illegal |
+| 4 (early unlock dirty read) | ✅ allowed (not strict) | ✅ allowed → can cascade |
+| 5 (cross‑DB deadlock) | ❌ possible deadlock | ✅ prevented |
+| 6 (same table rows) | ✅ works | ✅ works but extra locks |
+
+---
+
+# ✅ Key takeaways (clear & final)
+- **2PL** guarantees serializability but can deadlock.
+- **Tree protocol** guarantees serializability **and** deadlock freedom by forcing a fixed lock order.
+- Tree protocol is **more restrictive**, so some schedules 2PL allows are **not possible**.
+- Tree protocol can still allow **cascading rollbacks** because it allows early unlocks.
+- In practice, DBMS use **2PL variants** + **deadlock detection** or **prevention**, not pure tree protocol.
+
+---
+
+If you want, I can also draw the **wait‑for graphs** for the deadlock cases or show the **exact precedence graphs** to prove serializability.
+
+![[Introduction to Database Migrations]]

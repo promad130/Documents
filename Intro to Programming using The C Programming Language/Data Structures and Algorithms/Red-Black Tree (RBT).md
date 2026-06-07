@@ -47,11 +47,8 @@ void leftRotate(Node* x) {
 When inserting a new node $z$:
 
 1. Perform standard BST insertion.
-    
 2. Color the new node **Red**.
-    
 3. Fix any violations of the RBT properties (specifically Property 4: Red-Red violation).
-    
 
 ### Case 1: Uncle is Red
 
@@ -112,9 +109,7 @@ void insertFixup(Node* z) {
 Deletion is more complex because removing a Black node disrupts the Black-Height (Property 5).
 
 - **Red Node Deletion:** Simple. No properties are violated.
-    
 - **Black Node Deletion:** Creates a "Double Black" problem (a path now has one fewer black node).
-    
 
 ### Special Case: Black Node with one Red Child
 
